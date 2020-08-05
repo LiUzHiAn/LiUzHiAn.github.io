@@ -1,0 +1,38 @@
+/*toc begin*/
+/* toc end*/
+#toc {
+  margin-right: -240px;
+}
+.toc-article {
+  background: #f5f5f5;
+  margin: 0 0 0 0.2em;
+  padding: 1em;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  line-height: 1.5em;
+  font-size: 1em;
+  float: right;
+  max-width: 32%;
+  min-width: 220px;
+  border: 1px solid #c0c0c0;
+  white-space: nowrap;
+  overflow: hidden;
+/*下级目录的缩进量 */
+}
+.toc-article strong {
+  padding: 0.3em 0;
+}
+.toc-article ol {
+  padding-left: 0;
+}
+.toc-article ol,
+.toc-article li {
+  margin: 0 0 0 0.2em;
+  list-style-type: none;
+}
+.toc-article ol li:before {
+  display: none;
+}
+.toc-article .toc-child {
+  margin-left: 0.8em;
+}

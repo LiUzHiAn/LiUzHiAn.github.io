@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Java集合—Queue篇 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2020/04/28/Java集合-Queue篇/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/posts_imgs/java-logo.png')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Java" title="Java">Java</a>
+                        
+                    </div>
+                    <h1>Java集合—Queue篇</h1>
+                    <h2 class="subheading">Queue、Deque、LinkedList、ArrayDeque</h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2020-04-28
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Queue简介"><span class="toc-text">Queue简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Queue接口"><span class="toc-text">1. Queue接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Deque接口"><span class="toc-text">2. Deque接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-ArrayDeque实现类"><span class="toc-text">3. ArrayDeque实现类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-构造函数"><span class="toc-text">3.1 构造函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-add相关操作"><span class="toc-text">3.2 add相关操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-offer相关操作"><span class="toc-text">3.3 offer相关操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-remove相关操作"><span class="toc-text">3.4 remove相关操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-peek相关操作"><span class="toc-text">3.5 peek相关操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-LinkedList实现类"><span class="toc-text">4. LinkedList实现类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-PriorityQueue实现类"><span class="toc-text">5. PriorityQueue实现类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-参考"><span class="toc-text">6. 参考</span></a></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="Queue简介"><a href="#Queue简介" class="headerlink" title="Queue简介"></a>Queue简介</h1><p>Queue，即队列，是一个<code>先进先出(First In First Out, FIFO)</code>的数据结构，在JCF中也有很好的支持。和之间的分析步骤一样，我们先看一下接口的设计，再深入到具体实现类。</p>
+<h2 id="1-Queue接口"><a href="#1-Queue接口" class="headerlink" title="1. Queue接口"></a>1. Queue接口</h2><p>相对于<code>List</code>接口来说，<code>Queue</code>接口中支持的方法相对就比较少了，接口代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Queue</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">Collection</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span></span>; 		<span class="comment">// 往队尾添加一个元素，失败抛出异常</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">offer</span><span class="params">(E e)</span></span>;		<span class="comment">// 往队尾添加一个元素，失败返回false</span></span><br><span class="line">    </span><br><span class="line">    <span class="function">E <span class="title">remove</span><span class="params">()</span></span>;				<span class="comment">// 检索到队头元素并删除，返回该队头，失败抛出异常</span></span><br><span class="line">    <span class="function">E <span class="title">poll</span><span class="params">()</span></span>;				<span class="comment">// 检索到队头元素并删除，返回该队头，失败返回null</span></span><br><span class="line">    </span><br><span class="line">    <span class="function">E <span class="title">element</span><span class="params">()</span></span>;			<span class="comment">// 检索到队头元素，并返回该队头，失败抛出异常</span></span><br><span class="line">    <span class="function">E <span class="title">peek</span><span class="params">()</span></span>;				<span class="comment">// 检索到队头元素，并返回该队头，失败返回null</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong><em>Queue接口不支持存放<code>null</code>元素。</em></strong></p>
+<p>这里有个问题需要关注，原来自己用的时候也没仔细想过，为什么好像有两套功能一样的方法？即<code>add()</code>和<code>offer()</code>,<code>remove()</code>和<code>poll()</code>，<code>element()</code>和<code>peek()</code>的区别是什么？</p>
+<p>原来，二者区别的就是在操作失败时的处理上，就好比有两套约定，在<code>Collection</code>接口中规定，如果<code>add()</code>操作失败，则抛出相应的异常; 而<code>offer()</code>方法则规定，如果操作失败，返回false。<code>remove()</code>和<code>poll()</code>，<code>element()</code>和<code>peek()</code>的区别类似。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>返回值处理</th>
+<th>方法</th>
+<th>返回值处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>add()</td>
+<td>失败抛出异常，有<code>IllegalStateException</code>,<code>ClassCastException</code>和<code>NullPointerException</code>三种异常。</td>
+<td>offer()</td>
+<td>失败返回false</td>
+</tr>
+<tr>
+<td>remove()</td>
+<td>失败抛出<code>NoSuchElementException</code>异常。</td>
+<td>poll()</td>
+<td>失败返回null</td>
+</tr>
+<tr>
+<td>element()</td>
+<td>失败抛出<code>NoSuchElementException</code>异常。</td>
+<td>peek()</td>
+<td>失败返回null</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="2-Deque接口"><a href="#2-Deque接口" class="headerlink" title="2. Deque接口"></a>2. Deque接口</h2><p>说完<code>Queue</code>接口，很自然地就会涉及到<code>Deque</code>接口。Deque，即Double End Queue，双端队列，顾名思义，就是可以在队头和队尾进行插入或删除操作，我们看下接口的设计，这里我们也只列举一部分：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Deque</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">Queue</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addFirst</span><span class="params">(E e)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addLast</span><span class="params">(E e)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">offerFirst</span><span class="params">(E e)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">offerLast</span><span class="params">(E e)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function">E <span class="title">removeFirst</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">E <span class="title">removeLast</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">E <span class="title">pollFirst</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">E <span class="title">pollLast</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Okay，和我们的猜想一模一样，至于为什么也有两套一样的方法嘛，和上面在<code>Queue</code>中的解释完完全全一样。</p>
+<h2 id="3-ArrayDeque实现类"><a href="#3-ArrayDeque实现类" class="headerlink" title="3. ArrayDeque实现类"></a>3. ArrayDeque实现类</h2><p><code>ArrayDeque</code>类是实现了<code>Deque</code>接口的，常见的使用方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Deque&lt;String&gt; dq=<span class="keyword">new</span> ArrayDeque&lt;&gt;();</span><br><span class="line">dq.add(<span class="string">"jack"</span>);</span><br><span class="line">dq.add(<span class="string">"andy"</span>);</span><br><span class="line">dq.add(<span class="string">"rose"</span>);</span><br><span class="line">System.out.println(dq.toString());  <span class="comment">// 输出 [jack, andy, rose]</span></span><br><span class="line"></span><br><span class="line">dq.removeLast();</span><br><span class="line">System.out.println(dq.toString());  <span class="comment">// 输出 [jack, andy]</span></span><br></pre></td></tr></table></figure>
+<p>我们一步步分析一下这个类的具体实现源代码，先看下这个类实现的接口和类属性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayDeque</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractCollection</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">                           <span class="keyword">implements</span> <span class="title">Deque</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">transient</span> Object[] elements;   	<span class="comment">// 队列中的元素，底层用数组实现的</span></span><br><span class="line">    <span class="keyword">transient</span> <span class="keyword">int</span> head;				<span class="comment">// 队头</span></span><br><span class="line">    <span class="keyword">transient</span> <span class="keyword">int</span> first;			<span class="comment">// 队尾</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * The minimum capacity that we'll use for a newly created deque.</span></span><br><span class="line"><span class="comment">     * Must be a power of 2.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MIN_INITIAL_CAPACITY = <span class="number">8</span>;</span><br><span class="line"> 	</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-1-构造函数"><a href="#3-1-构造函数" class="headerlink" title="3.1 构造函数"></a>3.1 构造函数</h3><p><code>ArrayDeque</code>的构造函数有三个，方法签名分别是<code>ArrayDeque()</code>、<code>ArrayDeque(int numElements)</code>和<code>ArrayDeque(Collection&lt;? extends E&gt; c)</code>，我们一个个来分析一下。</p>
+<ul>
+<li><p><code>ArrayDeque()</code></p>
+<p>此构造函数的实现十分的简单粗暴，直接缺省地把数组的容量声明为16。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayDeque</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    elements = <span class="keyword">new</span> Object[<span class="number">16</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>ArrayDeque(int numElements)</code></p>
+<p>这个构造函数的功能是创建一个容量为用户指定初始大小的双端队列，私有方法如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayDeque</span><span class="params">(<span class="keyword">int</span> numElements)</span> </span>&#123;</span><br><span class="line">    allocateElements(numElements);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 开辟空间函数</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">allocateElements</span><span class="params">(<span class="keyword">int</span> numElements)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> initialCapacity = MIN_INITIAL_CAPACITY; <span class="comment">// 最小的初始化容量为8</span></span><br><span class="line">    <span class="comment">// Find the best power of two to hold elements.</span></span><br><span class="line">    <span class="comment">// Tests "&lt;=" because arrays aren't kept full.</span></span><br><span class="line">    <span class="keyword">if</span> (numElements &gt;= initialCapacity) &#123;  <span class="comment">// 如果用户指定的初始化容量大于8</span></span><br><span class="line">        initialCapacity = numElements;</span><br><span class="line">        initialCapacity |= (initialCapacity &gt;&gt;&gt;  <span class="number">1</span>); <span class="comment">// &gt;&gt;&gt;是不带符号右移 ，&gt;&gt;是带符号右移</span></span><br><span class="line">        initialCapacity |= (initialCapacity &gt;&gt;&gt;  <span class="number">2</span>);</span><br><span class="line">        initialCapacity |= (initialCapacity &gt;&gt;&gt;  <span class="number">4</span>);</span><br><span class="line">        initialCapacity |= (initialCapacity &gt;&gt;&gt;  <span class="number">8</span>);</span><br><span class="line">        initialCapacity |= (initialCapacity &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">        initialCapacity++; <span class="comment">// 找到这样一个k，使得2^k &gt; numElements</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (initialCapacity &lt; <span class="number">0</span>)   <span class="comment">// Too many elements, must back off</span></span><br><span class="line">            initialCapacity &gt;&gt;&gt;= <span class="number">1</span>;<span class="comment">// Good luck allocating 2 ^ 30 elements</span></span><br><span class="line">    &#125;</span><br><span class="line">    elements = <span class="keyword">new</span> Object[initialCapacity];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，关键就在于<code>allocateElements()</code>函数。该方法首先会判断用户指定的初始容量<code>numElements</code>是否比<code>MIN_INITIAL_CAPACITY</code>（也就是8）小，如果比8小，就直接开辟8个空间；如果比8大的话，代码会找到这样一个$k$，使得$2^k &gt; numElements$，也就是上面不断右移的作用，这里举个例子，因为在Java中一个int是用4个字节来表示的，这里举例只考虑了4个bit的情况，对应则只需要右移2次。</p>
+<p>假设用户声明的大小为5，即<code>initialCapacity = 0101</code>。<code>initialCapacity |= (initialCapacity &gt;&gt;&gt;  1)</code>后，<code>initialCapacity = 0111</code>；再次右移<code>initialCapacity |= (initialCapacity &gt;&gt;&gt; 2)</code>后，<code>initialCapacity = 0111</code>；最后<code>initialCapacity++</code>，此时<code>initialCapacity = 1000</code>，对应的十进制数为-8，于是经过if判断再次右移一位，<code>initialCapacity</code>又等于 0100，即十进制4。</p>
+<p>也就是说，实际队列能分配的最大初始容量其实也就是$2^{n-2}$，其中$n$为二进制位数，即在<code>Deque</code>中，最大也就允许用户初始化容量为$2^{30}$。</p>
+</li>
+<li><p><code>ArrayDeque(Collection&lt;? extends E&gt; c)</code></p>
+<p>这个构造函数就比较简单了，和之前在<code>List</code>中的分析差不多，代码如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayDeque</span><span class="params">(Collection&lt;? extends E&gt; c)</span> </span>&#123;</span><br><span class="line">    allocateElements(c.size());</span><br><span class="line">    addAll(c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="3-2-add相关操作"><a href="#3-2-add相关操作" class="headerlink" title="3.2 add相关操作"></a>3.2 add相关操作</h3><p>我们从最简单的<code>add(E e)</code>开始往下分析。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    addLast(e);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addLast</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (e == <span class="keyword">null</span>)  <span class="comment">// 不允许插入null</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    elements[tail] = e; <span class="comment">// 插入队尾</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> ( (tail = (tail + <span class="number">1</span>) &amp; (elements.length - <span class="number">1</span>)) == head) <span class="comment">// tail下标+1，尾巴和头相遇了，说明队列满了</span></span><br><span class="line">        doubleCapacity(); <span class="comment">// 双倍扩容，双倍快乐</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 双倍扩容</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doubleCapacity</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">assert</span> head == tail;</span><br><span class="line">    <span class="keyword">int</span> p = head;</span><br><span class="line">    <span class="keyword">int</span> n = elements.length;</span><br><span class="line">    <span class="keyword">int</span> r = n - p; <span class="comment">// number of elements to the right of p  // 队头右边的元素</span></span><br><span class="line">    <span class="keyword">int</span> newCapacity = n &lt;&lt; <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (newCapacity &lt; <span class="number">0</span>)  <span class="comment">// 无法扩容</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Sorry, deque too big"</span>);</span><br><span class="line">    Object[] a = <span class="keyword">new</span> Object[newCapacity];</span><br><span class="line">    System.arraycopy(elements, p, a, <span class="number">0</span>, r);  <span class="comment">// 把原队头右边的r个元素搬到新数组从0开头的位置</span></span><br><span class="line">    System.arraycopy(elements, <span class="number">0</span>, a, r, p);   <span class="comment">// 把原队尾左边的p个元素搬到新数组从r开头的位置</span></span><br><span class="line">    elements = a;  </span><br><span class="line">    head = <span class="number">0</span>; <span class="comment">// 队头置为0</span></span><br><span class="line">    tail = n; <span class="comment">// 队尾置为n</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从源码我们就可以知道，<code>add(E e)</code>方法默认是在队尾插入的（这也是必须的，因为这就是朴素队列的性质！），然后会调用<code>addLast(E e)</code>方法，在这里，是不允许插入null元素的，而在<code>List</code>中是允许存在null对象的，这个需要注意。插入一个元素后，如果队列满了，会进行扩容操作，这里用的是双倍扩容，并会相应地把原队头右边的r个元素搬到新数组从0开头的位置，并把原队尾左边的p个元素搬到新数组从r开头的位置。</p>
+<p>有了上面的基础，我们再来看下<code>addFirst(E e)</code>方法，注意，这个方法只有在双端队列中才有，朴素的队列是不支持在队头插入元素的，这相当于我们平时生活中的”插队“操作，而且是直接插到最前面去。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addFirst</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (e == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    elements[head = (head - <span class="number">1</span>) &amp; (elements.length - <span class="number">1</span>)] = e;  <span class="comment">// head 下标-1</span></span><br><span class="line">    <span class="keyword">if</span> (head == tail)  <span class="comment">// 如果head 和tail相遇，就扩容</span></span><br><span class="line">        doubleCapacity();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>总结：add操作的时间复杂度为$O(1)$。 如果碰到要扩容的情况，则空间复杂度为$O(N)$,其中$N$为队列中当前容量。</strong></p>
+<h3 id="3-3-offer相关操作"><a href="#3-3-offer相关操作" class="headerlink" title="3.3 offer相关操作"></a>3.3 offer相关操作</h3><p><code>offer()</code>就是对<code>add()</code>函数的一个包装，即在队尾添加一个元素。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 操作成功返回true，如果入参e是null，还是会抛出NullPointerException异常</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">offer</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> offerLast(e);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">offerLast</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    addLast(e);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很自然，<code>offerFrst(E e)</code>则是对<code>addFrst(E e)</code>的一个包装了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">offerFirst</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    addFirst(e);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-4-remove相关操作"><a href="#3-4-remove相关操作" class="headerlink" title="3.4 remove相关操作"></a>3.4 remove相关操作</h3><p>删除相关的操作也比较多，有朴素队列中的<code>remove()</code>，默认是从队头删除一个。在实现了<code>Deque</code>接口的类中，你也可以在队尾删除一个元素，就好比一个人排队，排着排着等得不耐烦就溜了。我们也简单看下源码实现方式。</p>
+<p>先看下<code>removeLast()</code>函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从队尾删除一个元素</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">removeLast</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    E x = pollLast();</span><br><span class="line">    <span class="keyword">if</span> (x == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException();</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从队尾删除</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">pollLast</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> t = (tail - <span class="number">1</span>) &amp; (elements.length - <span class="number">1</span>); <span class="comment">// tail的上一个位置是最后一个元素</span></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    E result = (E) elements[t];</span><br><span class="line">    <span class="keyword">if</span> (result == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    elements[t] = <span class="keyword">null</span>;</span><br><span class="line">    tail = t;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有个地方我们需要注意，在队列中，tail下标指向的那个元素其实是下一次添加时存放的位置，所以tail的上一个位置才是最后一个元素，于是在<code>pollLast()</code>函数中的操作就是先找到队尾那个元素，并保留。然后把队尾向前移动一个单位，最后返回之前保留的原队尾元素。</p>
+<p>当然，朴素队列中的删除操作默认是从队首删除，代码也很类似。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> removeFirst();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">removeFirst</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    E x = pollFirst();</span><br><span class="line">    <span class="keyword">if</span> (x == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException();</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">pollFirst</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> h = head;  <span class="comment">// head指向的是当前队头</span></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    E result = (E) elements[h];</span><br><span class="line">    <span class="comment">// Element is null if deque empty</span></span><br><span class="line">    <span class="keyword">if</span> (result == <span class="keyword">null</span>)  <span class="comment">// 空队列</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    elements[h] = <span class="keyword">null</span>;     <span class="comment">// Must null out slot</span></span><br><span class="line">    head = (h + <span class="number">1</span>) &amp; (elements.length - <span class="number">1</span>);  <span class="comment">// 队头后移一个单位</span></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>poll()</code>系列方法则是对<code>remove()</code>系列方法的包装。</p>
+<p><strong>总结：remove操作时间复杂度为$O(1)$，删除时是不会涉及到释放容量这一说法的。</strong></p>
+<h3 id="3-5-peek相关操作"><a href="#3-5-peek相关操作" class="headerlink" title="3.5 peek相关操作"></a>3.5 peek相关操作</h3><p><code>peek()</code>就是返回队列的队首元素了，当返回值为null的时候，说明队列是空的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">peek</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> peekFirst();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">peekFirst</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// elements[head] is null if deque empty</span></span><br><span class="line">    <span class="keyword">return</span> (E) elements[head];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>peekFirst()</code>、<code>peekLast()</code>的分析和前面类似，就不再赘述。<code>element()</code>系列方法则是对<code>`peek()</code>系列方法的包装。</p>
+<h2 id="4-LinkedList实现类"><a href="#4-LinkedList实现类" class="headerlink" title="4. LinkedList实现类"></a>4. LinkedList实现类</h2><p><code>LinkedList</code>即可以作为朴素队列<code>Queue</code>接口的实现类来使用，也可以作为双端队列<code>Deque</code>接口的实现类来使用。<code>LinkedList</code>的源码分析可以参阅之前的文章<a href="https://liuzhian.github.io/2020/04/24/Java%E9%9B%86%E5%90%88-List%E7%AF%87/">&gt;&gt;Java集合-List篇&lt;&lt;</a>，<code>LinkedList</code>作为朴素队列来使用的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Queue&lt;String&gt; q=<span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">q.add(<span class="string">"jack"</span>);</span><br><span class="line">q.add(<span class="string">"andy"</span>);</span><br><span class="line">q.add(<span class="string">"rose"</span>);</span><br><span class="line">System.out.println(q.toString());  <span class="comment">// 输出 [jack, andy, rose]</span></span><br><span class="line"></span><br><span class="line">q.remove();</span><br><span class="line">System.out.println(q.toString());  <span class="comment">// 输出 [andy, rose]</span></span><br></pre></td></tr></table></figure>
+<p>这里我们只再次看下相关方法是如何包装的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LinkedList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractSequentialList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt;, <span class="title">Deque</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 添加元素操作</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">        linkLast(e);  <span class="comment">// 尾插法</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 删除元素操作</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> E <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> removeFirst();  <span class="comment">// 删除第一个结点</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 得到队首结点</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> E <span class="title">peek</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Node&lt;E&gt; f = first;</span><br><span class="line">        <span class="keyword">return</span> (f == <span class="keyword">null</span>) ? <span class="keyword">null</span> : f.item;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>总结：对于一个底层用<code>LinkedList</code>实现的队列，其删除和添加操作的时间复杂度都是$O(1)$，空间复杂度也都是$O(1)$。</strong></p>
+<h2 id="5-PriorityQueue实现类"><a href="#5-PriorityQueue实现类" class="headerlink" title="5. PriorityQueue实现类"></a>5. PriorityQueue实现类</h2><h2 id="6-参考"><a href="#6-参考" class="headerlink" title="6. 参考"></a>6. 参考</h2><ul>
+<li><a href="https://github.com/CarpenterLee/JCFInternals" target="_blank" rel="noopener">深入理解Java集合</a></li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/" target="_blank" rel="noopener">Java8 官方API</a></li>
+</ul>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2020/05/29/Java集合-Map篇/" data-toggle="tooltip" data-placement="top" title="Java集合—Map篇">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2020/04/24/Java集合-List篇/" data-toggle="tooltip" data-placement="top" title="Java集合—List篇">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Java" title="Java">Java</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

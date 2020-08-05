@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          怎么求Pi的值 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/06/16/数学-怎么求Pi的值/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#数学" title="数学">数学</a>
+                        
+                    </div>
+                    <h1>怎么求Pi的值</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-06-16
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#怎么用计算机求解-pi-的值？"><span class="toc-text">怎么用计算机求解$\pi$的值？</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pos-7647"><span class="toc-text">Calculating Pi (π)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pos-7647"><span class="toc-text">Calculating Pi (π)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pos-7647"><span class="toc-text">Measuring circles</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pos-7647"><span class="toc-text">Using Polygons to approximate Pi (π)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pos-7647"><span class="toc-text">Calculating Pi (π) using infinite series</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#程序模拟"><span class="toc-text">程序模拟</span></a></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h2 id="怎么用计算机求解-pi-的值？"><a href="#怎么用计算机求解-pi-的值？" class="headerlink" title="怎么用计算机求解$\pi$的值？"></a>怎么用计算机求解$\pi$的值？</h2><p>我只是一只搬运工，下文中提供了两种求解方法，在最后，我会用程序来模拟一下求解的速度与精确度，<a href="https://www.mathscareers.org.uk/article/calculating-pi/" target="_blank" rel="noopener">&gt;文章来源&lt;</a></p>
+<div id="pos-7647" class="article post-7647 type-article status-publish has-post-thumbnail hentry age_group-16-19 section-i-love-maths"><div class="article-header"><h1>Calculating Pi (π)</h1></div><div class="article-content"><div class="featured-media featured-image"> <img width="304" height="159" src="https://www.mathscareers.org.uk/wp-content/uploads/2015/05/calculate_pi-304x159.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="Calculating Pi (π)" title="Calculating Pi (π)" srcset="https://www.mathscareers.org.uk/wp-content/uploads/2015/05/calculate_pi.jpg 304w, https://www.mathscareers.org.uk/wp-content/uploads/2015/05/calculate_pi-76x40.jpg 76w, https://www.mathscareers.org.uk/wp-content/uploads/2015/05/calculate_pi-300x157.jpg 300w, https://www.mathscareers.org.uk/wp-content/uploads/2015/05/calculate_pi-115x60.jpg 115w, https://www.mathscareers.org.uk/wp-content/uploads/2015/05/calculate_pi-188x98.jpg 188w, https://www.mathscareers.org.uk/wp-content/uploads/2015/05/calculate_pi-73x38.jpg 73w, https://www.mathscareers.org.uk/wp-content/uploads/2015/05/calculate_pi-33x17.jpg 33w" sizes="(max-width: 304px) 100vw, 304px"></div><p>In some ways Pi (π) is a really straightforward number – calculating Pi simply involves taking any circle and dividing its circumference by its diameter.</p><p style="text-align: center;"><img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=%5Cpi+%3D+%5Cfrac%7BCircumference%7D%7BDiameter%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="\pi = \frac{Circumference}{Diameter}" title="\pi = \frac{Circumference}{Diameter}" class="latex" width="116" height="21" src-orig="https://s0.wp.com/latex.php?latex=%5Cpi+%3D+%5Cfrac%7BCircumference%7D%7BDiameter%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25"></p><p>On the other hand Pi (π) is the first number we learn about at school where we can’t write it as an exact decimal – it is a mysterious number which has digits which go on forever and has fascinated people for thousands of years.</p><p>We learn that we can start to write down Pi (π) &nbsp;= 3.141592653589….. but that we can never finish it.&nbsp; Pi (π) goes on forever and has no repeating pattern to its digits – it is what is called an irrational number.&nbsp; In fact if you search long enough within the digits of Pi (π) you can <a href="http://www.angio.net/pi/" target="_blank" rel="noopener">find any number, including your birthday.</a></p><p>Pi (π) is also a really useful number. It appears everywhere in mathematics and also has countless uses in Engineering and Science.&nbsp; Lots of things are round, and whenever something is round, Pi (π) usually becomes important.&nbsp; For example if an engineer wants to calculate the volume of a water pipe they will use the following formula for a cylinder:</p><p style="text-align: center;"><img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=V%3D%5Cpi+r%5E2+h&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="V=\pi r^2 h" title="V=\pi r^2 h" class="latex" width="68" height="14" src-orig="https://s0.wp.com/latex.php?latex=V%3D%5Cpi+r%5E2+h&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25"></p><p>(Where <img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=r&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="r" title="r" class="latex" width="8" height="7" src-orig="https://s0.wp.com/latex.php?latex=r&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25"> is the radius of the pipe and&nbsp; <img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=h&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="h" title="h" class="latex" width="9" height="11" src-orig="https://s0.wp.com/latex.php?latex=h&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25"> is the height of the pipe.)</p><h3>Calculating Pi (π)</h3><p>Because Pi (π) has so many important uses, then we need to be able to start to calculate it, at least to several decimal places accuracy. &nbsp;Someone had to come up with the approximate value for Pi (π) which appears on your calculator – it didn’t get there by magic!</p><h3>Measuring circles</h3><p>The first and most obvious way to calculate Pi (π) is to take the most perfect circle you can, and then measure its circumference and diameter to work out Pi (π).&nbsp; This is what ancient civilisations would have done and it is how they would have first realised that there is a constant ratio hidden within every circle.&nbsp; The problem with this method is accuracy – can you trust your tape measure to deliver Pi (π) correct to 10 or more decimal places?</p><h3><img class="alignleft wp-image-7652 size-full" src="http://www.mathscareers.org.uk/wp-content/uploads/2015/04/hexagons.jpg" alt="Hexagons" width="300" height="265" srcset="https://www.mathscareers.org.uk/wp-content/uploads/2015/04/hexagons.jpg 300w, https://www.mathscareers.org.uk/wp-content/uploads/2015/04/hexagons-45x40.jpg 45w, https://www.mathscareers.org.uk/wp-content/uploads/2015/04/hexagons-68x60.jpg 68w, https://www.mathscareers.org.uk/wp-content/uploads/2015/04/hexagons-188x166.jpg 188w, https://www.mathscareers.org.uk/wp-content/uploads/2015/04/hexagons-73x64.jpg 73w, https://www.mathscareers.org.uk/wp-content/uploads/2015/04/hexagons-33x29.jpg 33w" sizes="(max-width: 300px) 100vw, 300px">Using Polygons to approximate Pi (π)</h3><p>The Ancient Greek mathematician Archimedes came up with an ingenious method for calculating an approximation of Pi (π).&nbsp; &nbsp;Archimedes began by inscribing a regular hexagon inside a circle and then circumscribing another regular hexagon outside the same circle. &nbsp;He&nbsp;was then able to calculate the exact circumferences and diameters of the hexagons and could therefore obtain a rough approximation of Pi (π) by dividing the circumference by the diameter.</p><p>Archimedes then found a way to double the number of sides of his hexagons. He could then find a more accurate approximation of Pi (π) by using polygons with more sides, which were closer to the circle. He&nbsp;did this four times until he was using 96 sided polygons. Archimedes calculated the circumference and diameter exactly and therefore could approximate Pi (π) to being between<img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=%5Cfrac%7B223%7D%7B71%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="\frac{223}{71}" title="\frac{223}{71}" class="latex" width="18" height="21" src-orig="https://s0.wp.com/latex.php?latex=%5Cfrac%7B223%7D%7B71%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25"> and <img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=%5Cfrac%7B22%7D%7B7%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="\frac{22}{7}" title="\frac{22}{7}" class="latex" width="12" height="20" src-orig="https://s0.wp.com/latex.php?latex=%5Cfrac%7B22%7D%7B7%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25">. The fraction <img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=%5Cfrac%7B22%7D%7B7%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="\frac{22}{7}" title="\frac{22}{7}" class="latex" width="12" height="20" src-orig="https://s0.wp.com/latex.php?latex=%5Cfrac%7B22%7D%7B7%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25"> has remained as one of the most popular and memorable approximations of Pi (π) ever since.</p><p>Around 600 years after Archimedes, the Chinese mathematician Zu Chongzhi used a similar method to inscribe a regular polygon with 12,288 sides.&nbsp; This produced an approximation of Pi (π) as&nbsp; <img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=%5Cfrac%7B355%7D%7B113%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="\frac{355}{113}" title="\frac{355}{113}" class="latex" width="18" height="21" src-orig="https://s0.wp.com/latex.php?latex=%5Cfrac%7B355%7D%7B113%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25"> which is correct to six decimal places.&nbsp; It was nearly 600 more years until a totally new method was devised that improved upon this approximation.</p><h3>Calculating Pi (π) using infinite series</h3><p>Mathematicians eventually discovered that there are in fact exact formulas for calculating Pi (π).&nbsp; The only catch is that each formula requires you to do something an infinite number of times.&nbsp; (Which makes sense given that the digits of Pi (π) go on forever.)&nbsp; One of the amazing things which interests people about Pi (π) is that there isn’t just one formula, but a large number of different ones for people to study.</p><p>One of the most well known and beautiful ways to calculate Pi (π) is to use the Gregory-Leibniz Series:</p><p style="text-align: center;"><img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=%5Cfrac%7B%5Cpi%7D%7B4%7D%3D1-%5Cfrac%7B1%7D%7B3%7D%2B%5Cfrac%7B1%7D%7B5%7D-%5Cfrac%7B1%7D%7B7%7D%2B%5Cfrac%7B1%7D%7B9%7D-%5Cldots&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="\frac{\pi}{4}=1-\frac{1}{3}+\frac{1}{5}-\frac{1}{7}+\frac{1}{9}-\ldots" title="\frac{\pi}{4}=1-\frac{1}{3}+\frac{1}{5}-\frac{1}{7}+\frac{1}{9}-\ldots" class="latex" width="195" height="20" src-orig="https://s0.wp.com/latex.php?latex=%5Cfrac%7B%5Cpi%7D%7B4%7D%3D1-%5Cfrac%7B1%7D%7B3%7D%2B%5Cfrac%7B1%7D%7B5%7D-%5Cfrac%7B1%7D%7B7%7D%2B%5Cfrac%7B1%7D%7B9%7D-%5Cldots&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25"></p><p>If you continued this pattern forever you would be able to calculate <img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=%5Cfrac%7B%5Cpi%7D%7B4%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="\frac{\pi}{4}" title="\frac{\pi}{4}" class="latex" width="8" height="17" src-orig="https://s0.wp.com/latex.php?latex=%5Cfrac%7B%5Cpi%7D%7B4%7D&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25"> exactly and then just multiply it by 4 in order to get <img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=%5Cpi&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="\pi" title="\pi" class="latex" width="10" height="7" src-orig="https://s0.wp.com/latex.php?latex=%5Cpi&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25">.. If however you start to add up the first few terms, you will begin to get an approximation for Pi (π). The problem with the series above is that you need to add up a lot of terms in order to get an accurate approximation of Pi (π).&nbsp; You need to add up more than 300 terms in order to produce Pi (π) accurate to two decimal places!</p><p>Another series which converges more quickly is the Nilakantha Series which was developed in the 15<sup>th</sup> century. Converges more quickly means that you need to work out fewer terms for your answer to become closer to Pi (π) .</p><p style="text-align: center;">Nilakantha Series: <img src="https://s0.wp.com/latex.php?zoom=1.25&amp;latex=%5Cpi%3D+3%2B+%5Cfrac%7B4%7D%7B2%5Ctimes+3+%5Ctimes+4%7D-%5Cfrac%7B4%7D%7B4%5Ctimes+5+%5Ctimes+6%7D%2B%5Cfrac%7B4%7D%7B6%5Ctimes+7+%5Ctimes+8%7D-%5Cfrac%7B4%7D%7B8%5Ctimes+9+%5Ctimes+10%7D%2B%5Cldots+&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" alt="\pi= 3+ \frac{4}{2\times 3 \times 4}-\frac{4}{4\times 5 \times 6}+\frac{4}{6\times 7 \times 8}-\frac{4}{8\times 9 \times 10}+\ldots " title="\pi= 3+ \frac{4}{2\times 3 \times 4}-\frac{4}{4\times 5 \times 6}+\frac{4}{6\times 7 \times 8}-\frac{4}{8\times 9 \times 10}+\ldots " class="latex" width="322" height="21" src-orig="https://s0.wp.com/latex.php?latex=%5Cpi%3D+3%2B+%5Cfrac%7B4%7D%7B2%5Ctimes+3+%5Ctimes+4%7D-%5Cfrac%7B4%7D%7B4%5Ctimes+5+%5Ctimes+6%7D%2B%5Cfrac%7B4%7D%7B6%5Ctimes+7+%5Ctimes+8%7D-%5Cfrac%7B4%7D%7B8%5Ctimes+9+%5Ctimes+10%7D%2B%5Cldots+&amp;bg=ffffff&amp;fg=7b7979&amp;s=0" scale="1.25"></p><p>Mathematicians have also found other more efficient series for calculating Pi (π). Computer programs can add up more and more terms, calculating Pi (π) to extraordinary degrees of accuracy. In 2014 the world record was that a computer has calculated Pi (π) correct to 13,300,000,000,000<strong>&nbsp;</strong>decimal places.</p><p>Before the advent of computers it was much harder to calculate Pi (π). In the 19<sup>th</sup> Century William Shanks took 15 years to calculate Pi (π) correct to 707 decimal places. Unfortunately it was later found that he had made a mistake and was only right to 527 decimal places! The nine or 10 digits of Pi (π) which you see on your calculator have been known about probably since 1400.</p><p>Now that you know how to calculate Pi (π), you could always try your hand at memorising the decimal places of Pi (π). The world record is currently held by Chao Lu of China who learnt Pi (π) correct to 67,890 decimal places in 2005. On the other hand, you could simply use the following mnemonic for learning the first six decimal places of Pi (π): “How I wish I could calculate Pi”</p><p>The length of each word corresponds to a digit in Pi (π).</p><table style="height: 61px;" width="100%"><tbody><tr><td><strong>How</strong></td><td><strong>I </strong></td><td><strong>wish </strong></td><td><strong>I </strong></td><td><strong>could </strong></td><td><strong>calculate</strong></td><td><strong>Pi</strong></td></tr><tr><td>3</td><td>1</td><td>4</td><td>1</td><td>5</td><td>9</td><td>2</td></tr></tbody></table><p>&nbsp;</p><p style="text-align: right;"></p></div><div class="article-meta"><p class="article-taxonomies"></p></div></div>
+
+<p>上面这句话还是很有意思的，就是教我们怎来记pi的值，How I wish I could calculate pi,每个单词的字母个数就对应了pi的值，即3.141592。</p>
+<h2 id="程序模拟"><a href="#程序模拟" class="headerlink" title="程序模拟"></a>程序模拟</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iomanip&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">calculate_pi_1</span><span class="params">(<span class="keyword">int</span> pricise, <span class="keyword">int</span> *sum_cnt)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// sum_cnt是一个输出参数</span></span><br><span class="line">	<span class="keyword">double</span> last_value = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">double</span> cur_value = last_value;</span><br><span class="line">	<span class="keyword">int</span> sign = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		cur_value += sign * <span class="number">4</span> / <span class="keyword">double</span>(<span class="number">2</span>*n<span class="number">-1</span>);</span><br><span class="line">		(*sum_cnt)++;</span><br><span class="line">		<span class="comment">// 精确到多少位，需要在它的下一位进行判断</span></span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">abs</span>(cur_value - last_value) &lt; <span class="built_in">pow</span>(<span class="number">10</span>, -pricise - <span class="number">1</span>))</span><br><span class="line">			<span class="comment">// 如果两次迭代的插值小于10^-p-1，就退出</span></span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			last_value = cur_value;</span><br><span class="line">			sign = -sign;		<span class="comment">// 变号</span></span><br><span class="line">			n++;			<span class="comment">// 计算下一项</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> cur_value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">calculate_pi_2</span><span class="params">(<span class="keyword">int</span> pricise,<span class="keyword">int</span> *sum_cnt)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// sum_cnt是一个输出参数</span></span><br><span class="line">	<span class="keyword">double</span> last_value=<span class="number">3</span>;</span><br><span class="line">	<span class="keyword">double</span> cur_value=last_value;</span><br><span class="line">	<span class="keyword">int</span> sign=<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">int</span> n=<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		cur_value+=sign*<span class="number">4</span>/ <span class="keyword">double</span>((n+<span class="number">1</span>)*(n+<span class="number">2</span>)*(n+<span class="number">3</span>));</span><br><span class="line">		(*sum_cnt)++;</span><br><span class="line">		<span class="comment">// 精确到多少位，需要在它的下一位进行判断</span></span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">abs</span>(cur_value - last_value) &lt; <span class="built_in">pow</span>(<span class="number">10</span>, -pricise<span class="number">-1</span>)) </span><br><span class="line">		<span class="comment">// 如果两次迭代的插值小于10^-p-1，就退出</span></span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			last_value=cur_value;</span><br><span class="line">			sign=-sign;		<span class="comment">// 变号</span></span><br><span class="line">			n++;			<span class="comment">// 计算下一项</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> cur_value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"*************第一种方法*************"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;=<span class="number">6</span>;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">int</span> sum_cnt = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">double</span> pi = <span class="number">0</span>;</span><br><span class="line">		pi = calculate_pi_1(i, &amp;sum_cnt);</span><br><span class="line">		<span class="comment">// 控制输出位数</span></span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; fixed &lt;&lt; setprecision(i) &lt;&lt; pi &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt;<span class="string">"迭代次数"</span> &lt;&lt; sum_cnt&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="string">"*************第二种方法*************"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= <span class="number">6</span>;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">int</span> sum_cnt = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">double</span> pi = <span class="number">0</span>;</span><br><span class="line">		pi = calculate_pi_2(i, &amp;sum_cnt);</span><br><span class="line">		<span class="comment">// 控制输出位数</span></span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; fixed &lt;&lt; setprecision(i) &lt;&lt; pi &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"迭代次数"</span>&lt;&lt;sum_cnt &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从运行结果上来看，第一种方法比较精确，但是需要的迭代次数比较多。第二种方法精确度不是很高，不知道是不是我程序模拟的方式不对，如有错误，还请指出。<br><img src="https://img-blog.csdnimg.cn/2019051213035547.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/06/16/OS进程管理及进程状态转化/" data-toggle="tooltip" data-placement="top" title="OS进程管理及进程状态转化">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/06/16/计算机网络-当你浏览一个网页时，协议栈中发生了什么/" data-toggle="tooltip" data-placement="top" title="当你浏览一个网页时，协议栈中发生了什么？">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#数学" title="数学">数学</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

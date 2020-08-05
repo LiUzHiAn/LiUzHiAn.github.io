@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          一文读懂网络报问中的检验和（checksum）—— 原理+举例+代码 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/03/13/计算机网络-一文读懂网络报问中的检验和(checksum)/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#计算机网络" title="计算机网络">计算机网络</a>
+                        
+                    </div>
+                    <h1>一文读懂网络报问中的检验和（checksum）—— 原理+举例+代码</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-03-13
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#如何求解网络报文中的checksum？"><span class="toc-text">如何求解网络报文中的checksum？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是检验和？"><span class="toc-text">什么是检验和？</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#算法归纳"><span class="toc-text">算法归纳</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#example"><span class="toc-text">example</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IP报文各字段"><span class="toc-text">IP报文各字段</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#IP首部检验和示例"><span class="toc-text">IP首部检验和示例</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发送端"><span class="toc-text">发送端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#接收端"><span class="toc-text">接收端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Python实现"><span class="toc-text">Python实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Reference"><span class="toc-text">Reference</span></a></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="如何求解网络报文中的checksum？"><a href="#如何求解网络报文中的checksum？" class="headerlink" title="如何求解网络报文中的checksum？"></a>如何求解网络报文中的checksum？</h1><p>最近在学习计算机网络，在运输层和网络层部分存在各种协议TCP、UDP、IP、ICMP等等，而在这些报文中都存在一个公共的字段——检验和（checksum）。接下来，我将从什么是检验和、检验和怎么算、检验和计算示例、python代码计算检验和这几个部分详细介绍。</p>
+<h2 id="什么是检验和？"><a href="#什么是检验和？" class="headerlink" title="什么是检验和？"></a>什么是检验和？</h2><p>检验和是存在于各种报文中的一个字段，它存在的目的是验证报文在网络传输过程中的完整性（有的数据可能在链路传输时发生0-1数据翻转，从而导致报文出错）。因此，在报文的发送端，会根据报文中的首部或数据来计算一个检验和（IP报文的检验和只对首部进行计算，ICMP报文对报文首部和数据都进行计算），然后一旦接收端接受到相应报文，接收端也会对报文的首部或数据进行一次检验和计算，如果接收端算出来的检验和和发送端发送的不一样，那么对不起，接收端认为报文在传输过程中出了错，于是就丢掉该报文。</p>
+<h5 id="算法归纳"><a href="#算法归纳" class="headerlink" title="算法归纳"></a>算法归纳</h5><p>待检验部分从头开始，每16比特进行一次加法计算（如果最后有8位剩余，最后加上这8位），这样最终计算出来的和进行一次反码运算，就是检验和。<br><code>注意：如果求和过程中遇到了任何溢出，都进行回卷（即加回到最低位）</code></p>
+<h6 id="example"><a href="#example" class="headerlink" title="example"></a>example</h6><p><img src="https://img-blog.csdnimg.cn/20190311193254589.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="IP报文各字段"><a href="#IP报文各字段" class="headerlink" title="IP报文各字段"></a>IP报文各字段</h4><p>看完上面还迷迷糊糊的？没关系，在这里，就以IP报文为例，介绍更多的细节。首先，还是先把IP报文的各个字段信息回顾一下，如下图。如果你看到这个，有些字段忘记了它的意思，就百度回忆一下吧，这里我就不多说了。<br><img src="https://img-blog.csdnimg.cn/20190311192518791.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h6 id="IP首部检验和示例"><a href="#IP首部检验和示例" class="headerlink" title="IP首部检验和示例"></a>IP首部检验和示例</h6><p>现在假设有一个IP报文的首部如下所示（都是16进制数）：<br><code>4500 003c 1c46 4000 4006 b1e6 ac10 0a63 ac10 0a0c</code></p>
+<p>ok，我们将这个报文的各个字段一一来匹配一下</p>
+<ul>
+<li>45 —— 对应IP首部前8位，4是version字段，表示IPV4，5是首部长度字段，但注意，首部长度是以每4个字节为1个单位的，所以这里就是5*4=20个字节 （这也说明IP报文首部的option字段和padding字段没用上）</li>
+<li>00 —— 对应服务类型（TOS，type of service）字段，00表明是正常操作</li>
+<li>003C —— 对应total length字段，说明改IP报文首部加数据段一共是60字节（也就是说，数据段部分占了40字节）</li>
+<li>1C46 —— 对应报文标识符字段</li>
+<li>4000 —— 对应flags和fragment offset字段，其中flag字段占3位，分片偏移占13位</li>
+<li>40 —— 对应TTL字段（Time to live），表明该报文可以经过40跳（hops）</li>
+<li>06 —— 对应IP报文封装的上层协议代码，这里是6，表明是TCP报文</li>
+<li>b1e6 —— <code>这就是发送端即将求出来的检验和</code></li>
+<li>ac10  0a63 —— 对应IP报文的源IP地址</li>
+<li>ac10  0a0c —— 对应IP报文的目的IP地址</li>
+</ul>
+<h2 id="发送端"><a href="#发送端" class="headerlink" title="发送端"></a>发送端</h2><p>Alright ! 终于可以开始计算了。 : )</p>
+<p><code>说明：在计算检验和字段之前，我们先把检验和的16位全部置0。</code></p>
+<p>我们现在把16进制数全部转为二进制，如下：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">4500</span> -&gt; <span class="number">0100010100000000</span></span><br><span class="line"><span class="number">003</span>c -&gt; <span class="number">0000000000111100</span></span><br><span class="line"><span class="number">1</span>c46 -&gt; <span class="number">0001110001000110</span></span><br><span class="line"><span class="number">4000</span> -&gt; <span class="number">0100000000000000</span></span><br><span class="line"><span class="number">4006</span> -&gt; <span class="number">0100000000000110</span></span><br><span class="line"><span class="number">0000</span> -&gt; <span class="number">0000000000000000</span>   <span class="comment">// 先全部置零，最后再把算出来的结果附加上</span></span><br><span class="line">ac10 -&gt; <span class="number">1010110000010000</span></span><br><span class="line"><span class="number">0</span>a63 -&gt; <span class="number">0000101001100011</span></span><br><span class="line">ac10 -&gt; <span class="number">1010110000010000</span></span><br><span class="line"><span class="number">0</span>a0c -&gt; <span class="number">0000101000001100</span></span><br></pre></td></tr></table></figure>
+<p>然后我们每16位进行一次加法运算：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">4500</span> -&gt; <span class="number">0100010100000000</span></span><br><span class="line"><span class="number">003</span>c -&gt; <span class="number">0000000000111100</span></span><br><span class="line"><span class="number">453</span>C -&gt; <span class="number">0100010100111100</span>  <span class="comment">// 第一次计算结果</span></span><br><span class="line"></span><br><span class="line"><span class="number">453</span>C -&gt; <span class="number">0100010100111100</span>  <span class="comment">// 第一次计算结果 加 后16位</span></span><br><span class="line"><span class="number">1</span>c46 -&gt; <span class="number">0001110001000110</span></span><br><span class="line"><span class="number">6182</span> -&gt; <span class="number">0110000110000010</span> <span class="comment">// 第二次计算结果</span></span><br><span class="line"></span><br><span class="line"><span class="number">6182</span> -&gt; <span class="number">0110000110000010</span> <span class="comment">// 第二次计算结果 加 后16位</span></span><br><span class="line"><span class="number">4000</span> -&gt; <span class="number">0100000000000000</span></span><br><span class="line">A182 -&gt; <span class="number">1010000110000010</span> <span class="comment">// 第三次计算结果</span></span><br><span class="line"></span><br><span class="line">A182 -&gt; <span class="number">1010000110000010</span> <span class="comment">// 第三次计算结果 加 后16位</span></span><br><span class="line"><span class="number">4006</span> -&gt; <span class="number">0100000000000110</span></span><br><span class="line">E188 -&gt; <span class="number">1110000110001000</span></span><br><span class="line"></span><br><span class="line">E188 -&gt; <span class="number">1110000110001000</span> </span><br><span class="line">AC10 -&gt; <span class="number">1010110000010000</span></span><br><span class="line"><span class="number">18</span>D98 -&gt; <span class="number">11000110110011000</span> <span class="comment">// 这里产生了一次溢出，根据回卷规则，把溢出位加到最后</span></span><br><span class="line"></span><br><span class="line"><span class="number">18</span>D98 -&gt; <span class="number">11000110110011000</span></span><br><span class="line"><span class="number">8</span>D99 -&gt; <span class="number">1000110110011001</span> <span class="comment">// 进行类似16位加法。。。就不再重述了</span></span><br><span class="line"></span><br><span class="line"><span class="number">8</span>D99 -&gt; <span class="number">1000110110011001</span> </span><br><span class="line"><span class="number">0</span>A63 -&gt; <span class="number">0000101001100011</span></span><br><span class="line"><span class="number">97</span>FC -&gt; <span class="number">1001011111111100</span> </span><br><span class="line"></span><br><span class="line"><span class="number">97</span>FC -&gt; <span class="number">1001011111111100</span> </span><br><span class="line">AC10 -&gt; <span class="number">1010110000010000</span></span><br><span class="line"><span class="number">1440</span>C -&gt; <span class="number">10100010000001100</span> <span class="comment">// 由产生了进位，继续回卷</span></span><br><span class="line"></span><br><span class="line"><span class="number">1440</span>C -&gt; <span class="number">10100010000001100</span></span><br><span class="line"><span class="number">440</span>D -&gt; <span class="number">0100010000001101</span> </span><br><span class="line"></span><br><span class="line"><span class="number">440</span>D -&gt; <span class="number">0100010000001101</span> </span><br><span class="line"><span class="number">0</span>A0C -&gt; <span class="number">0000101000001100</span></span><br><span class="line"><span class="number">4E19</span> -&gt; <span class="number">0100111000011001</span></span><br></pre></td></tr></table></figure>
+<p>Well，终于加完了，别急还没完！！！还要求一次反码，别忘了哈~~</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">4E19</span> -&gt; <span class="number">0100111000011001</span></span><br><span class="line">B1E6 -&gt;<span class="number">1011000111100110</span>  <span class="comment">// 检验和</span></span><br></pre></td></tr></table></figure>
+<p>好了，这样我们再把b1e6这个检验和放进到IP报文的checksum字段，检验的工作也就此完成。</p>
+<h2 id="接收端"><a href="#接收端" class="headerlink" title="接收端"></a>接收端</h2><p>接收端就比较简单了，把所有的二进制位每16位进行一次加法，最后求一次补码（同样也要溢出回卷），如果结果全部是1，那就稳了，没出错；只要有一位是0，那就说明出现了错误。</p>
+<h3 id="Python实现"><a href="#Python实现" class="headerlink" title="Python实现"></a>Python实现</h3><p>看完以上，你肯定懂了是怎么算的，但是代码实现可能还有点困难，这里特别感谢<code>JamesF. Kurose</code> ——《计算机网络：自顶向下方法》的作者在书中附带的资源和代码，以下代码来自书中编程实验的ICMPping程序。</p>
+<p>具体的代码解析我注释好了，大家可以看看。<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">def <span class="keyword">checksum</span>(<span class="keyword">str</span>):</span><br><span class="line">	csum = <span class="number">0</span>  <span class="comment"># 校验和  （一个32位十进制数，因为每16位相加时可能会产生进位（即溢出），这些溢出将会被回卷）</span></span><br><span class="line">	<span class="comment"># 奇偶控制，如果总长的字节数为奇数时，肯定最后一个字节要单独相加（求校验和时是每16位一加）</span></span><br><span class="line">	countTo = (<span class="keyword">len</span>(<span class="keyword">str</span>) // <span class="number">2</span>) * <span class="number">2</span></span><br><span class="line">	<span class="keyword">count</span> = <span class="number">0</span></span><br><span class="line">	<span class="keyword">while</span> <span class="keyword">count</span> &lt; countTo:</span><br><span class="line">		<span class="comment"># ord()函数返回一个字符的ASCII码</span></span><br><span class="line">		<span class="comment"># 取两个字节，第二个字节放在16位的高位，第一个字节放在16位的地位</span></span><br><span class="line">		thisVal = (<span class="keyword">str</span>[<span class="keyword">count</span> + <span class="number">1</span>] &lt;&lt; <span class="number">8</span>) + <span class="keyword">str</span>[<span class="keyword">count</span>]</span><br><span class="line">		csum = csum + thisVal</span><br><span class="line">		<span class="comment"># 这里和0xffffffff进行and运算主要是为了保留每次运算过程中可能出现的16位溢出，</span></span><br><span class="line">		<span class="comment"># 这样一来，就可以将溢出位（也就是进位）保存到sum的高16位</span></span><br><span class="line">		csum = csum &amp; <span class="number">0xffffffff</span></span><br><span class="line">		<span class="keyword">count</span> = <span class="keyword">count</span> + <span class="number">2</span>  <span class="comment"># 后移两个字节，也就是准备求和下一个16位</span></span><br><span class="line"></span><br><span class="line">	<span class="comment"># 如果真的有一个字节剩余</span></span><br><span class="line">	<span class="keyword">if</span> countTo &lt; <span class="keyword">len</span>(<span class="keyword">str</span>):</span><br><span class="line">		csum = csum + <span class="keyword">str</span>[<span class="keyword">len</span>(<span class="keyword">str</span>) - <span class="number">1</span>].decode()</span><br><span class="line">		csum = csum &amp; <span class="number">0xffffffff</span></span><br><span class="line"></span><br><span class="line">	<span class="comment"># 把csum的高16位溢出回卷，加到低16位上</span></span><br><span class="line">	csum = (csum &gt;&gt; <span class="number">16</span>) + (csum &amp; <span class="number">0xffff</span>)</span><br><span class="line">	<span class="comment"># 如果还产生了溢出，再操作一次</span></span><br><span class="line">	csum = csum + (csum &gt;&gt; <span class="number">16</span>)</span><br><span class="line">	<span class="comment"># 求反码</span></span><br><span class="line">	answer = ~csum</span><br><span class="line">	answer = answer &amp; <span class="number">0xffff</span></span><br><span class="line">	<span class="comment"># 这里进行字节序大小端转换，因为网络字节序是大端模式</span></span><br><span class="line">	answer = answer &gt;&gt; <span class="number">8</span> | (answer &lt;&lt; <span class="number">8</span> &amp; <span class="number">0xff00</span>)</span><br><span class="line">	<span class="keyword">return</span> answer</span><br></pre></td></tr></table></figure></p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ul>
+<li><a href="https://tools.ietf.org/html/rfc1071" target="_blank" rel="noopener">RFC 1071</a></li>
+<li><a href="https://www.bau.edu.jo/UserPortal/UserProfile/PostsAttach/10617_1870_1.pdf" target="_blank" rel="noopener">Computer Network  A Top-Down Approach:JamesF. Kurose</a></li>
+<li><a href="https://www.thegeekstuff.com/2012/05/ip-header-checksum/" target="_blank" rel="noopener">How to Calculate IP Header Checksum (With an Example)</a></li>
+</ul>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/03/13/LeetCode-29-两数相除/" data-toggle="tooltip" data-placement="top" title="LeetCode-29-两数相除">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/11/15/LeetCod-4-两个排序数组的中位数/" data-toggle="tooltip" data-placement="top" title="LeetCod-4-两个排序数组的中位数">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#计算机网络" title="计算机网络">计算机网络</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

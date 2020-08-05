@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Spring装配Bean - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/12/20/Spring装配Bean/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/posts_imgs/spring.png')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Java" title="Java">Java</a>
+                        
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                    </div>
+                    <h1>Spring装配Bean</h1>
+                    <h2 class="subheading">Spring 实战第二章</h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-12-20
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-Spring配置的三种方案"><span class="toc-text">1.Spring配置的三种方案</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-自动装配"><span class="toc-text">1.1 自动装配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-在Java中显式配置"><span class="toc-text">1.2 在Java中显式配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-在XML中显式配置"><span class="toc-text">1.3 在XML中显式配置</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-混合装配"><span class="toc-text">2. 混合装配</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-总结"><span class="toc-text">3. 总结</span></a></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="1-Spring配置的三种方案"><a href="#1-Spring配置的三种方案" class="headerlink" title="1.Spring配置的三种方案"></a>1.Spring配置的三种方案</h1><h2 id="1-1-自动装配"><a href="#1-1-自动装配" class="headerlink" title="1.1 自动装配"></a>1.1 自动装配</h2><ol>
+<li>首先，需要将Bean类添加<code>@Component</code>注解，便于Spring进行扫描（默认是关闭的）<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeyondCD</span> <span class="keyword"><span class="keyword">implements</span> <span class="type">CD</span></span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span> title = <span class="string">"Beyond合集唱片"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span> artist = <span class="string">"Beyond"</span>;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">String</span> play() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.title+<span class="string">"播放中...作者: "</span>+<span class="built_in">this</span>.artist;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>其次，需要定一个Java配置类来开启组件扫描，添加<code>@Configuration</code> 和 <code>@ComponentScan</code>注解，这样会默认扫描同一包下所有带有<code>@Component</code>注解的Bean类。<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@Configuration</span></span><br><span class="line"><span class="variable">@ComponentScan</span></span><br><span class="line">public class CDPlayerConfig &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>最后我们可以用上述配置类来开启一个应用/测试<br>这里是一个测试的例子，要加上注解<code>@ContextConfiguration(classes = XXX.class)</code>，其中<code>XXX</code>就是上述定义的Java配置类。<code>@Autowired</code>注解表明会自动装配Bean<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">@<span class="constructor">RunWith(SpringJUnit4ClassRunner.<span class="params">class</span>)</span></span><br><span class="line">@<span class="constructor">ContextConfiguration(<span class="params">classes</span> = CDPlayerConfig.<span class="params">class</span>)</span></span><br><span class="line">public <span class="keyword">class</span> CDPlaerTest &#123;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    <span class="keyword">private</span> CD cd;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    <span class="keyword">private</span> Player player;</span><br><span class="line"></span><br><span class="line">    @Test</span><br><span class="line">    public void cd<span class="constructor">ShouldNotBeNull()</span> &#123;</span><br><span class="line">        <span class="module-access"><span class="module"><span class="identifier">Assert</span>.</span></span><span class="keyword">assert</span><span class="constructor">NotNull(<span class="params">cd</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Test</span><br><span class="line">    public void play<span class="literal">()</span> &#123;</span><br><span class="line">        String res=player.play<span class="literal">()</span>;</span><br><span class="line">        <span class="module-access"><span class="module"><span class="identifier">Assert</span>.</span></span><span class="keyword">assert</span><span class="constructor">Equals(<span class="string">"Beyond合集唱片播放中...作者: Beyond"</span>,<span class="params">res</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+上面的<code>@RunWith</code>,<code>Assert.assertNotNull()</code>是JUnit中的东西，在这里影响不大，注解<code>@Autowired</code>才是关键。</li>
+</ol>
+<h2 id="1-2-在Java中显式配置"><a href="#1-2-在Java中显式配置" class="headerlink" title="1.2 在Java中显式配置"></a>1.2 在Java中显式配置</h2><p>1.首先，我们同样需要写一个Java配置类来手动进行显式地装配Bean。每创建一个Bean，都要写一个带有<code>@Bean</code>注解的方法，返回一个Bean对象，Spring默认会生成一个单例的Bean对象，在下次调用被<code>@Bean</code>注解修饰的方法时，只会返回这个创建好的Bean对象，而不会再创建一个新的。大概类似这样，其实就是一种JAVA的“配置文件”<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CDPlayerConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 显式生成一个bean,bean的ID默认为方法名，但也可以指定参数name</span></span><br><span class="line">    <span class="meta">@Bean</span>(name = <span class="string">"myBeyondCD"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> CD <span class="title">beyondCD</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> BeyondCD();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 方法1：</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Player <span class="title">cdPlayer</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 这里只会返回之前创建好的bean对象，不会再创建一个</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> CDPlayer(beyondCD());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 方法2：</span></span><br><span class="line">    <span class="comment">//@Bean</span></span><br><span class="line">    <span class="comment">//public Player cdPlayer(CD cd)</span></span><br><span class="line">    <span class="comment">//&#123;</span></span><br><span class="line">    <span class="comment">//    return new CDPlayer(cd);</span></span><br><span class="line">    <span class="comment">//&#125;</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="1-3-在XML中显式配置"><a href="#1-3-在XML中显式配置" class="headerlink" title="1.3 在XML中显式配置"></a>1.3 在XML中显式配置</h2><p>这个就比较好理解了，其实和Java类配置的思路是一样的，只不过XML配置的方式更“死”，在JAVA配置类中我们甚至可以通过各种逻辑去对Bean进行各种操作，而XML中就很难做到这一点。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"myBeyondCD"</span> <span class="attr">class</span>=<span class="string">"com.liuzhian.soundsys.BeyondCD"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"myCDPlayer"</span> <span class="attr">class</span>=<span class="string">"com.liuzhian.soundsys.CDPlayer"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"myBeyondCD"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure><br>还有一种所谓的<code>c命名空间</code>声明方式，这个虽然看上去简洁，但是我觉得问题蛮多，它甚至会需要在xml的属性中输入Java的Bean类中的方法参数名字！这真是奇怪，形参名字不是应该被编译器优化吗？为什么这里还保留？的确好像这个<code>c命名空间</code>声明方式是在Spring 3中使用的，现在貌似不鼓励使用了。</p>
+<p>于是乎,应用代码可以这样写:<br><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">@<span class="constructor">RunWith(SpringJUnit4ClassRunner.<span class="params">class</span>)</span></span><br><span class="line">@<span class="constructor">ContextConfiguration(<span class="params">classes</span> = CDPlayerConfig.<span class="params">class</span>)</span></span><br><span class="line">public <span class="keyword">class</span> CDPlayerTest &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//1.创建spring容器对象</span></span><br><span class="line">    ApplicationContext ctx = <span class="keyword">new</span> <span class="constructor">ClassPathXmlApplicationContext(<span class="string">"META-INF/applicationContext.xml"</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// @Autowired</span></span><br><span class="line">    <span class="keyword">private</span> CD cd;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// @Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Player player;</span><br><span class="line"></span><br><span class="line">    @Test</span><br><span class="line">    public void cd<span class="constructor">ShouldNotBeNull()</span> &#123;</span><br><span class="line">        <span class="comment">//2.从容器中获取bean实例</span></span><br><span class="line">        cd=(CD) ctx.get<span class="constructor">Bean(<span class="string">"myBeyondCD"</span>)</span>;</span><br><span class="line">        <span class="module-access"><span class="module"><span class="identifier">Assert</span>.</span></span><span class="keyword">assert</span><span class="constructor">NotNull(<span class="params">cd</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Test</span><br><span class="line">    public void play<span class="literal">()</span> &#123;</span><br><span class="line">        <span class="comment">//2.从容器中获取bean实例</span></span><br><span class="line">        player=(Player) ctx.get<span class="constructor">Bean(<span class="string">"myCDPlayer"</span>)</span>;</span><br><span class="line">        </span><br><span class="line">        String res = player.play<span class="literal">()</span>;</span><br><span class="line">        <span class="module-access"><span class="module"><span class="identifier">Assert</span>.</span></span><span class="keyword">assert</span><span class="constructor">Equals(<span class="string">"Beyond合集唱片播放中...作者: Beyond"</span>, <span class="params">res</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="2-混合装配"><a href="#2-混合装配" class="headerlink" title="2. 混合装配"></a>2. 混合装配</h1><p>Spring也支持XML和Java配置类交叉混合配置，Java配置类中可以通过<code>@ImportResource()</code>注解引用XML配置文件，在XML配置文件中直接通过<code>&lt;bean&gt;</code>标签引用，只不过现在标签的<code>class</code>属性的取值不是具体的Bean类，而是Java配置文件的类。具体的这里不记录了，以后用到了再看。</p>
+<h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><p>装配方式的选取原则：</p>
+<ol>
+<li>尽可能使用自动化配置，以避免显式配置所带来的维护成本。</li>
+<li>如果确实需要显式配置Spring的话，应该优先选择基于Java的配置，它比基于XML的配置更加强大、类型安全并且易于重构。</li>
+<li>最后考虑使用XML配置</li>
+</ol>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2020/01/11/Spring+Mybatis项目搭建/" data-toggle="tooltip" data-placement="top" title="Spring+Mybatis项目搭建">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/12/19/LeetCode-143-重排链表/" data-toggle="tooltip" data-placement="top" title="LeetCode-143-重排链表">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Java" title="Java">Java</a>
+                        
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

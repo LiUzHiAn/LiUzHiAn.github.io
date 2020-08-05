@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Leetcode 78- 子集 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/11/10/LeetCode-78-子集/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/posts_imgs/leetcode.png')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#LeetCode" title="LeetCode">LeetCode</a>
+                        
+                    </div>
+                    <h1>Leetcode 78- 子集</h1>
+                    <h2 class="subheading">Naive V.S. 牛掰格拉斯</h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-11-10
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Leetcode-Leetcode-78-子集"><span class="toc-text">Leetcode Leetcode 78- 子集</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-题目描述"><span class="toc-text">1. 题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-思路"><span class="toc-text">2. 思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-我的思路"><span class="toc-text">2.1 我的思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-别人牛掰的思路"><span class="toc-text">2.2 别人牛掰的思路</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-代码"><span class="toc-text">3. 代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-迭代思路Java实现"><span class="toc-text">3.1 迭代思路Java实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-位运算思路Java实现"><span class="toc-text">3.2 位运算思路Java实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-类似题"><span class="toc-text">4. 类似题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-迭代思路"><span class="toc-text">4.1 迭代思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-位操作思路"><span class="toc-text">4.2 位操作思路</span></a></li></ol></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="Leetcode-Leetcode-78-子集"><a href="#Leetcode-Leetcode-78-子集" class="headerlink" title="Leetcode Leetcode 78- 子集"></a>Leetcode Leetcode 78- 子集</h1><h2 id="1-题目描述"><a href="#1-题目描述" class="headerlink" title="1. 题目描述"></a>1. 题目描述</h2><p>给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。</p>
+<p>说明：解集不能包含重复的子集。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">输入: nums = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">输出:</span><br><span class="line">[</span><br><span class="line">  [<span class="number">3</span>],</span><br><span class="line">  [<span class="number">1</span>],</span><br><span class="line">  [<span class="number">2</span>],</span><br><span class="line">  [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],</span><br><span class="line">  [<span class="number">1</span>,<span class="number">3</span>],</span><br><span class="line">  [<span class="number">2</span>,<span class="number">3</span>],</span><br><span class="line">  [<span class="number">1</span>,<span class="number">2</span>],</span><br><span class="line">  []</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h2 id="2-思路"><a href="#2-思路" class="headerlink" title="2. 思路"></a>2. 思路</h2><h3 id="2-1-我的思路"><a href="#2-1-我的思路" class="headerlink" title="2.1 我的思路"></a>2.1 我的思路</h3><p>依然先手动列举，我开始也没想到怎么做。先列出1,2,3的所有子集，为：<br><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[],[<span class="number">1</span>],[<span class="number">2</span>],[<span class="number">3</span>],[<span class="number">1</span>,<span class="number">2</span>],[<span class="number">1</span>,<span class="number">3</span>],[<span class="number">2</span>,<span class="number">3</span>],[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br></pre></td></tr></table></figure><br>这时好像还没发现什么规律，我再列举4个元素1,2,3,4的情况，为：<br><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[],[<span class="number">1</span>],[<span class="number">2</span>],[<span class="number">3</span>],[<span class="number">1</span>,<span class="number">2</span>],[<span class="number">1</span>,<span class="number">3</span>],[<span class="number">2</span>,<span class="number">3</span>],[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">[<span class="number">4</span>],[<span class="number">1</span>,<span class="number">4</span>],[<span class="number">2</span>,<span class="number">4</span>],[<span class="number">3</span>,<span class="number">4</span>],[<span class="number">1</span>,<span class="number">2</span>,<span class="number">4</span>],[<span class="number">1</span>,<span class="number">3</span>,<span class="number">4</span>],[<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>],[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br></pre></td></tr></table></figure><br>诶，等会儿，好像有了，不就是之前1,2,3的子集，每个再加上一个4吗？为了验证是否的确是这样，我又列举了1,2的情况，为：<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">[]</span>,<span class="string">[1]</span>,<span class="string">[2]</span>,<span class="string">[1,2]</span></span><br></pre></td></tr></table></figure><br>再改写一下1,2,3的情况下所有子集的排列顺序<br><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[],[<span class="number">1</span>],[<span class="number">2</span>],[<span class="number">1</span>,<span class="number">2</span>]</span><br><span class="line">[<span class="number">3</span>],[<span class="number">1</span>,<span class="number">3</span>],[<span class="number">2</span>,<span class="number">3</span>],[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br></pre></td></tr></table></figure><br>是的，就是这样递归求解。所以思路就是：先找nums[0~len-2]的所有子集，再在暂时得到所有子集中添加一个nums[len-1]。</p>
+<p>我把代码大致写了一下，的确能AC，就是内存消耗会略微有点大。</p>
+<h3 id="2-2-别人牛掰的思路"><a href="#2-2-别人牛掰的思路" class="headerlink" title="2.2 别人牛掰的思路"></a>2.2 别人牛掰的思路</h3><p>作者：<code>yi-qu-xin-ci</code><br>链接：<a href="https://leetcode-cn.com/problems/subsets/solution/wei-yun-suan-by-yi-qu-xin-ci/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/subsets/solution/wei-yun-suan-by-yi-qu-xin-ci/</a><br>来源：<code>力扣（LeetCode）</code></p>
+<p>我们知道，对于给定一个集合里，所有元素的集合它们应该满足这样一个公式: 假设所有的组合数之和为sum，则有sum = C(n, 0) + C(n, 1) + …+ C(n, n); 分别对应取集合中的一个元素，两个元素…n个元素。而通过数学公式二项式定义，这个和是等于2 ** n（2的n次方）。就是说，我们所有取的组合数为一个指数函数。</p>
+<p>假设输入是1、2、3。</p>
+<p>首先全部的子集为<code>【000】【001】【010】【100】【011】【101】【110】【111】</code><br>1表示这一位的数字存在，例如 【010】 表示只含有 2</p>
+<p>由此发现子集所代表的二进制数全部小于 <code>1 &lt;&lt; 数组.length</code><br>第一层循环<code>for (int i = 0; i &lt; (1 &lt;&lt; size); i++)</code></p>
+<p>然后根据<code>【i】</code> 的二进制数中 <code>【1】</code> 的位置取得子集</p>
+<h2 id="3-代码"><a href="#3-代码" class="headerlink" title="3. 代码"></a>3. 代码</h2><h3 id="3-1-迭代思路Java实现"><a href="#3-1-迭代思路Java实现" class="headerlink" title="3.1 迭代思路Java实现"></a>3.1 迭代思路Java实现</h3><figure class="highlight zephir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">import java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@ClassName</span> Subset</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Deacription</span> // TODO</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> LiuZhian</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2019-11-10 09:43</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Version</span> 1.0</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Subset78</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">List</span>&lt;<span class="keyword">List</span>&lt;Integer&gt;&gt; subsets(<span class="keyword">int</span>[] nums) &#123;</span><br><span class="line">        <span class="keyword">List</span>&lt;<span class="keyword">List</span>&lt;Integer&gt;&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">if</span> (nums.length == <span class="number">0</span>)  <span class="comment">// 空数组</span></span><br><span class="line">            <span class="keyword">return</span> res;</span><br><span class="line">        <span class="keyword">if</span> (nums.length == <span class="number">1</span>)  <span class="comment">// 只有一个元素的情况</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">List</span>&lt;Integer&gt; <span class="keyword">empty</span> = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            res.add(<span class="keyword">empty</span>);</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">                <span class="keyword">List</span>&lt;Integer&gt; tmpList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                tmpList.add(nums[i]);</span><br><span class="line">                res.add(tmpList);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> res;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 其他nums个数大于1时</span></span><br><span class="line">        <span class="comment">// 取最后一个作为anotherItem</span></span><br><span class="line">        <span class="keyword">int</span> anotherItem = nums[nums.length - <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">int</span>[] subNums = Arrays.copyOfRange(nums, <span class="number">0</span>, nums.length - <span class="number">1</span>);</span><br><span class="line">        res = setComination(subNums, subsets(subNums), anotherItem);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在基于nums的所有子集基础上，再加上一个anotherItem得到的所有集合</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">List</span>&lt;<span class="keyword">List</span>&lt;Integer&gt;&gt; setComination(<span class="keyword">int</span>[] nums, <span class="keyword">List</span>&lt;<span class="keyword">List</span>&lt;Integer&gt;&gt; alreadyCal, <span class="keyword">int</span> anotherItem) &#123;</span><br><span class="line">        <span class="keyword">List</span>&lt;<span class="keyword">List</span>&lt;Integer&gt;&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;(alreadyCal.size() * <span class="number">2</span>);</span><br><span class="line">        res.addAll(alreadyCal);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">List</span>&lt;Integer&gt; ls : alreadyCal) &#123;</span><br><span class="line">            <span class="comment">// 用ls初始化tmpList</span></span><br><span class="line">            <span class="keyword">List</span>&lt;Integer&gt; tmpList = <span class="keyword">new</span> ArrayList&lt;&gt;(ls);</span><br><span class="line">            <span class="comment">// 再添加anotherItem</span></span><br><span class="line">            tmpList.add(anotherItem);</span><br><span class="line">            <span class="comment">// 加入到结果中</span></span><br><span class="line">            res.add(tmpList);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> void main(String[] args) &#123;</span><br><span class="line">        <span class="keyword">int</span>[] nums = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;;</span><br><span class="line">        Subset78 s = <span class="keyword">new</span> Subset78();</span><br><span class="line">        <span class="keyword">List</span>&lt;<span class="keyword">List</span>&lt;Integer&gt;&gt; res = s.subsets(nums);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">List</span>&lt;Integer&gt; ls : res) &#123;</span><br><span class="line">            System.out.println(ls.toString());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-2-位运算思路Java实现"><a href="#3-2-位运算思路Java实现" class="headerlink" title="3.2 位运算思路Java实现"></a>3.2 位运算思路Java实现</h3><figure class="highlight zephir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  位运算</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">List</span>&lt;<span class="keyword">List</span>&lt;Integer&gt;&gt; subsetsBitOps(<span class="keyword">int</span>[] nums) &#123;</span><br><span class="line">	<span class="keyword">List</span>&lt;<span class="keyword">List</span>&lt;Integer&gt;&gt; res=<span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">	<span class="keyword">int</span> len = nums.length;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; (i &lt; <span class="number">1</span> &lt;&lt; len); i++) &#123;</span><br><span class="line">		<span class="keyword">List</span>&lt;Integer&gt; tmpList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; len; j++) &#123;</span><br><span class="line">			<span class="keyword">if</span> ( ( (<span class="number">1</span> &lt;&lt; j) &amp; i) != <span class="number">0</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				tmpList.add(nums[j]);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		res.add(tmpList);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="4-类似题"><a href="#4-类似题" class="headerlink" title="4. 类似题"></a>4. 类似题</h2><ul>
+<li>LeetCode90-子集②<h3 id="4-1-迭代思路"><a href="#4-1-迭代思路" class="headerlink" title="4.1 迭代思路"></a>4.1 迭代思路</h3></li>
+</ul>
+<p>这个题和本题（78题）的区别是,数组中元素可能存在重复。</p>
+<p>看了一下评论区的题解，有一个刚好是对我之前想的迭代思想的延续</p>
+<p><img src="1.png" alt=""></p>
+<p>主要的思路就是在每次添加新的列表时，必须是在上次新解的基础上添加。具体的描述详见:<a href="https://leetcode-cn.com/problems/subsets-ii/solution/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-19/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/subsets-ii/solution/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-19/</a></p>
+<h3 id="4-2-位操作思路"><a href="#4-2-位操作思路" class="headerlink" title="4.2 位操作思路"></a>4.2 位操作思路</h3><p>其实位操作思路倒是很简单，就是如果直接按照二进制位的情况去重还是有点麻烦。我想到了一个简单粗暴的方法，效率不是那么高，但也能AC。</p>
+<p>既然你会重复，那我就让你重复好了，我用一个集合(这里用的是TreeSet)，自定义集合比较大小方法，其实我们只要写好了集合相等时的比较就Ok.即：<code>两个集合中的元素数量相等，且对应元素均相等。</code></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">//  位运算</span><br><span class="line"><span class="built_in">public</span> List&lt;List&lt;<span class="type">Integer</span>&gt;&gt; subsetsWithDupBitOps(<span class="type">int</span>[] nums) &#123;</span><br><span class="line">	<span class="keyword">Set</span>&lt;List&lt;<span class="type">Integer</span>&gt;&gt; s = <span class="built_in">new</span> TreeSet&lt;&gt;(<span class="built_in">new</span> Comparator&lt;List&lt;<span class="type">Integer</span>&gt;&gt;() &#123;</span><br><span class="line">		@Override</span><br><span class="line">		<span class="built_in">public</span> <span class="type">int</span> compare(List&lt;<span class="type">Integer</span>&gt; o1, List&lt;<span class="type">Integer</span>&gt; o2) &#123;</span><br><span class="line">			<span class="keyword">if</span> (o1.size() &lt; o2.size())</span><br><span class="line">				<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (o1.size() &gt; o2.size())</span><br><span class="line">				<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">			Collections.sort(o1);</span><br><span class="line">			Collections.sort(o2);</span><br><span class="line">			Iterator&lt;<span class="type">Integer</span>&gt; iter1 = o1.iterator();</span><br><span class="line">			Iterator&lt;<span class="type">Integer</span>&gt; iter2 = o2.iterator();</span><br><span class="line">			<span class="keyword">while</span> (iter1.hasNext() &amp;&amp; iter2.hasNext()) &#123;</span><br><span class="line">				<span class="type">int</span> i1 = iter1.next();</span><br><span class="line">				<span class="type">int</span> i2 = iter2.next();</span><br><span class="line">				<span class="keyword">if</span> (i1 &lt; i2)</span><br><span class="line">					<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">				<span class="keyword">else</span> <span class="keyword">if</span> (i1 &gt; i2)</span><br><span class="line">					<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">	<span class="type">int</span> len = nums.length;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; (i &lt; <span class="number">1</span> &lt;&lt; len); i++) &#123;</span><br><span class="line">		List&lt;<span class="type">Integer</span>&gt; tmpList = <span class="built_in">new</span> ArrayList&lt;&gt;();</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; len; j++) &#123;</span><br><span class="line">			<span class="keyword">if</span> (((<span class="number">1</span> &lt;&lt; j) &amp; i) != <span class="number">0</span>) &#123;</span><br><span class="line">				tmpList.<span class="keyword">add</span>(nums[j]);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		s.<span class="keyword">add</span>(tmpList);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">new</span> ArrayList&lt;&gt;(s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/11/17/PASCAL VOC数据集介绍/" data-toggle="tooltip" data-placement="top" title="PASCAL VOC数据集介绍">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/11/09/Java多线程核心技术阅读笔记(第四章)/" data-toggle="tooltip" data-placement="top" title="Java多线程核心技术阅读笔记(第四章)">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#LeetCode" title="LeetCode">LeetCode</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

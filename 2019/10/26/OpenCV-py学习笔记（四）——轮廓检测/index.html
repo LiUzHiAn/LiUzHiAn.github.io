@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          OpenCV-py学习笔记（四）—— 轮廓检测 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/10/26/OpenCV-py学习笔记（四）——轮廓检测/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#OpenCV" title="OpenCV">OpenCV</a>
+                        
+                    </div>
+                    <h1>OpenCV-py学习笔记（四）—— 轮廓检测</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-10-26
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#轮廓检测"><span class="toc-text">轮廓检测</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-text">参考资料</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-什么是轮廓？"><span class="toc-text">0. 什么是轮廓？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-基本使用"><span class="toc-text">1. 基本使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-基本使用示例"><span class="toc-text">2. 基本使用示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-轮廓的常用特征和性质（外接矩形、等效直径等）"><span class="toc-text">3. 轮廓的常用特征和性质（外接矩形、等效直径等）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-轮廓的层级（contours-hierarchy）"><span class="toc-text">4. 轮廓的层级（contours hierarchy）</span></a></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <p>@[toc]<br>这几天一直在学习特征点检测、角点检测相关的内容，更新的略慢，这篇博文将主要介绍一下图像的轮廓方面的知识和openCV中的相关操作。</p>
+<h1 id="轮廓检测"><a href="#轮廓检测" class="headerlink" title="轮廓检测"></a>轮廓检测</h1><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contours_begin/py_contours_begin.html" target="_blank" rel="noopener">OpenCV-Python Tutorial</a></li>
+<li>Computer Vision: Algorithms and Applications</li>
+</ul>
+<h2 id="0-什么是轮廓？"><a href="#0-什么是轮廓？" class="headerlink" title="0. 什么是轮廓？"></a>0. 什么是轮廓？</h2><p>所谓轮廓，简单地可以解释为，一些连续的，沿着曲线边界的，点的集合，这些点拥有相同的颜色或者亮度。【In English, Contours can be explained simply as a curve joining all the continuous points (along the boundary), having same color or intensity。】这些轮廓往往在目标检测和目标识别中很有作用。</p>
+<p>下面是几个在使用opencv作轮廓检测时需要注意的点：</p>
+<ul>
+<li>为了更精确地提取轮廓，请使用二值图。也就是说，在使用轮廓提取函数前，请将源图片运用阈值进行<code>二值化(cv2.threshold())</code>或者采用<code>Canny边缘检测</code>。</li>
+<li>findContours 函数会修改源图片，如果希望在轮廓检测后继续使用源图片，务必提前保存在另一个变量中。</li>
+<li>在OpenCV中，轮廓检测视作从黑色背景中提取白色的物体，所以，在结果中，白色表示物体，黑色表示背景。</li>
+</ul>
+<h2 id="1-基本使用"><a href="#1-基本使用" class="headerlink" title="1. 基本使用"></a>1. 基本使用</h2><p>下面是一个轮廓检测的基本使用例子：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">def find<span class="constructor">_contours_of_binary_image()</span>:</span><br><span class="line">	im = cv2.imread('rectangle.jpg')</span><br><span class="line">	imgray = cv2.cvt<span class="constructor">Color(<span class="params">im</span>, <span class="params">cv2</span>.COLOR_BGR2GRAY)</span></span><br><span class="line">	ret, thresh = cv2.threshold(imgray, <span class="number">127</span>, <span class="number">255</span>, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">	image, contours, hierarchy = cv2.find<span class="constructor">Contours(<span class="params">thresh</span>, <span class="params">cv2</span>.RETR_TREE, <span class="params">cv2</span>.CHAIN_APPROX_SIMPLE)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	print(<span class="string">"一共检测到%d个轮廓"</span> % len(contours))</span><br><span class="line">	for i <span class="keyword">in</span> range(len(contours)):</span><br><span class="line">		print(<span class="string">"第%d个轮廓:"</span> % (i + <span class="number">1</span>))</span><br><span class="line">		print(contours<span class="literal">[<span class="identifier">i</span>]</span>)</span><br><span class="line"></span><br><span class="line">	# -<span class="number">1</span> 代表画出所有轮廓</span><br><span class="line">	res = cv2.draw<span class="constructor">Contours(<span class="params">im</span>, <span class="params">contours</span>, -1, (0, 255, 0)</span>, thickness=<span class="number">3</span>)</span><br><span class="line">	img<span class="constructor">_show(<span class="params">res</span>)</span></span><br></pre></td></tr></table></figure>
+<p><em>提取轮廓的步骤大概会是这样子：</em></p>
+<ol>
+<li>读取源图片，并转化为灰度图</li>
+<li>运用threshold将灰度图片二值化（也可以使用Canny边缘检测）</li>
+<li>使用<code>findContours()函数</code>找到所有的轮廓</li>
+<li>使用<code>drawContours()函数</code>将轮廓画出来</li>
+</ol>
+<p>这里对<code>findContours()函数</code>和<code>drawContours()函数</code>这两个方法的参数做一个解释：</p>
+<ul>
+<li><p>image, contours, hierarchy = findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE):</p>
+<p>  ==输入参数==，第一个参数是待提取轮廓的源图片（是一个二值图），第二个参数指的是轮廓提取的模式，第三个参数是怎么去近似轮廓的模式；暂时不理解没关系，继续往下看示例部分。</p>
+<p>  ==输出参数==，第一个是原图片，第二个是所有的轮廓，用的是python内置的list，如果一张图里面有n个轮廓，那就是一个长度为n的list，而list中的每一项就是一些些点，具体来说，就是一个shape为[?x1x2]的numpy数组，?为轮廓上的点的数目，而后面的1x2自然就是每个点的x，y坐标了。第三个参数是一个轮廓检索时会用到的下标，后面我们会讲到。</p>
+</li>
+<li><p>res = cv2.drawContours(im, contours, -1, (0, 255, 0), thickness=3):<br>  ==输入参数==，第一个参数是源图片（要在哪个图片上画出轮廓），第二个参数指的是画哪个轮廓，-1表示全部画出，第三个参数是轮廓画笔的颜色，后面有些可选参数，比如画笔的粗细，这里选的是3.</p>
+<p>  ==输出参数==，很简答，就是结果图片了。</p>
+</li>
+</ul>
+<h2 id="2-基本使用示例"><a href="#2-基本使用示例" class="headerlink" title="2. 基本使用示例"></a>2. 基本使用示例</h2><p>所谓一图胜千言，这里是几个示例：<br><img src="https://img-blog.csdnimg.cn/20190826161451705.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>有点朋友可能对两个函数的输入输出还是有点懵逼，这里再结合例子详细说明。我们说，轮廓是对一个物体的边界的一个描述对吧？比如一条直线，一个矩形的边框。假如有一条直线，我们是不是真的需要把直线上的每个点都找出来呢，或者说，我们是不是真的需要把沿着矩形边框上的每个点也给他找出来？当然不要，2点确定一条直线，4点确地一个矩形。而这就是<code>findContours()</code>中第三个输入参数的意义。（a type of approximation）</p>
+<p>我做了一个简单的图片，运行上面的示例代码，输出信息和图片如下：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">一共检测到<span class="number">2</span>个轮廓</span><br><span class="line">第<span class="number">1</span>个轮廓:</span><br><span class="line"><span class="string">[[[233  89]]</span></span><br><span class="line"></span><br><span class="line"> <span class="string">[[233 165]]</span></span><br><span class="line"></span><br><span class="line"> <span class="string">[[363 165]]</span></span><br><span class="line"></span><br><span class="line"> <span class="string">[[363  89]]</span>]</span><br><span class="line">第<span class="number">2</span>个轮廓:</span><br><span class="line"><span class="string">[[[ 50  55]]</span></span><br><span class="line"></span><br><span class="line"> <span class="string">[[ 50 186]]</span></span><br><span class="line"></span><br><span class="line"> <span class="string">[[128 186]]</span></span><br><span class="line"></span><br><span class="line"> <span class="string">[[128  55]]</span>]</span><br></pre></td></tr></table></figure><br><img src="https://img-blog.csdnimg.cn/20190826162057374.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>假如你说，哎，我就是非要把轮廓上每个点找出来，当然可以！参数改为<code>cv2.CHAIN_APPROX_NONE</code>（不近似的意思），效果是一样的，只不过点多了些（大概几百个）。至于其他的近似方法，可以查看<a href="https://docs.opencv.org/2.4/modules/imgproc/doc/structural_analysis_and_shape_descriptors.html" target="_blank" rel="noopener">官方文档</a>。</p>
+<h2 id="3-轮廓的常用特征和性质（外接矩形、等效直径等）"><a href="#3-轮廓的常用特征和性质（外接矩形、等效直径等）" class="headerlink" title="3. 轮廓的常用特征和性质（外接矩形、等效直径等）"></a>3. 轮廓的常用特征和性质（外接矩形、等效直径等）</h2><p>这里就不细说了，看<a href="https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contour_features/py_contour_features.html" target="_blank" rel="noopener">&gt;&gt;官方文档&lt;&lt;</a>吧！</p>
+<h2 id="4-轮廓的层级（contours-hierarchy）"><a href="#4-轮廓的层级（contours-hierarchy）" class="headerlink" title="4. 轮廓的层级（contours hierarchy）"></a>4. 轮廓的层级（contours hierarchy）</h2><p>这个非常有必要详细说明，这也是<code>findContours()函数</code>第二个输入参数和最后一个输出参数的含义，这表明了各轮廓的父-子关系。</p>
+<p><strong>什么是轮廓的层级？</strong><br>一般来说，我们用<code>findContours()函数</code>来找一个图像中的所有物体的轮廓，对吧? 当一张图里面有多个物体，就算是一个物体，它也会有多个组成部分，所以，在一定程度上，这些物体的轮廓之间必然相互之间存在一个关系。那怎么表示这种关系呢？可以类似层级的思想，在外面的是父亲，在里面的是孩子。</p>
+<p>打个比方，一个人，有两个眼睛，在找轮廓时，我肯定会先找最大的那个，也就是人这个整体，然后人的眼睛又是在人这个整体中的一部分，于是我们就称眼睛是人体的子轮廓，反过来就是一个父亲的关系了。当然，有父子肯定就会存在兄弟，左眼睛和右眼睛就是兄弟关系了。</p>
+<p>看下面这个图片：<br><img src="https://img-blog.csdnimg.cn/20190826165540114.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>最外面一层，记为第0层，有轮廓0、1、2，轮廓2的下一级是轮廓2a，轮廓2a的下一级是3，轮廓3的下一级是轮廓3a，3a的下一级有轮廓4、5。</p>
+<p>在OpenCV中，用一个4个数字的元组来表示它们的层级关系，分别是<code>[Next, Previous, First_Child, Parent]</code>,next是同一级的下一个轮廓，previous是同一级的上一个轮廓，first_child是下一级的第一个子轮廓，parent则是父轮廓了。</p>
+<p>==说明:如果不存在，则用-1表示。==</p>
+<p><strong>还记得findContours()的第二个输入参数和输出hierarchy吗？</strong></p>
+<p>Contour Retrieval Mode：</p>
+<ol>
+<li>CV2.RETR_LIST<br>这是最简单的提取轮廓的方式了，这种方式下，也不管你什么父-子关系，提取出来所有找到的轮廓就完事儿了，然后全部统统简单的用一个list返回给你，所以，安装OpenCV的表达父子关系的方式，元组的最后两个取值必然都是-1了。而且前两个元素的取值在各个item中必然是“连续的”。</li>
+</ol>
+<p><img src="https://img-blog.csdnimg.cn/20190826174742875.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>继续这个图，得到的hierarchy结果如下：<br><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[[ <span class="number">1</span> <span class="number">-1</span> <span class="number">-1</span> <span class="number">-1</span>]</span><br><span class="line">  [ <span class="number">2</span>  <span class="number">0</span> <span class="number">-1</span> <span class="number">-1</span>]</span><br><span class="line">  [ <span class="number">3</span>  <span class="number">1</span> <span class="number">-1</span> <span class="number">-1</span>]</span><br><span class="line">  [ <span class="number">4</span>  <span class="number">2</span> <span class="number">-1</span> <span class="number">-1</span>]</span><br><span class="line">  [ <span class="number">5</span>  <span class="number">3</span> <span class="number">-1</span> <span class="number">-1</span>]</span><br><span class="line">  [ <span class="number">6</span>  <span class="number">4</span> <span class="number">-1</span> <span class="number">-1</span>]</span><br><span class="line">  [ <span class="number">7</span>  <span class="number">5</span> <span class="number">-1</span> <span class="number">-1</span>]</span><br><span class="line">  [<span class="number">-1</span>  <span class="number">6</span> <span class="number">-1</span> <span class="number">-1</span>]]]</span><br></pre></td></tr></table></figure><br>而8个轮廓的像素依次如下：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">一共检测到<span class="number">8</span>个轮廓</span><br><span class="line">第<span class="number">0</span>个轮廓:</span><br><span class="line"><span class="string">[[[365 174]]</span></span><br><span class="line"> <span class="string">[[365 283]]</span></span><br><span class="line"> <span class="string">[[564 283]]</span></span><br><span class="line"> <span class="string">[[564 174]]</span>]</span><br><span class="line">第<span class="number">1</span>个轮廓:</span><br><span class="line"><span class="string">[[[148 128]]</span></span><br><span class="line"> <span class="string">[[148 277]]</span></span><br><span class="line"> <span class="string">[[273 277]]</span></span><br><span class="line"> <span class="string">[[273 128]]</span>]</span><br><span class="line">第<span class="number">2</span>个轮廓:</span><br><span class="line"><span class="string">[[[ 83  94]]</span></span><br><span class="line"> <span class="string">[[ 84  93]]</span></span><br><span class="line"> <span class="string">[[589  93]]</span></span><br><span class="line"> <span class="string">[[590  94]]</span></span><br><span class="line"> <span class="string">[[590 316]]</span></span><br><span class="line"> <span class="string">[[589 317]]</span></span><br><span class="line"> <span class="string">[[ 84 317]]</span></span><br><span class="line"> <span class="string">[[ 83 316]]</span>]</span><br><span class="line">第<span class="number">3</span>个轮廓:</span><br><span class="line"><span class="string">[[[ 79  89]]</span></span><br><span class="line"> <span class="string">[[ 79 321]]</span></span><br><span class="line"> <span class="string">[[594 321]]</span></span><br><span class="line"> <span class="string">[[594  89]]</span>]</span><br><span class="line">第<span class="number">4</span>个轮廓:</span><br><span class="line"><span class="string">[[[ 25  62]]</span></span><br><span class="line"> <span class="string">[[ 26  61]]</span></span><br><span class="line"> <span class="string">[[622  61]]</span></span><br><span class="line"> <span class="string">[[623  62]]</span></span><br><span class="line"> <span class="string">[[623 344]]</span></span><br><span class="line"> <span class="string">[[622 345]]</span></span><br><span class="line"> <span class="string">[[ 26 345]]</span></span><br><span class="line"> <span class="string">[[ 25 344]]</span>]</span><br><span class="line">第<span class="number">5</span>个轮廓:</span><br><span class="line"><span class="string">[[[ 21  57]]</span></span><br><span class="line"> <span class="string">[[ 21 349]]</span></span><br><span class="line"> <span class="string">[[627 349]]</span></span><br><span class="line"> <span class="string">[[627  57]]</span>]</span><br><span class="line">第<span class="number">6</span>个轮廓:</span><br><span class="line"><span class="string">[[[ 18  13]]</span></span><br><span class="line"> <span class="string">[[ 17  14]]</span></span><br><span class="line"> <span class="string">[[ 17  16]]</span></span><br><span class="line"> <span class="string">[[ 18  17]]</span></span><br><span class="line"> <span class="string">[[135  17]]</span></span><br><span class="line"> <span class="string">[[136  16]]</span></span><br><span class="line"> <span class="string">[[136  14]]</span></span><br><span class="line"> <span class="string">[[135  13]]</span>]</span><br><span class="line">第<span class="number">7</span>个轮廓:</span><br><span class="line"><span class="string">[[[217  11]]</span></span><br><span class="line"> <span class="string">[[216  12]]</span></span><br><span class="line"> <span class="string">[[216  14]]</span></span><br><span class="line"> <span class="string">[[217  15]]</span></span><br><span class="line"> <span class="string">[[509  15]]</span></span><br><span class="line"> <span class="string">[[510  14]]</span></span><br><span class="line"> <span class="string">[[510  12]]</span></span><br><span class="line"> <span class="string">[[509  11]]</span>]</span><br></pre></td></tr></table></figure>
+<ol>
+<li>CV2.RETR_TREE</li>
+</ol>
+<p>这种模式下，OpenCV会为我们处理好各轮廓之间的父-子关系，hierarchy的结果如下：<br><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[[ <span class="number">6</span> <span class="number">-1</span>  <span class="number">1</span> <span class="number">-1</span>]</span><br><span class="line">  [<span class="number">-1</span> <span class="number">-1</span>  <span class="number">2</span>  <span class="number">0</span>]</span><br><span class="line">  [<span class="number">-1</span> <span class="number">-1</span>  <span class="number">3</span>  <span class="number">1</span>]</span><br><span class="line">  [<span class="number">-1</span> <span class="number">-1</span>  <span class="number">4</span>  <span class="number">2</span>]</span><br><span class="line">  [ <span class="number">5</span> <span class="number">-1</span> <span class="number">-1</span>  <span class="number">3</span>]</span><br><span class="line">  [<span class="number">-1</span>  <span class="number">4</span> <span class="number">-1</span>  <span class="number">3</span>]</span><br><span class="line">  [ <span class="number">7</span>  <span class="number">0</span> <span class="number">-1</span> <span class="number">-1</span>]</span><br><span class="line">  [<span class="number">-1</span>  <span class="number">6</span> <span class="number">-1</span> <span class="number">-1</span>]]]</span><br></pre></td></tr></table></figure><br>各轮廓的标记如下，红色数字表示该轮廓的索引，黄色数字表示概论课所处的层级，白色的四元组是该轮廓与其他轮廓间的关系表达方式。<br><img src="https://img-blog.csdnimg.cn/20190826175334317.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ol>
+<li>RETR_CCOMP</li>
+<li>RETR_EXTERNAL</li>
+</ol>
+<p>这两个好像用的不多，详情参见官网吧，我也没仔细看。</p>
+<p><strong>如有不对，欢迎指出，thank you~</strong></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/10/26/OpenCV-py学习笔记（二）——核心运算操作/" data-toggle="tooltip" data-placement="top" title="OpenCV-py学习笔记（二）—— 核心运算/操作">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/10/26/基于预测未来帧的异常事件检测/" data-toggle="tooltip" data-placement="top" title="基于预测未来帧的异常事件检测">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#OpenCV" title="OpenCV">OpenCV</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

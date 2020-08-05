@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Normalization of Database——数据库的正规化 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2018/11/15/数据库-正规化/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#数据库" title="数据库">数据库</a>
+                        
+                    </div>
+                    <h1>Normalization of Database——数据库的正规化</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2018-11-15
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Recall："><span class="toc-text">Recall：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Normalization-of-Database"><span class="toc-text">Normalization of Database</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Problems-Without-Normalization"><span class="toc-text">Problems Without Normalization</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#插入异常"><span class="toc-text">插入异常</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新异常"><span class="toc-text">更新异常</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除异常"><span class="toc-text">删除异常</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#正规化的规则"><span class="toc-text">正规化的规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#First-Normal-Form-1NF-详细介绍1NF"><span class="toc-text">First Normal Form (1NF) 详细介绍1NF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Second-Normal-Form-2NF-详细介绍2NF"><span class="toc-text">Second Normal Form (2NF) 详细介绍2NF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Third-Normal-Form-3NF-详细介绍3NF"><span class="toc-text">Third Normal Form (3NF) 详细介绍3NF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Boyce-and-Codd-Normal-Form-BCNF-详细介绍BCNF"><span class="toc-text">Boyce and Codd Normal Form (BCNF) 详细介绍BCNF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fourth-Normal-Form-4NF-详细介绍4NF"><span class="toc-text">Fourth Normal Form (4NF) 详细介绍4NF</span></a></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h3 id="Recall："><a href="#Recall：" class="headerlink" title="Recall："></a>Recall：</h3><p>数据库中的一些术语：（后面的中文可能翻译不准确，我自己这么称呼它们）<br><code>relation</code> —— <code>关系模型</code><br><code>tuple</code> <code>entity</code>—— 表中的一条<code>记录</code>，也成为<code>实体</code><br><code>attribute/column</code> —— 每个表头即<code>属性</code><br><code>domain</code> —— 属性的取值域<br><code>FD（functional dependency）</code>—— 函数依赖<br><code>MVD(Multi-Valued Dependency)</code> —— 多值依赖。。这个真不知道该怎么翻译</p>
+<h1 id="Normalization-of-Database"><a href="#Normalization-of-Database" class="headerlink" title="Normalization of Database"></a>Normalization of Database</h1><p>数据库正规化是数据库中如何合理且有效组织数据的一门技术，它也为我们提供了一套系统地消除数据<code>冗余（redundancy）</code>和<code>异常（anomaly）</code>的方法。</p>
+<p>正规化主要就是两个目的：</p>
+<ul>
+<li>消除数据冗余（或者说没意义的数据）</li>
+<li>确保数据之间的依赖关系是合乎逻辑的</li>
+</ul>
+<h1 id="Problems-Without-Normalization"><a href="#Problems-Without-Normalization" class="headerlink" title="Problems Without Normalization"></a>Problems Without Normalization</h1><p>假如在设计数据库关系的时候没考虑正规化，不仅会因为数据间的冗余从而浪费存储空间，同时，它也会给我们更新、删除数据时带来很多麻烦，也就是上面说到的异常，下面举例说明。<br><img src="https://img-blog.csdn.net/20180919174036594?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p>
+<p>表头分别是学生id，学生姓名，学生具体的专业方向，hod(Head of Department) 学院的领导，办公电话。</p>
+<h3 id="插入异常"><a href="#插入异常" class="headerlink" title="插入异常"></a>插入异常</h3><p>假如来了个新生，他还没细分具体专业方向，于是乎在后三栏我们就没办法添了，只能用NULL来补充了，这样就很不方便了；相反，假如软件工程专业有50个学生，那么这50个学生的后三栏就会重复，但我们不得不重复地插入。</p>
+<h3 id="更新异常"><a href="#更新异常" class="headerlink" title="更新异常"></a>更新异常</h3><p>好，假如某天Mr. X不当领导了，然后换了个领导Mr. Y，那么每个学生都需要将他的hod改成Mr. Y了。万一数据库管理员不小心漏了几个同学的没改，那这些学生的学籍就有错误了。</p>
+<p>也许你会说：哎呀，那你管理员细心一点不就好了？</p>
+<p>那我会说：你为什么不可以换一种设计数据表的方式呢？</p>
+<h3 id="删除异常"><a href="#删除异常" class="headerlink" title="删除异常"></a>删除异常</h3><p>再假设，某个branch只有一个学生（好像不太可能），有一天，这个学生真的太孤单了，他读不下去了，转去学管理了，很显然就要把他的信息删掉，问题就来了。因为我们的学生信息和专业的信息是绑在一起的，你删了这个唯一的同学，那这个专业、专业领导也被你删掉了，这样就有问题了。</p>
+<h1 id="正规化的规则"><a href="#正规化的规则" class="headerlink" title="正规化的规则"></a>正规化的规则</h1><p>主要分为以下几种（越往后，要求越严格）：</p>
+<ul>
+<li>First Normal Form</li>
+<li>Second Normal Form</li>
+<li>Third Normal Form</li>
+<li>BCNF（Boyce-Codd Normal Form）</li>
+<li>Fourth Normal Form</li>
+</ul>
+<h3 id="First-Normal-Form-1NF-详细介绍1NF"><a href="#First-Normal-Form-1NF-详细介绍1NF" class="headerlink" title="First Normal Form (1NF) 详细介绍1NF"></a>First Normal Form (1NF) <a href="https://blog.csdn.net/qq_37174526/article/details/82776507" target="_blank" rel="noopener">详细介绍1NF</a></h3><p>如果一个表是满足一范式的，那么它需要满足以下条件：</p>
+<ol>
+<li>每个属性的取值必须是原子的<code>atomic</code></li>
+<li>每一列的<code>domain</code>必须是一样的</li>
+<li>不存在相同的列名</li>
+<li>列的排列顺序，以及每个tuple间的排列顺序可以交换。</li>
+</ol>
+<h3 id="Second-Normal-Form-2NF-详细介绍2NF"><a href="#Second-Normal-Form-2NF-详细介绍2NF" class="headerlink" title="Second Normal Form (2NF) 详细介绍2NF"></a>Second Normal Form (2NF) <a href="https://blog.csdn.net/qq_37174526/article/details/84107366" target="_blank" rel="noopener">详细介绍2NF</a></h3><p>如果一个表是满足二范式的，那么它需要满足以下条件：</p>
+<ol>
+<li>它必须是满足一范式的</li>
+<li>它不含有部分依赖（Partial Dependency）</li>
+</ol>
+<h3 id="Third-Normal-Form-3NF-详细介绍3NF"><a href="#Third-Normal-Form-3NF-详细介绍3NF" class="headerlink" title="Third Normal Form (3NF) 详细介绍3NF"></a>Third Normal Form (3NF) <a href="https://blog.csdn.net/qq_37174526/article/details/84107958" target="_blank" rel="noopener">详细介绍3NF</a></h3><p>如果一个表是满足三范式的，那么它需要满足以下条件：</p>
+<ol>
+<li>它必须是满足二范式的</li>
+<li>它不含有传递依赖（TransitiveDependency）</li>
+</ol>
+<h3 id="Boyce-and-Codd-Normal-Form-BCNF-详细介绍BCNF"><a href="#Boyce-and-Codd-Normal-Form-BCNF-详细介绍BCNF" class="headerlink" title="Boyce and Codd Normal Form (BCNF) 详细介绍BCNF"></a>Boyce and Codd Normal Form (BCNF) <a href="https://blog.csdn.net/qq_37174526/article/details/82846661" target="_blank" rel="noopener">详细介绍BCNF</a></h3><p>BCNF其实是第三范式的更高约束版本，它可以处理一些3NF处理不了的异常<br>如果一个表是满足BCNF的，那么它需要满足以下条件：</p>
+<ol>
+<li>它必须是满足三范式的</li>
+<li>对任意一个FD ( X → Y ), X应该是个<code>超键(superkey)</code>.</li>
+</ol>
+<h3 id="Fourth-Normal-Form-4NF-详细介绍4NF"><a href="#Fourth-Normal-Form-4NF-详细介绍4NF" class="headerlink" title="Fourth Normal Form (4NF) 详细介绍4NF"></a>Fourth Normal Form (4NF) <a href="">详细介绍4NF</a></h3><p>如果一个表是满足三范式的，那么它需要满足以下条件：</p>
+<ol>
+<li>它必须是满足BCNF的</li>
+<li>它不含有多值依赖（ Multi-Valued Dependency.）</li>
+</ol>
+<p>后面会持续更新。</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/11/15/数据库-BCNF范式-Boyce-CoddNormalForm/" data-toggle="tooltip" data-placement="top" title="Boyce-Codd Normal Form（BCNF）">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/11/15/数据库-第一范式-FirstNormalForm/" data-toggle="tooltip" data-placement="top" title="First Normal Form（1NF）">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#数据库" title="数据库">数据库</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

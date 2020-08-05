@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          LeetCode-12&amp;13-整数与罗马数字相互转化 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2018/11/15/LeetCode-12&amp;13-整数与罗马数字相互转化/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#LeetCode" title="LeetCode">LeetCode</a>
+                        
+                    </div>
+                    <h1>LeetCode-12&amp;13-整数与罗马数字相互转化</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2018-11-15
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#说明"><span class="toc-text">说明</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#字典是存放顺序与你输入的顺序是不一样的！！！迭代读取的时候一定要小心！！！！！"><span class="toc-text">字典是存放顺序与你输入的顺序是不一样的！！！迭代读取的时候一定要小心！！！！！</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#描述"><span class="toc-text">描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#示例1："><span class="toc-text">示例1：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#示例2："><span class="toc-text">示例2：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#示例3："><span class="toc-text">示例3：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#示例4："><span class="toc-text">示例4：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#示例5："><span class="toc-text">示例5：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#思路"><span class="toc-text">思路</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Code"><span class="toc-text">Code</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#疑问"><span class="toc-text">疑问</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改"><span class="toc-text">修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#另：罗马数字转整数，思路几乎一样，就是预定义字典的顺序改变一下。"><span class="toc-text">另：罗马数字转整数，思路几乎一样，就是预定义字典的顺序改变一下。</span></a></li></ol></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>如果你在写这个程序的时候，发现你在IDE上运行结果完全正确，而在网站上总是Wrong Answer，恭喜你，这将让你倍涨经验（起码我找了很久才发现这个问题）</p>
+<h2 id="字典是存放顺序与你输入的顺序是不一样的！！！迭代读取的时候一定要小心！！！！！"><a href="#字典是存放顺序与你输入的顺序是不一样的！！！迭代读取的时候一定要小心！！！！！" class="headerlink" title="字典是存放顺序与你输入的顺序是不一样的！！！迭代读取的时候一定要小心！！！！！"></a>字典是存放顺序与你输入的顺序是不一样的！！！迭代读取的时候一定要小心！！！！！</h2><p>下面讲下经过。。。</p>
+<h4 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h4><p>罗马数字包含以下七种字符： I， V， X， L，C，D 和 M。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">字符          数值</span><br><span class="line">I             <span class="number">1</span></span><br><span class="line">V             <span class="number">5</span></span><br><span class="line">X             <span class="number">10</span></span><br><span class="line">L             <span class="number">50</span></span><br><span class="line">C             <span class="number">100</span></span><br><span class="line">D             <span class="number">500</span></span><br><span class="line">M             <span class="number">1000</span></span><br></pre></td></tr></table></figure>
+<p>例如， 罗马数字 2 写做 II ，即为两个并列的 1。12 写做 XII ，即为 X + II 。 27 写做  XXVII, 即为 XX + V + II 。</p>
+<p>通常情况下，罗马数字中小的数字在大的数字的右边。但也存在特例，例如 4 不写做 IIII，而是 IV。数字 1 在数字 5 的左边，所表示的数等于大数 5 减小数 1 得到的数值 4 。同样地，数字 9 表示为 IX。这个特殊的规则只适用于以下六种情况：</p>
+<p>I 可以放在 V (5) 和 X (10) 的左边，来表示 4 和 9。<br>X 可以放在 L (50) 和 C (100) 的左边，来表示 40 和 90。<br>C 可以放在 D (500) 和 M (1000) 的左边，来表示 400 和 900。<br>给定一个整数，将其转为罗马数字。输入确保在 1 到 3999 的范围内。</p>
+<h4 id="示例1："><a href="#示例1：" class="headerlink" title="示例1："></a>示例1：</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">输入: 3</span></span><br><span class="line"><span class="section">输出: "III"</span></span><br></pre></td></tr></table></figure>
+<h4 id="示例2："><a href="#示例2：" class="headerlink" title="示例2："></a>示例2：</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">输入: 4</span></span><br><span class="line"><span class="section">输出: "IV"</span></span><br></pre></td></tr></table></figure>
+<h4 id="示例3："><a href="#示例3：" class="headerlink" title="示例3："></a>示例3：</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">输入: 9</span></span><br><span class="line"><span class="section">输出: "IX"</span></span><br></pre></td></tr></table></figure>
+<h4 id="示例4："><a href="#示例4：" class="headerlink" title="示例4："></a>示例4：</h4><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: <span class="number">58</span></span><br><span class="line">输出: <span class="string">"LVIII"</span></span><br><span class="line">解释: C = <span class="number">100</span>, L = <span class="number">50</span>, XXX = <span class="number">30</span>, III = <span class="number">3.</span></span><br></pre></td></tr></table></figure>
+<h4 id="示例5："><a href="#示例5：" class="headerlink" title="示例5："></a>示例5：</h4><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: <span class="number">58</span></span><br><span class="line">输出: <span class="string">"LVIII"</span></span><br><span class="line">解释: C = <span class="number">100</span>, L = <span class="number">50</span>, XXX = <span class="number">30</span>, III = <span class="number">3.</span></span><br></pre></td></tr></table></figure>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>乍一看，什么放左边放右边，有点凌乱的感jio，我们不妨把所有罗马数字的“基数”都给它罗列出来（当然是用字典了），一共有以下这些“基数”。<br><strong><em>这里的字典一定要按照基数值从大到小的顺序排列</em></strong>  ,就好比我们从高位到低位写一个数字，总是从高位写到低位。<br><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dict_roma</span> = <span class="string">&#123;</span></span><br><span class="line">	<span class="attr">3000</span>: <span class="string">'MMM',</span></span><br><span class="line">	<span class="attr">2000</span>: <span class="string">'MM',</span></span><br><span class="line">	<span class="attr">1000</span>: <span class="string">'M',</span></span><br><span class="line">	<span class="attr">900</span>: <span class="string">'CM',</span></span><br><span class="line">	<span class="attr">500</span>: <span class="string">'D',</span></span><br><span class="line">	<span class="attr">400</span>: <span class="string">'CD',</span></span><br><span class="line">	<span class="attr">300</span>: <span class="string">'CCC',</span></span><br><span class="line">	<span class="attr">200</span>: <span class="string">'CC',</span></span><br><span class="line">	<span class="attr">100</span>: <span class="string">'C',</span></span><br><span class="line">	<span class="attr">90</span>: <span class="string">'XC',</span></span><br><span class="line">	<span class="attr">50</span>: <span class="string">'L',</span></span><br><span class="line">	<span class="attr">40</span>: <span class="string">'IL',</span></span><br><span class="line">	<span class="attr">30</span>: <span class="string">'XXX',</span></span><br><span class="line">	<span class="attr">20</span>: <span class="string">'XX',</span></span><br><span class="line">	<span class="attr">10</span>: <span class="string">'X',</span></span><br><span class="line">	<span class="attr">9</span>: <span class="string">'IX',</span></span><br><span class="line">	<span class="attr">5</span>: <span class="string">'V',</span></span><br><span class="line">	<span class="attr">4</span>: <span class="string">'IV',</span></span><br><span class="line">	<span class="attr">3</span>: <span class="string">'III',</span></span><br><span class="line">	<span class="attr">2</span>: <span class="string">'II',</span></span><br><span class="line">	<span class="attr">1</span>: <span class="string">'I',</span></span><br><span class="line"><span class="attr">&#125;</span></span><br></pre></td></tr></table></figure><br>然后再逐个去除基数，看有没有商（够不够除），一旦够除，商肯定也只能是1，这里用到了<code>defaultdict(int)</code>这个标准库中的字典，方便统计数量。</p>
+<p>最后再根据统计的情况生成最终结果字符串即可。</p>
+<h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="symbol">Solution:</span></span><br><span class="line">	<span class="symbol">def</span> <span class="symbol">intToRoman</span>(<span class="symbol">self, <span class="symbol">num</span></span>):</span><br><span class="line">		"""</span><br><span class="line">		:<span class="symbol">type</span> <span class="symbol">num: <span class="symbol">int</span></span></span><br><span class="line">		:<span class="symbol">rtype: <span class="symbol">str</span></span></span><br><span class="line">		"""</span><br><span class="line">		# 这里的预定义字典一定要从数值大道数值小排列</span><br><span class="line">		<span class="symbol">dict_roma</span> = &#123;</span><br><span class="line">			<span class="number">3000</span>: <span class="string">'MMM'</span>,</span><br><span class="line">			<span class="number">2000</span>: <span class="string">'MM'</span>,</span><br><span class="line">			<span class="number">1000</span>: <span class="string">'M'</span>,</span><br><span class="line">			<span class="number">900</span>: <span class="string">'CM'</span>,</span><br><span class="line">			<span class="number">500</span>: <span class="string">'D'</span>,</span><br><span class="line">			<span class="number">400</span>: <span class="string">'CD'</span>,</span><br><span class="line">			<span class="number">300</span>: <span class="string">'CCC'</span>,</span><br><span class="line">			<span class="number">200</span>: <span class="string">'CC'</span>,</span><br><span class="line">			<span class="number">100</span>: <span class="string">'C'</span>,</span><br><span class="line">			<span class="number">90</span>: <span class="string">'XC'</span>,</span><br><span class="line">			<span class="number">50</span>: <span class="string">'L'</span>,</span><br><span class="line">			<span class="number">40</span>: <span class="string">'IL'</span>,</span><br><span class="line">			<span class="number">30</span>: <span class="string">'XXX'</span>,</span><br><span class="line">			<span class="number">20</span>: <span class="string">'XX'</span>,</span><br><span class="line">			<span class="number">10</span>: <span class="string">'X'</span>,</span><br><span class="line">			<span class="number">9</span>: <span class="string">'IX'</span>,</span><br><span class="line">			<span class="number">5</span>: <span class="string">'V'</span>,</span><br><span class="line">			<span class="number">4</span>: <span class="string">'IV'</span>,</span><br><span class="line">			<span class="number">3</span>: <span class="string">'III'</span>,</span><br><span class="line">			<span class="number">2</span>: <span class="string">'II'</span>,</span><br><span class="line">			<span class="number">1</span>: <span class="string">'I'</span>,</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		num_dict = defaultdict(<span class="built_in">int</span>)</span><br><span class="line">		<span class="keyword">for</span> key <span class="keyword">in</span> dict_roma.keys():</span><br><span class="line">			<span class="keyword">if</span> <span class="built_in">int</span>(num / key) != <span class="number">0</span>:</span><br><span class="line">				num_dict[key] += <span class="number">1</span></span><br><span class="line">				num -= key</span><br><span class="line">			# 查找完了，提前退出，后面的key无需再试探</span><br><span class="line">			<span class="keyword">if</span> num == <span class="number">0</span>:</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">		result = <span class="string">""</span></span><br><span class="line">		<span class="keyword">for</span> key, value <span class="keyword">in</span> num_dict.items():</span><br><span class="line">			<span class="keyword">if</span> value != <span class="number">0</span>:</span><br><span class="line">				result += dict_roma[key]</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">s = Solution()</span><br><span class="line">print(s.<span class="built_in">int</span>ToRoman(<span class="number">4</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><p>我在pycharm中运行程序，完全没问题，输入4时，输出为<code>IV</code><br><img src="https://img-blog.csdn.net/20180821112247909?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>可是在LeetCode跑起来，就是说我输入4的时候输出错误<br><img src="https://img-blog.csdn.net/20180821112339823?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>我也是醉了，不知道是哪里的问题，真的想了很久很久。于是乎，我又遇到了<br><a href="https://leetcode-cn.com/problems/roman-to-integer/description" target="_blank" rel="noopener">罗马数字转整数</a>这个题，也出现了类似的错误，百度了一下，并没有找到什么相关答案。我灵机一动，是不是和字典的“无序性”有关？呵呵。。果然是这样</p>
+<h3 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h3><p>上面说道，我用了<code>defaultdict</code>这个工具，实验证明，它也是无序的。于是我干脆自己统计好了（省去defaultdict提供的便利），用了两个<code>OrderedDict()</code>,关于<code>OrderedDict()</code>大家自行百度，我这里说明一下它的一个特别之处。</p>
+<p>一般字典取value，我们肯定是<code>dictionary[key]</code>这样，但是在<code>OrderedDict()</code>中，<code>dictionary[key]</code>返回的是一个元组，所以取出具体值需要这样操作——<br><code>dictionary[key][0]</code>,ok，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> OrderedDict</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">intToRoman</span><span class="params">(self, num)</span>:</span></span><br><span class="line">		<span class="string">"""</span></span><br><span class="line"><span class="string">		:type num: int</span></span><br><span class="line"><span class="string">		:rtype: str</span></span><br><span class="line"><span class="string">		"""</span></span><br><span class="line">		<span class="comment"># 这里的预定义字典一定要从数值大道数值小排列</span></span><br><span class="line">		dict_roma = OrderedDict()</span><br><span class="line">		dict_roma[<span class="string">'3000'</span>] = <span class="string">'MMM'</span>,</span><br><span class="line">		dict_roma[<span class="string">'2000'</span>] = <span class="string">'MM'</span>,</span><br><span class="line">		dict_roma[<span class="string">'1000'</span>] = <span class="string">'M'</span>,</span><br><span class="line">		dict_roma[<span class="string">'900'</span>] = <span class="string">'CM'</span>,</span><br><span class="line">		dict_roma[<span class="string">'500'</span>] = <span class="string">'D'</span>,</span><br><span class="line">		dict_roma[<span class="string">'400'</span>] = <span class="string">'CD'</span>,</span><br><span class="line">		dict_roma[<span class="string">'300'</span>] = <span class="string">'CCC'</span>,</span><br><span class="line">		dict_roma[<span class="string">'200'</span>] = <span class="string">'CC'</span>,</span><br><span class="line">		dict_roma[<span class="string">'100'</span>] = <span class="string">'C'</span>,</span><br><span class="line">		dict_roma[<span class="string">'90'</span>] = <span class="string">'XC'</span>,</span><br><span class="line">		dict_roma[<span class="string">'50'</span>] = <span class="string">'L'</span>,</span><br><span class="line">		dict_roma[<span class="string">'40'</span>] = <span class="string">'XL'</span>,</span><br><span class="line">		dict_roma[<span class="string">'30'</span>] = <span class="string">'XXX'</span>,</span><br><span class="line">		dict_roma[<span class="string">'20'</span>] = <span class="string">'XX'</span>,</span><br><span class="line">		dict_roma[<span class="string">'10'</span>] = <span class="string">'X'</span>,</span><br><span class="line">		dict_roma[<span class="string">'9'</span>] = <span class="string">'IX'</span>,</span><br><span class="line">		dict_roma[<span class="string">'5'</span>] = <span class="string">'V'</span>,</span><br><span class="line">		dict_roma[<span class="string">'4'</span>] = <span class="string">'IV'</span>,</span><br><span class="line">		dict_roma[<span class="string">'3'</span>] = <span class="string">'III'</span>,</span><br><span class="line">		dict_roma[<span class="string">'2'</span>] = <span class="string">'II'</span>,</span><br><span class="line">		dict_roma[<span class="string">'1'</span>] = <span class="string">'I'</span></span><br><span class="line"></span><br><span class="line">		num_dict = OrderedDict()</span><br><span class="line">		<span class="keyword">for</span> key <span class="keyword">in</span> dict_roma.keys():</span><br><span class="line">			<span class="keyword">if</span> int(num / int(key)) != <span class="number">0</span>:</span><br><span class="line">				<span class="comment"># 如果计数字典中存在这个键</span></span><br><span class="line">				<span class="keyword">if</span> key <span class="keyword">in</span> num_dict:</span><br><span class="line">					num_dict[key] += <span class="number">1</span></span><br><span class="line">				<span class="keyword">else</span>:</span><br><span class="line">					num_dict[key] = <span class="number">1</span></span><br><span class="line">				num -= int(key)</span><br><span class="line">			<span class="comment"># 查找完了，提前退出，a后面的key无需再试探</span></span><br><span class="line">			<span class="keyword">if</span> num == <span class="number">0</span>:</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">		result = <span class="string">""</span></span><br><span class="line">		<span class="keyword">for</span> key, value <span class="keyword">in</span> num_dict.items():</span><br><span class="line">			<span class="keyword">if</span> value != <span class="number">0</span>:</span><br><span class="line">				result += dict_roma[key][<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+<h3 id="另：罗马数字转整数，思路几乎一样，就是预定义字典的顺序改变一下。"><a href="#另：罗马数字转整数，思路几乎一样，就是预定义字典的顺序改变一下。" class="headerlink" title="另：罗马数字转整数，思路几乎一样，就是预定义字典的顺序改变一下。"></a>另：罗马数字转整数，思路几乎一样，就是预定义字典的顺序改变一下。</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> OrderedDict</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">romanToInt</span><span class="params">(self, s)</span>:</span></span><br><span class="line">		<span class="string">"""</span></span><br><span class="line"><span class="string">		:type s: str</span></span><br><span class="line"><span class="string">		:rtype: int</span></span><br><span class="line"><span class="string">		"""</span></span><br><span class="line">		<span class="comment"># 这里的预定义字典一定要从数值大道数值小排列</span></span><br><span class="line">		dict_roma = OrderedDict()</span><br><span class="line">		dict_roma[<span class="string">'CM'</span>] = <span class="number">900</span>,</span><br><span class="line">		dict_roma[<span class="string">'CD'</span>] = <span class="number">400</span>,</span><br><span class="line">		dict_roma[<span class="string">'XC'</span>] = <span class="number">90</span>,</span><br><span class="line">		dict_roma[<span class="string">'XL'</span>] = <span class="number">40</span>,</span><br><span class="line">		dict_roma[<span class="string">'IX'</span>] = <span class="number">9</span>,</span><br><span class="line">		dict_roma[<span class="string">'IV'</span>] = <span class="number">4</span>,</span><br><span class="line">		dict_roma[<span class="string">'MMM'</span>] = <span class="number">3000</span>,</span><br><span class="line">		dict_roma[<span class="string">'MM'</span>] = <span class="number">2000</span>,</span><br><span class="line">		dict_roma[<span class="string">'M'</span>] = <span class="number">1000</span>,</span><br><span class="line">		dict_roma[<span class="string">'D'</span>] = <span class="number">500</span>,</span><br><span class="line">		dict_roma[<span class="string">'CCC'</span>] = <span class="number">300</span>,</span><br><span class="line">		dict_roma[<span class="string">'CC'</span>] = <span class="number">200</span>,</span><br><span class="line">		dict_roma[<span class="string">'C'</span>] = <span class="number">100</span>,</span><br><span class="line">		dict_roma[<span class="string">'L'</span>] = <span class="number">50</span>,</span><br><span class="line">		dict_roma[<span class="string">'XXX'</span>] = <span class="number">30</span>,</span><br><span class="line">		dict_roma[<span class="string">'XX'</span>] = <span class="number">20</span>,</span><br><span class="line">		dict_roma[<span class="string">'X'</span>] = <span class="number">10</span>,</span><br><span class="line">		dict_roma[<span class="string">'V'</span>] = <span class="number">5</span>,</span><br><span class="line">		dict_roma[<span class="string">'III'</span>] = <span class="number">3</span>,</span><br><span class="line">		dict_roma[<span class="string">'II'</span>] = <span class="number">2</span>,</span><br><span class="line">		dict_roma[<span class="string">'I'</span>] = <span class="number">1</span>,</span><br><span class="line"></span><br><span class="line">		base_list = list(dict_roma.keys())</span><br><span class="line">		result = <span class="number">0</span></span><br><span class="line">		<span class="keyword">for</span> item <span class="keyword">in</span> base_list:</span><br><span class="line">			<span class="keyword">try</span>:</span><br><span class="line">				base_index = s.index(item)</span><br><span class="line">				num = dict_roma[item][<span class="number">0</span>]</span><br><span class="line">				result += num</span><br><span class="line">				<span class="comment"># 如果从头匹配到</span></span><br><span class="line">				<span class="keyword">if</span> base_index == <span class="number">0</span>:</span><br><span class="line">					s = s[len(item) + base_index:]</span><br><span class="line">				<span class="comment"># 如果在中间匹配到</span></span><br><span class="line">				<span class="keyword">else</span>:</span><br><span class="line">					s = s[:base_index] + s[len(item) + base_index:]</span><br><span class="line">			<span class="keyword">except</span> ValueError <span class="keyword">as</span> e:</span><br><span class="line">				<span class="keyword">continue</span></span><br><span class="line">		<span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/11/15/LeetCode-14-最长公共前缀/" data-toggle="tooltip" data-placement="top" title="LeetCode-14-最长公共前缀">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/11/15/LeetCode-2-两数相加/" data-toggle="tooltip" data-placement="top" title="LeetCode-2-两数相加">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#LeetCode" title="LeetCode">LeetCode</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

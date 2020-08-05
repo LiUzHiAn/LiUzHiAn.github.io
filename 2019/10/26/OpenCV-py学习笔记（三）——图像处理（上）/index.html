@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          OpenCV-py学习笔记（三）—— 图像处理（上） - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/10/26/OpenCV-py学习笔记（三）——图像处理（上）/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#OpenCV" title="OpenCV">OpenCV</a>
+                        
+                    </div>
+                    <h1>OpenCV-py学习笔记（三）—— 图像处理（上）</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-10-26
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#改变颜色空间"><span class="toc-text">改变颜色空间</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-转换颜色空间-cv2-cvtColor"><span class="toc-text">1. 转换颜色空间 cv2.cvtColor()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-物体跟踪-cv2-inRange"><span class="toc-text">2. 物体跟踪 cv2.inRange()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#图像的阈值处理"><span class="toc-text">图像的阈值处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-简单阈值处理-cv2-threshold"><span class="toc-text">1. 简单阈值处理 cv2.threshold()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-自适应阈值处理-cv2-adaptiveThreshold"><span class="toc-text">2. 自适应阈值处理 cv2.adaptiveThreshold()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平滑处理"><span class="toc-text">平滑处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-添加椒盐噪音"><span class="toc-text">1. 添加椒盐噪音</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-去噪"><span class="toc-text">2. 去噪</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#形态转变"><span class="toc-text">形态转变</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-腐蚀操作"><span class="toc-text">1. 腐蚀操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-扩张操作"><span class="toc-text">2.扩张操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-腐蚀-扩张（opening操作）"><span class="toc-text">3. 腐蚀+扩张（opening操作）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-扩张-腐蚀（closing操作）"><span class="toc-text">4. 扩张+腐蚀（closing操作）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-梯度运算"><span class="toc-text">5. 梯度运算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-OpenCV内置函数生成structuring-element"><span class="toc-text">6. OpenCV内置函数生成structuring element</span></a></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <p>@[TOC]</p>
+<h2 id="改变颜色空间"><a href="#改变颜色空间" class="headerlink" title="改变颜色空间"></a>改变颜色空间</h2><h3 id="1-转换颜色空间-cv2-cvtColor"><a href="#1-转换颜色空间-cv2-cvtColor" class="headerlink" title="1. 转换颜色空间 cv2.cvtColor()"></a>1. 转换颜色空间 cv2.cvtColor()</h3><p>OpenCV中提供了100多种颜色空间，其实我们常用的也就那么三个，RGB、HSV、灰度图，HSV其实是一个用来描述颜色的很好的颜色空间，具体的原理请百度，转换颜色空间的方法就是<code>cv2.cvtColor()</code>，代码如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 所有的颜色空间</span></span><br><span class="line"><span class="comment"># color_space = [i for i in dir(cv2) if i.startswith("COLOR_")]</span></span><br><span class="line"><span class="comment"># print(color_space)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">img</span> = cv2.imread(<span class="string">"bear.jpg"</span>)</span><br><span class="line"><span class="attr">img_hsv</span> = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)</span><br></pre></td></tr></table></figure>
+<h3 id="2-物体跟踪-cv2-inRange"><a href="#2-物体跟踪-cv2-inRange" class="headerlink" title="2. 物体跟踪 cv2.inRange()"></a>2. 物体跟踪 cv2.inRange()</h3><p>OpenCV官方教程中提供了以下的例子，用来在视频中实时地追踪指定颜色的物体（代码里是蓝色），方法就是上面讲到的HSV颜色空间，首先你需要找到你要追踪的颜色的下界和上界，然后利用<code>cv2.inRange()</code>方法得到一张mask图片，再用mask和每一帧进行按位与操作即可，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">object_tracking</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="string">"""</span></span><br><span class="line"><span class="string">		跟踪视频中的蓝色物体（其他颜色均可）</span></span><br><span class="line"><span class="string">	:return:</span></span><br><span class="line"><span class="string">	"""</span></span><br><span class="line"></span><br><span class="line">	cap = cv2.VideoCapture(<span class="number">0</span>)</span><br><span class="line">	<span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">		<span class="comment"># get each frame</span></span><br><span class="line">		ret, frame = cap.read()</span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">not</span> ret:</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		<span class="keyword">if</span> ret:</span><br><span class="line">			<span class="comment"># convert each BGR frame to HSV</span></span><br><span class="line">			hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)</span><br><span class="line"></span><br><span class="line">			<span class="comment"># define range of blue color in HSV</span></span><br><span class="line">			lower_blue = np.array([<span class="number">110</span>, <span class="number">50</span>, <span class="number">50</span>])</span><br><span class="line">			upper_blue = np.array([<span class="number">130</span>, <span class="number">255</span>, <span class="number">255</span>])</span><br><span class="line"></span><br><span class="line">			<span class="comment"># generate a mask img w.r.t the color defined above</span></span><br><span class="line">			<span class="comment"># hence, we only get some blue colors</span></span><br><span class="line">			mask = cv2.inRange(hsv, lower_blue, upper_blue)</span><br><span class="line"></span><br><span class="line">			res = cv2.bitwise_and(frame, frame, mask=mask)</span><br><span class="line"></span><br><span class="line">			cv2.imshow(<span class="string">'frame'</span>, frame)</span><br><span class="line">			cv2.imshow(<span class="string">'mask'</span>, mask)</span><br><span class="line">			cv2.imshow(<span class="string">'res'</span>, res)</span><br><span class="line">			k = cv2.waitKey(<span class="number">5</span>) &amp; <span class="number">0xFF</span></span><br><span class="line">			<span class="keyword">if</span> k == <span class="number">27</span>:</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">	cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+<p>效果如下：<br><img src="https://img-blog.csdnimg.cn/20190802095352438.png#pic_center" alt="在这里插入图片描述"><br>当然，你也可以换一个颜色，==需要注意的是，OpenCV中HSV空间三个量依次对应的范围是0-179,0-255，0-255，如果用其他工具转换时需要变换到该范围下对应的值==，也可以通过下列的示例代码进行转换：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">green = np.uint8(<span class="string">[[[0,255,0 ]]</span>])</span><br><span class="line">hsv_green = cv2.cvtColor(green,cv2.COLOR_BGR2HSV)</span><br><span class="line"><span class="built_in">print</span>(hsv_green)</span><br><span class="line"><span class="string">[[[ 60 255 255]]</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="图像的阈值处理"><a href="#图像的阈值处理" class="headerlink" title="图像的阈值处理"></a>图像的阈值处理</h2><h3 id="1-简单阈值处理-cv2-threshold"><a href="#1-简单阈值处理-cv2-threshold" class="headerlink" title="1. 简单阈值处理 cv2.threshold()"></a>1. 简单阈值处理 cv2.threshold()</h3><p>所谓阈值处理，就是给定一个阈值，当像素值比指定阈值大或小时做相关的操作。==这个字念yu，不是fa==，方法签名为:<code>cv2.threshold(src,thresh,maxval,type,dst=None)</code>,需要将的是OpenCV中提供的几种type：</p>
+<ul>
+<li>cv2.THRESH_BINARY：若像素值大于阈值，则置为maxval；否则置0</li>
+<li>cv2.THRESH_BINARY_INV：THRESH_BINARY的反转</li>
+<li>cv2.THRESH_TRUNC：若像素值大于阈值，则置为阈值；否则不变</li>
+<li>cv2.THRESH_TOZERO：小于阈值的部分置为0；其他不变</li>
+<li>cv2.THRESH_TOZERO_INV：THRESH_TOZERO的反转</li>
+</ul>
+<p>示例代码如下:</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">thresh_ops</span></span>():</span><br><span class="line">	img = cv2.cvtColor(cv2.imread(<span class="string">"bear.jpg"</span>), cv2.<span class="type">COLOR_BGR2GRAY</span>)</span><br><span class="line">	_, thresh1 = cv2.threshold(img, <span class="number">127</span>, <span class="number">255</span>, <span class="class"><span class="keyword">type</span><span class="title">=cv2</span>.<span class="title">THRESH_BINARY</span>)</span></span><br><span class="line"><span class="class">	<span class="title">_</span>, <span class="title">thresh2</span> </span>= cv2.threshold(img, <span class="number">127</span>, <span class="number">255</span>, <span class="class"><span class="keyword">type</span><span class="title">=cv2</span>.<span class="title">THRESH_BINARY_INV</span>)</span></span><br><span class="line"><span class="class">	<span class="title">_</span>, <span class="title">thresh3</span> </span>= cv2.threshold(img, <span class="number">127</span>, <span class="number">255</span>, <span class="class"><span class="keyword">type</span><span class="title">=cv2</span>.<span class="title">THRESH_TRUNC</span>)</span></span><br><span class="line"><span class="class">	<span class="title">_</span>, <span class="title">thresh4</span> </span>= cv2.threshold(img, <span class="number">127</span>, <span class="number">255</span>, <span class="class"><span class="keyword">type</span><span class="title">=cv2</span>.<span class="title">THRESH_TOZERO</span>)</span></span><br><span class="line"><span class="class">	<span class="title">_</span>, <span class="title">thresh5</span> </span>= cv2.threshold(img, <span class="number">127</span>, <span class="number">255</span>, <span class="class"><span class="keyword">type</span><span class="title">=cv2</span>.<span class="title">THRESH_TOZERO_INV</span>)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">	<span class="title">titles</span> </span>= [<span class="symbol">'Original</span> <span class="type">Image</span>', <span class="symbol">'BINAR</span>Y', <span class="symbol">'BINARY_IN</span>V', <span class="symbol">'TRUN</span>C', <span class="symbol">'TOZER</span>O', <span class="symbol">'TOZERO_IN</span>V']</span><br><span class="line">	images = [img, thresh1, thresh2, thresh3, thresh4, thresh5]</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i in range(<span class="number">6</span>):</span><br><span class="line">		plt.subplot(<span class="number">2</span>, <span class="number">3</span>, i + <span class="number">1</span>), plt.imshow(images[i], <span class="symbol">'gra</span>y')</span><br><span class="line">		plt.title(titles[i])</span><br><span class="line">		plt.xticks([]), plt.yticks([])</span><br><span class="line"></span><br><span class="line">	plt.show()</span><br></pre></td></tr></table></figure>
+<p>效果如下：<br><img src="https://img-blog.csdnimg.cn/2019080210161060.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br> <strong>遇到的问题</strong></p>
+<ul>
+<li>mat is not a numerical tuple<br>出现这个问题的原因是 cv2.threshold()返回2个参数，我开始想当然的认为只返回一个，于是最开始直接用cv2.imshow(“winName”,thresh1)的时候就报错了。添加一个占位返回参数即可。</li>
+</ul>
+<h3 id="2-自适应阈值处理-cv2-adaptiveThreshold"><a href="#2-自适应阈值处理-cv2-adaptiveThreshold" class="headerlink" title="2. 自适应阈值处理 cv2.adaptiveThreshold()"></a>2. 自适应阈值处理 cv2.adaptiveThreshold()</h3><p>自适应阈值处理和简单处理略有不同，该方法会在一定的区域内（比如5*5）进行一次阈值计算，计算的方法可以是直接求均值、weighted mean，然后再根据该阈值在指定的区域内进行简答阈值化操作。方法签名为:<code>cv2.adaptiveThreshold(src, maxValue, adaptiveMethod, thresholdType, blockSize, C, dst=None)</code>。</p>
+<ul>
+<li>Adaptive Method ：处理方法</li>
+</ul>
+<ol>
+<li>cv2.ADAPTIVE_THRESH_MEAN_C : 阈值为邻域内像素的均值</li>
+<li>cv2.ADAPTIVE_THRESH_GAUSSIAN_C : 阈值为邻域内像素的权重均值，权重是一个高斯窗口</li>
+</ol>
+<ul>
+<li>Block Size ：邻域大小</li>
+<li>C - 计算阈值后固定减去的值</li>
+</ul>
+<p>代码如下：<br><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">def adaptive_thresh_ops():</span><br><span class="line">	img = cv2.cvtColor(cv2.imread(<span class="string">"bear.jpg"</span>), cv2.COLOR_BGR2GRAY)</span><br><span class="line">	ret, th1 = cv2.threshold(img, <span class="number">127</span>, <span class="number">255</span>, cv2.THRESH_BINARY)</span><br><span class="line">	th2 = cv2.adaptiveThreshold(img, <span class="number">255</span>, cv2.ADAPTIVE_THRESH_MEAN_C, \</span><br><span class="line">								cv2.THRESH_BINARY, <span class="number">11</span>, <span class="number">2</span>)</span><br><span class="line">	th3 = cv2.adaptiveThreshold(img, <span class="number">255</span>, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, \</span><br><span class="line">								cv2.THRESH_BINARY, <span class="number">11</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">	titles = [<span class="string">'Original Image'</span>, <span class="string">'Global Thresholding (v = 127)'</span>,</span><br><span class="line">			  <span class="string">'Adaptive Mean Thresholding'</span>, <span class="string">'Adaptive Gaussian Thresholding'</span>]</span><br><span class="line">	images = [img, th1, th2, th3]</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">4</span>):</span><br><span class="line">		plt.subplot(<span class="number">2</span>, <span class="number">2</span>, i + <span class="number">1</span>), plt.imshow(images[i], <span class="string">'gray'</span>)</span><br><span class="line">		plt.title(titles[i])</span><br><span class="line">		plt.xticks([]), plt.yticks([])</span><br><span class="line">	plt.show()</span><br></pre></td></tr></table></figure><br>效果如下:</p>
+<p><img src="https://img-blog.csdnimg.cn/20190802103204827.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="平滑处理"><a href="#平滑处理" class="headerlink" title="平滑处理"></a>平滑处理</h2><h3 id="1-添加椒盐噪音"><a href="#1-添加椒盐噪音" class="headerlink" title="1. 添加椒盐噪音"></a>1. 添加椒盐噪音</h3><p>椒盐噪声也称为脉冲噪声，是图像中经常见到的一种噪声，它是一种随机出现的白点或者黑点，可能是亮的区域有黑色像素或是在暗的区域有白色像素。椒盐噪声的成因可能是影像讯号受到突如其来的强烈干扰而产生、模数转换器或位元传输错误等。例如失效的感应器导致像素值为最小值，饱和的感应器导致像素值为最大值。</p>
+<p>说直白一点，就是会出现一些随机的黑白点，即所谓的salt&amp;pepper noise。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_salt_and_pepper_nosie</span><span class="params">(image, num)</span>:</span></span><br><span class="line">	<span class="string">"""</span></span><br><span class="line"><span class="string">		给图片添加椒盐噪音，num是噪声点的个数</span></span><br><span class="line"><span class="string">	:param image: </span></span><br><span class="line"><span class="string">	:param num: </span></span><br><span class="line"><span class="string">	:return: </span></span><br><span class="line"><span class="string">	"""</span></span><br><span class="line">	img = copy.deepcopy(image)</span><br><span class="line">	<span class="keyword">if</span> len(img.shape) == <span class="number">3</span>:</span><br><span class="line">		rows, cols = img.shape[:<span class="number">2</span>]</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		rows, cols = img.shape</span><br><span class="line"></span><br><span class="line">	<span class="comment"># add pepper noise</span></span><br><span class="line">	<span class="keyword">for</span> n <span class="keyword">in</span> range(num):</span><br><span class="line">		i = random.randint(<span class="number">0</span>, rows - <span class="number">1</span>)</span><br><span class="line">		j = random.randint(<span class="number">0</span>, cols - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> len(img.shape) == <span class="number">3</span>:</span><br><span class="line">			img[i, j, :] = [<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>]</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			img[i, j] = <span class="number">255</span></span><br><span class="line"></span><br><span class="line">	<span class="comment"># add salt noise</span></span><br><span class="line">	<span class="keyword">for</span> n <span class="keyword">in</span> range(num):</span><br><span class="line">		i = random.randint(<span class="number">0</span>, rows - <span class="number">1</span>)</span><br><span class="line">		j = random.randint(<span class="number">0</span>, cols - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> len(img.shape) == <span class="number">3</span>:</span><br><span class="line">			img[i, j, :] = [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			img[i, j] = <span class="number">0</span></span><br><span class="line">	<span class="keyword">return</span> img</span><br></pre></td></tr></table></figure><br>效果：<br><img src="https://img-blog.csdnimg.cn/2019080217564298.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="2-去噪"><a href="#2-去噪" class="headerlink" title="2. 去噪"></a>2. 去噪</h3><p>主要是用OpenCV提供的各种滤波器在图像上进行卷积运算，以下分别是一些常用滤波器对椒盐噪音图像滤波的效果：<br><img src="https://img-blog.csdnimg.cn/20190802175825356.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>代码：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">def smoothing_ops(img):</span><br><span class="line">	<span class="string">""</span><span class="string">"自定义卷积"</span><span class="string">""</span></span><br><span class="line">	avg_kernel = np.ones((<span class="number">5</span>, <span class="number">5</span>), dtype=np.<span class="built_in">float</span>32) / <span class="number">25</span></span><br><span class="line">	laplacian_kernel = np.<span class="built_in">array</span>([[<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>], [<span class="number">1</span>, <span class="number">-4</span>, <span class="number">1</span>], [<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>]], dtype=np.<span class="built_in">float</span>32)</span><br><span class="line"></span><br><span class="line">	# 其中ddepth表示目标图像的所需深度，它包含有关图像中存储的数据类型的信息</span><br><span class="line">	# 可以是unsigned char（CV_8U），signed char（CV_8S），unsigned short（CV_16U）等等...</span><br><span class="line">	# 当ddepth = <span class="number">-1</span>时，表示输出图像与原图像有相同的深度。</span><br><span class="line">	dst1 = cv2.filter2D(img, <span class="number">-1</span>, avg_kernel)</span><br><span class="line"></span><br><span class="line">	<span class="string">""</span><span class="string">"使用OpenCV封装的blur库函数"</span><span class="string">""</span></span><br><span class="line">	# dst2 = cv2.blur(img, (<span class="number">5</span>, <span class="number">5</span>))</span><br><span class="line">	dst2 = cv2.medianBlur(img, <span class="number">5</span>)</span><br><span class="line">	dst3 = cv2.GaussianBlur(img, (<span class="number">5</span>, <span class="number">5</span>), <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">	plt.subplot(<span class="number">221</span>), plt.imshow(img[:, :, ::<span class="number">-1</span>]), plt.title(<span class="string">'original'</span>)</span><br><span class="line">	plt.xticks([]), plt.yticks([])</span><br><span class="line">	plt.subplot(<span class="number">222</span>), plt.imshow(dst1[:, :, ::<span class="number">-1</span>]), plt.title(<span class="string">'customize'</span>)</span><br><span class="line">	plt.xticks([]), plt.yticks([])</span><br><span class="line">	plt.subplot(<span class="number">223</span>), plt.imshow(dst2[:, :, ::<span class="number">-1</span>]), plt.title(<span class="string">'lib-mean-kernel'</span>)</span><br><span class="line">	plt.xticks([]), plt.yticks([])</span><br><span class="line">	plt.subplot(<span class="number">224</span>), plt.imshow(dst3[:, :, ::<span class="number">-1</span>]), plt.title(<span class="string">'lib-gaussian-kernel'</span>)</span><br><span class="line">	plt.xticks([]), plt.yticks([])</span><br><span class="line">	plt.show()</span><br></pre></td></tr></table></figure>
+<h2 id="形态转变"><a href="#形态转变" class="headerlink" title="形态转变"></a>形态转变</h2><p>形态转变一般用在二值图上，需要两个输入，①待处理的图像 ②处理图片的kernel （在OpenCV中被称为 structuring element ）</p>
+<h3 id="1-腐蚀操作"><a href="#1-腐蚀操作" class="headerlink" title="1. 腐蚀操作"></a>1. 腐蚀操作</h3><p>腐蚀操作的原理如下：</p>
+<p>有一个slide window（类似卷积核的概念）在原图像上进行滑动，如果该滑动窗口中所有的像素值都为1，则生成的图像在此处的像素点为1；否则为0。更清楚的英文解释如下：</p>
+<p>The kernel slides through the image (as in 2D convolution). A pixel in the original image (either 1 or 0) will be considered 1 only if all the pixels under the kernel is 1, otherwise it is eroded (made to zero).</p>
+<h3 id="2-扩张操作"><a href="#2-扩张操作" class="headerlink" title="2.扩张操作"></a>2.扩张操作</h3><p>扩张操作则和腐蚀操作相反，在腐蚀中，必须所有在滑动窗口在像素全为1才为1，而在扩张中，则是至少有一个像素在滑动窗口中是1.</p>
+<p>It is just opposite of erosion. Here, a pixel element is ‘1’ if atleast one pixel under the kernel is ‘1’. So it increases the white region in the image or size of foreground object increases. </p>
+<p>在二值图中，我们假定前景全为白色（取值为1），一种直观的理解是，腐蚀操作相当于把白色的像素减少了，一定程度上达到了去噪的效果；扩张操作则是增加了白色的像素，相当于恢复了边缘像素的信息。</p>
+<p>试想，如果在图片的某些区域内有一些白色的噪点，通过腐蚀操作就可以消除他们，可腐蚀操作又可能把边缘的一些白色像素抹去，请看下面这张图，像这些边界上的白色像素就会被腐蚀掉。<br><img src="https://img-blog.csdnimg.cn/20190802184148773.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>于是，我们先腐蚀，再扩张，一定程度上也可以达到去噪的效果。这也就是所谓的==Opening操作==<br><img src="https://img-blog.csdnimg.cn/20190802185254162.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>代码如下：</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">def morphological_ops():</span><br><span class="line">	img = cv2.imread(<span class="string">"i.png"</span>)</span><br><span class="line">	img_noise = copy.deepcopy(img)</span><br><span class="line">	# add some noise to original image</span><br><span class="line">	rows, cols = img_noise.shape[:<span class="number">2</span>]</span><br><span class="line">	for n in range(<span class="number">50</span>):</span><br><span class="line">		i = random.randint(<span class="number">0</span>, rows - <span class="number">1</span>)</span><br><span class="line">		j = random.randint(<span class="number">0</span>, cols - <span class="number">1</span>)</span><br><span class="line">		img_noise[i, j] = <span class="number">255</span></span><br><span class="line"></span><br><span class="line">	kernel = np.ones((<span class="number">5</span>, <span class="number">5</span>), dtype=np.uint8)</span><br><span class="line">	erosion = cv2.erode(img_noise, kernel)</span><br><span class="line">	dilation = cv2.dilate(erosion, kernel)</span><br><span class="line"></span><br><span class="line">	plt.subplot(<span class="number">221</span>), plt.imshow(img[:, :, ::-<span class="number">1</span>])</span><br><span class="line">	plt.xticks([]), plt.yticks([]), plt.title(<span class="string">"original"</span>)</span><br><span class="line"></span><br><span class="line">	plt.subplot(<span class="number">222</span>), plt.imshow(img_noise[:, :, ::-<span class="number">1</span>])</span><br><span class="line">	plt.xticks([]), plt.yticks([]), plt.title(<span class="string">"noisy"</span>)</span><br><span class="line"></span><br><span class="line">	plt.subplot(<span class="number">223</span>), plt.imshow(erosion[:, :, ::-<span class="number">1</span>])</span><br><span class="line">	plt.xticks([]), plt.yticks([]), plt.title(<span class="string">"erosion-out"</span>)</span><br><span class="line"></span><br><span class="line">	plt.subplot(<span class="number">224</span>), plt.imshow(dilation[:, :, ::-<span class="number">1</span>])</span><br><span class="line">	plt.xticks([]), plt.yticks([]), plt.title(<span class="string">"dilation-back"</span>)</span><br><span class="line"></span><br><span class="line">	plt.show()</span><br></pre></td></tr></table></figure>
+<h3 id="3-腐蚀-扩张（opening操作）"><a href="#3-腐蚀-扩张（opening操作）" class="headerlink" title="3. 腐蚀+扩张（opening操作）"></a>3. 腐蚀+扩张（opening操作）</h3><p>直接用下面这行代码，效果和先腐蚀，再膨胀一样。<br><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opening = cv2.morphology<span class="constructor">Ex(<span class="params">img</span>, <span class="params">cv2</span>.MORPH_OPEN, <span class="params">kernel</span>)</span></span><br></pre></td></tr></table></figure><br><img src="https://img-blog.csdnimg.cn/20190802192308549.png" alt="在这里插入图片描述"></p>
+<h3 id="4-扩张-腐蚀（closing操作）"><a href="#4-扩张-腐蚀（closing操作）" class="headerlink" title="4. 扩张+腐蚀（closing操作）"></a>4. 扩张+腐蚀（closing操作）</h3><p>opening的逆操作，可以用来消除图像中的一些黑点噪声。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">closing = cv2.morphology<span class="constructor">Ex(<span class="params">img</span>, <span class="params">cv2</span>.MORPH_CLOSE, <span class="params">kernel</span>)</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20190802192256768.png" alt="在这里插入图片描述"></p>
+<h3 id="5-梯度运算"><a href="#5-梯度运算" class="headerlink" title="5. 梯度运算"></a>5. 梯度运算</h3><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradient = cv2.morphology<span class="constructor">Ex(<span class="params">img</span>, <span class="params">cv2</span>.MORPH_GRADIENT, <span class="params">kernel</span>)</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20190802192537578.png" alt="在这里插入图片描述"></p>
+<h3 id="6-OpenCV内置函数生成structuring-element"><a href="#6-OpenCV内置函数生成structuring-element" class="headerlink" title="6. OpenCV内置函数生成structuring element"></a>6. OpenCV内置函数生成structuring element</h3><p>上述都是我们手动用numpy生成了一个5*5的kernel，有时候我们可能需要多种类型的kernel，也可以用内置函数<code>cv2.getStructuringElement().</code>来生成kernel，OpenCV中的术语为structuring element 。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"># Rectangular Kernel</span><br><span class="line">&gt;&gt;&gt; cv2.getStructuringElement(cv2.MORPH_RECT,(<span class="number">5</span>,<span class="number">5</span>))</span><br><span class="line"><span class="built_in">array</span>([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">       [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">       [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">       [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">       [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]], dtype=<span class="built_in">uint</span>8)</span><br><span class="line"></span><br><span class="line"># Elliptical Kernel</span><br><span class="line">&gt;&gt;&gt; cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(<span class="number">5</span>,<span class="number">5</span>))</span><br><span class="line"><span class="built_in">array</span>([[<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">       [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">       [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">       [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">       [<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>]], dtype=<span class="built_in">uint</span>8)</span><br><span class="line"></span><br><span class="line"># Cross-shaped Kernel</span><br><span class="line">&gt;&gt;&gt; cv2.getStructuringElement(cv2.MORPH_CROSS,(<span class="number">5</span>,<span class="number">5</span>))</span><br><span class="line"><span class="built_in">array</span>([[<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">       [<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">       [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">       [<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">       [<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>]], dtype=<span class="built_in">uint</span>8)</span><br></pre></td></tr></table></figure>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/10/26/OpenCV-py学习笔记（一）——基本图像视频输入输出/" data-toggle="tooltip" data-placement="top" title="OpenCV-py学习笔记（一）—— 基本图像/视频输入输出">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/10/26/OpenCV-py学习笔记（二）——核心运算操作/" data-toggle="tooltip" data-placement="top" title="OpenCV-py学习笔记（二）—— 核心运算/操作">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#OpenCV" title="OpenCV">OpenCV</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

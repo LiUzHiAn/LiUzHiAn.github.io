@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          OpenCV-py学习笔记（一）—— 基本图像/视频输入输出 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/10/26/OpenCV-py学习笔记（一）——基本图像视频输入输出/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#OpenCV" title="OpenCV">OpenCV</a>
+                        
+                    </div>
+                    <h1>OpenCV-py学习笔记（一）—— 基本图像/视频输入输出</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-10-26
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#图像的相关操作"><span class="toc-text">图像的相关操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-读取图片代码"><span class="toc-text">1.读取图片代码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#视频的相关操作"><span class="toc-text">视频的相关操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-读取播放视频代码"><span class="toc-text">1.读取播放视频代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-打开摄像头并保存视频代码"><span class="toc-text">2.打开摄像头并保存视频代码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#画图的相关操作"><span class="toc-text">画图的相关操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-画图函数测试"><span class="toc-text">1.画图函数测试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-画OpenCV-LOGO"><span class="toc-text">2.画OpenCV-LOGO</span></a></li></ol></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <p>@[TOC]</p>
+<h2 id="图像的相关操作"><a href="#图像的相关操作" class="headerlink" title="图像的相关操作"></a>图像的相关操作</h2><p>需要注意的是，OpenCV读入图像的顺序是<code>g、b、r</code>的顺序，而像matplotlib这样的图像库读入图像的顺序是正常的<code>r、g、b</code>，所以如果想要用opencv读取图像而用<code>matplotlib.plotlib</code>显示时，就需要考虑一个通道翻转的问题。详情参见Stack Overflow上的<a href="http://stackoverflow.com/a/15074748/1134940" target="_blank" rel="noopener">讨论</a>。</p>
+<h4 id="1-读取图片代码"><a href="#1-读取图片代码" class="headerlink" title="1.读取图片代码"></a>1.读取图片代码</h4><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">def openCV_image_ops():</span><br><span class="line">	img = cv2.imread(<span class="string">"bear.jpg"</span>)</span><br><span class="line">	<span class="comment"># print(img.shape)  # (301, 400, 3)</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">b, </span>g, r = cv2.split(img)</span><br><span class="line">	<span class="comment"># print(b.shape)	#(301, 400)</span></span><br><span class="line">	<span class="comment"># 重组后的图片</span></span><br><span class="line">	img2 = cv2.merge([r, g, <span class="keyword">b])</span></span><br><span class="line"><span class="keyword">	</span>plt.<span class="keyword">subplot(121)</span></span><br><span class="line"><span class="keyword">	</span>plt.xticks([])  <span class="comment"># 隐藏x、y轴</span></span><br><span class="line">	plt.yticks([])</span><br><span class="line">	plt.imshow(img)</span><br><span class="line"></span><br><span class="line">	plt.<span class="keyword">subplot(122)</span></span><br><span class="line"><span class="keyword">	</span>plt.xticks([])  <span class="comment"># 隐藏x、y轴</span></span><br><span class="line">	plt.yticks([])</span><br><span class="line">	plt.imshow(img2)</span><br><span class="line"></span><br><span class="line">	plt.<span class="keyword">show()</span></span><br></pre></td></tr></table></figure>
+<p><strong><em>遇到的问题</em></strong></p>
+<ul>
+<li>b, g, r = cv2.split(img) ValueError: not enough values to unpack (expected 3, got 0)<br>出现这个问题我后，我查看了一下split相关代码，我寻思img的确是个3维的序列呀？但是报错说里面是空的，原来是读取的图片文件名写错了。。。 cv2.imread(“bear.jpg”)之前写成了 cv2.imread(“bear.png”),OpenCV在读取不到指定的文件时是不会报错的！！！</li>
+</ul>
+<h2 id="视频的相关操作"><a href="#视频的相关操作" class="headerlink" title="视频的相关操作"></a>视频的相关操作</h2><p>视频就是一系列的连续帧（frame by frame），OpenCV中视频的操作有2种，①获取摄像头的实时操作 ②直接操作视频。以上两种操作都通过一个<code>VideoCapture对象</code>来管理，传入摄像头设备索引/视频文件名作为该对象的构造函数参数即可。</p>
+<h4 id="1-读取播放视频代码"><a href="#1-读取播放视频代码" class="headerlink" title="1.读取播放视频代码"></a>1.读取播放视频代码</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">openCV_video_ops</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="comment"># 新建一个视频捕捉对象,可以通过摄像头设备索引/视频文件名</span></span><br><span class="line">	cap = cv2.VideoCapture(<span class="string">"video.avi"</span>)</span><br><span class="line">	<span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">		<span class="comment"># 逐帧读取</span></span><br><span class="line">		ret, frame = cap.read()</span><br><span class="line">		<span class="keyword">if</span> ret:</span><br><span class="line">			<span class="comment"># 转为灰度图</span></span><br><span class="line">			gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)</span><br><span class="line">			<span class="comment"># 显示</span></span><br><span class="line">			cv2.imshow(<span class="string">"video-frame"</span>, gray)</span><br><span class="line">			<span class="comment"># 64位系统需要追加&amp; 0xff</span></span><br><span class="line">			<span class="keyword">if</span> cv2.waitKey(<span class="number">50</span>) &amp; <span class="number">0xff</span> == ord(<span class="string">'q'</span>):</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">	cap.release()</span><br><span class="line">	cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+<p>如果想要用摄像头记录视频并保存，需要多做一些额外的工作，具体来说，需要考虑视频的<code>FourCC编码</code>，这个可以百度一下，还有就是要指定保存视频的fps、每帧的宽度和高度、以及是否保存成彩色。</p>
+<h4 id="2-打开摄像头并保存视频代码"><a href="#2-打开摄像头并保存视频代码" class="headerlink" title="2.打开摄像头并保存视频代码"></a>2.打开摄像头并保存视频代码</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">openCV_camera_save</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="comment"># 新建一个视频捕捉对象,可以通过摄像头设备索引/视频文件名</span></span><br><span class="line">	cap = cv2.VideoCapture(<span class="number">0</span>)</span><br><span class="line">	fourcc = cv2.VideoWriter_fourcc(*<span class="string">'XVID'</span>)</span><br><span class="line">	<span class="comment"># 参数依次为保存视频名称、fourcc编码、fps、尺寸、是否彩色图（默认为true）</span></span><br><span class="line">	out = cv2.VideoWriter(<span class="string">"video.avi"</span>, fourcc, <span class="number">20.0</span>, (<span class="number">640</span>, <span class="number">480</span>))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> cap.isOpened():</span><br><span class="line">		<span class="comment"># 逐帧读取</span></span><br><span class="line">		ret, frame = cap.read()</span><br><span class="line">		<span class="keyword">if</span> ret == <span class="literal">True</span>:</span><br><span class="line">			<span class="comment"># write the frame</span></span><br><span class="line">			out.write(frame)</span><br><span class="line">			cv2.imshow(<span class="string">'frame'</span>, frame)</span><br><span class="line"></span><br><span class="line">			<span class="comment"># 64位系统需要追加&amp; 0xff</span></span><br><span class="line">			<span class="keyword">if</span> cv2.waitKey(<span class="number">1</span>) &amp; <span class="number">0xff</span> == ord(<span class="string">'q'</span>):</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">	cap.release()</span><br><span class="line">	out.release()</span><br><span class="line">	cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+<h2 id="画图的相关操作"><a href="#画图的相关操作" class="headerlink" title="画图的相关操作"></a>画图的相关操作</h2><p>画图的机制是，先设置一个底板，然后在底板上画出响应的图形，具体的参加<a href="https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_gui/py_drawing_functions/py_drawing_functions.html" target="_blank" rel="noopener">&gt;&gt;官方文档&lt;&lt;</a>,总体来说，和其他语言中的绘图部分差不多，下面我测试了几个画图函数，并且我用OpenCV中提供的椭圆、圆、文字绘制函数画出了OpenCV的logo。</p>
+<h4 id="1-画图函数测试"><a href="#1-画图函数测试" class="headerlink" title="1.画图函数测试"></a>1.画图函数测试</h4><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">def openCV_drawing_ops():</span><br><span class="line">	# 画图的黑色底板</span><br><span class="line">	img = np.zeros((<span class="number">512</span>, <span class="number">512</span>, <span class="number">3</span>), np.<span class="built_in">uint</span>8)</span><br><span class="line">	# 从点(<span class="number">10</span>,<span class="number">10</span>)到点(<span class="number">110</span>,<span class="number">110</span>)画一条蓝色的线,thickness <span class="number">5</span> px</span><br><span class="line">	cv2.line(img, (<span class="number">10</span>, <span class="number">10</span>), (<span class="number">110</span>, <span class="number">110</span>), (<span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="number">5</span>)</span><br><span class="line">	# 从点(<span class="number">120</span>, <span class="number">120</span>)到点(<span class="number">220</span>, <span class="number">220</span>)画一个绿色的矩形,thickness <span class="number">3</span> px</span><br><span class="line">	cv2.rectangle(img, (<span class="number">120</span>, <span class="number">120</span>), (<span class="number">220</span>, <span class="number">220</span>), (<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">3</span>)</span><br><span class="line">	# 以(<span class="number">260</span>, <span class="number">260</span>)为中心，半径为<span class="number">30</span>，画一个红色的圆，<span class="number">-1</span>表示填充</span><br><span class="line">	cv2.circle(img, (<span class="number">260</span>, <span class="number">260</span>), <span class="number">30</span>, (<span class="number">0</span>, <span class="number">0</span>, <span class="number">255</span>), <span class="number">-1</span>)</span><br><span class="line">	# 在图片上写字</span><br><span class="line">	font = cv2.FONT_HERSHEY_SIMPLEX</span><br><span class="line">	cv2.putText(img, <span class="string">'OpenCV'</span>, (<span class="number">10</span>, <span class="number">500</span>), font, <span class="number">4</span>, (<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>), <span class="number">2</span>, cv2.LINE_AA)</span><br><span class="line"></span><br><span class="line">	cv2.imshow(<span class="string">"OpenCV drawing ops"</span>, img)</span><br><span class="line">	cv2.waitKey()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/2019073115385112.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="2-画OpenCV-LOGO"><a href="#2-画OpenCV-LOGO" class="headerlink" title="2.画OpenCV-LOGO"></a>2.画OpenCV-LOGO</h4><p>就是3个同心圆环，再加上字体，注意，三个圈中间是个等边三角形</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">def draw_openCV_logo():</span><br><span class="line">	# 画图的黑色底板</span><br><span class="line">	img = np.zeros((<span class="number">500</span>, <span class="number">500</span>, <span class="number">3</span>), np.<span class="built_in">uint</span>8)</span><br><span class="line"></span><br><span class="line">	min_circle = <span class="number">20</span></span><br><span class="line">	max_circle = <span class="number">50</span></span><br><span class="line">	gap = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">	green_circle_center_x = <span class="number">180</span></span><br><span class="line">	green_circle_center_y = <span class="number">200</span></span><br><span class="line">	green_blue_distance = <span class="built_in">int</span>(<span class="number">2</span> * max_circle + gap)</span><br><span class="line">	green_red_distance_x = <span class="built_in">int</span>(green_blue_distance / <span class="number">2</span>)</span><br><span class="line">	green_red_distance_y = <span class="built_in">int</span>(green_red_distance_x * <span class="number">1.732</span>)</span><br><span class="line"></span><br><span class="line">	# 绿色圈</span><br><span class="line">	cv2.ellipse(img, (green_circle_center_x, green_circle_center_y), (max_circle, max_circle), <span class="number">0</span>, <span class="number">0</span>, <span class="number">300</span>, (<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>),</span><br><span class="line">				<span class="number">-1</span>, cv2.LINE_AA)</span><br><span class="line">	cv2.circle(img, (green_circle_center_x, green_circle_center_y), min_circle, (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="number">-1</span>, cv2.LINE_AA)</span><br><span class="line"></span><br><span class="line">	# 蓝色圈</span><br><span class="line">	cv2.ellipse(img, (green_circle_center_x + green_blue_distance, green_circle_center_y), (max_circle, max_circle),</span><br><span class="line">				<span class="number">0</span>, <span class="number">-60</span>, <span class="number">240</span>, (<span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="number">-1</span>, cv2.LINE_AA)</span><br><span class="line">	cv2.circle(img, (green_circle_center_x + green_blue_distance, green_circle_center_y), min_circle, (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="number">-1</span>,</span><br><span class="line">			   cv2.LINE_AA)</span><br><span class="line"></span><br><span class="line">	# 红色圈</span><br><span class="line">	cv2.ellipse(img, (green_circle_center_x + green_red_distance_x, green_circle_center_y - green_red_distance_y),</span><br><span class="line">				(max_circle, max_circle), <span class="number">0</span>, <span class="number">-240</span>, <span class="number">60</span>, (<span class="number">0</span>, <span class="number">0</span>, <span class="number">255</span>), <span class="number">-1</span>, cv2.LINE_AA)</span><br><span class="line">	cv2.circle(img, (green_circle_center_x + green_red_distance_x, green_circle_center_y - green_red_distance_y),</span><br><span class="line">			   min_circle, (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="number">-1</span>, cv2.LINE_AA)</span><br><span class="line"></span><br><span class="line">	# 在图片上写字</span><br><span class="line">	font = cv2.FONT_ITALIC</span><br><span class="line">	cv2.putText(img, <span class="string">'OpenCV'</span>, (<span class="number">65</span>, <span class="number">350</span>), font, <span class="number">3</span>, (<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>), <span class="number">2</span>, cv2.LINE_AA)</span><br><span class="line"></span><br><span class="line">	cv2.imshow(<span class="string">"OpenCV logo"</span>, img)</span><br><span class="line">	cv2.waitKey()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20190731154037286.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><strong><em>遇到的问题</em></strong></p>
+<ul>
+<li>OpenCV窗口的标题栏，如果用中文会乱码，因为OpenCV中用的是gbk，python中是utf-8，目前好像还没有好的解决办法，改成英文吧。。。</li>
+</ul>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/10/26/OS-磁盘的块级接口和文件级别接口/" data-toggle="tooltip" data-placement="top" title="磁盘的块级接口和文件级别接口">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/10/26/OpenCV-py学习笔记（三）——图像处理（上）/" data-toggle="tooltip" data-placement="top" title="OpenCV-py学习笔记（三）—— 图像处理（上）">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#OpenCV" title="OpenCV">OpenCV</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

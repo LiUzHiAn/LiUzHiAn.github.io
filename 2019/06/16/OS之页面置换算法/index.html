@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          OS之页面置换算法 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/06/16/OS之页面置换算法/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#操作系统" title="操作系统">操作系统</a>
+                        
+                    </div>
+                    <h1>OS之页面置换算法</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-06-16
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#置换算法"><span class="toc-text">置换算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-局部页面置换算法"><span class="toc-text">1. 局部页面置换算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#最优置换算法（opt算法）"><span class="toc-text">最优置换算法（opt算法）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FIFO算法"><span class="toc-text">FIFO算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最近最久未使用算法-（Least-Recently-Used-LRU）"><span class="toc-text">最近最久未使用算法 （Least Recently Used, LRU）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#时钟算法（clock）"><span class="toc-text">时钟算法（clock）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最不常用算法（Least-Frequently-Used，LFU）"><span class="toc-text">最不常用算法（Least Frequently Used，LFU）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-全局页面置换算法"><span class="toc-text">2. 全局页面置换算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#工作集（working-set）"><span class="toc-text">工作集（working set）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#常驻集"><span class="toc-text">常驻集</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#工作集置换算法"><span class="toc-text">工作集置换算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#缺页率置换算法（page-fault-frequency，PFF）"><span class="toc-text">缺页率置换算法（page fault frequency，PFF）</span></a></li></ol></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <p>之前几篇博客记录了OS内存管理的一些知识和技术，接下来将继续深入，介绍一些页面置换算法，这里包括一些我们大家都略有耳闻的算法。</p>
+<h1 id="置换算法"><a href="#置换算法" class="headerlink" title="置换算法"></a>置换算法</h1><p>当出现缺页故障时，需要从外存调入新的页面到内存中去，而如果此时内存已满，于是就要按照一定策略置换一些物理页帧出来，这就是置换算法的目的。而置换算法的目标就是<code>尽量减少页面的调入调出次数</code></p>
+<p>页面置换算法主要可分为两大类：</p>
+<ol>
+<li>局部页面置换算法</li>
+</ol>
+<p>置换页面的选择范围仅限于当前进程占用的物理页面内。比较有代表性的算法有<code>最优置换算法</code>、<code>FIFO算法</code>、<code>最近最久未使用算法</code>、<code>时钟算法</code>、<code>最不常用算法</code></p>
+<ol>
+<li>全局页面置换算法</li>
+</ol>
+<p>全局页面置换算法的选择范围是所有可换出的物理页，比较有代表性的算法有<code>工作集算法</code>、<code>缺页率算法</code></p>
+<h2 id="1-局部页面置换算法"><a href="#1-局部页面置换算法" class="headerlink" title="1. 局部页面置换算法"></a>1. 局部页面置换算法</h2><p>所谓局部页面置换，就是说，如果OS给一个程序固定分配了5个物理页帧，当这些页帧满了后，如何进行页面置换。</p>
+<hr>
+<h3 id="最优置换算法（opt算法）"><a href="#最优置换算法（opt算法）" class="headerlink" title="最优置换算法（opt算法）"></a>最优置换算法（opt算法）</h3><p>思路就是，当产生缺页时，计算每个逻辑页面的下一次访问时间，选择未来最长时间不访问的页面进行置换。</p>
+<p>比如现在内存里面有a、b、c三个物理页帧，现在来了一个d页面，又知道a在未来的第3个页面后又会重新需要访问、b在未来的第2个页面后又会重新需要访问，c则是未来的第5个时间。那么这样的话，按照opt算法，我们就将c物理页面换出，将d页面放置在原来c页面的位置即可。</p>
+<p>细心的筒子可以发现一个问题，我这里说在未来的第几个页面又会重新需要，那真的运行一个程序的时候，OS哪里可能知道未来那个页面会被重新使用 ？所以说，这是一个<code>纯理想</code>的算法，无法实现，只能作为置换算法的一个性能评估依据。</p>
+<p>再举个栗子，大家可以自己在脑子里模拟一下执行过程，这里假设在0时刻，abcd四个页都已经在内存中了。紫色的圈表示在该时刻出现了缺页异常，红色的箭头表示置换的是哪个页。<br><img src="https://img-blog.csdnimg.cn/20190608160357752.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="FIFO算法"><a href="#FIFO算法" class="headerlink" title="FIFO算法"></a>FIFO算法</h3><p>FIFO即First-In-First-out，先入先出算法，思想就是将那个在内存中驻留时间最长的页面进行置换。这里实现的方法可以是通过维护一个链表，按照页面的到来顺序，依次插入链表尾部，每次要置换页的时候，就对链首继续置换，新页插入到链表尾。</p>
+<p>但是，这个算法的性能比较差，因为它不知道未来页面的到来情况（毕竟它只看到的是已经驻留的页面），有可能频繁的将一些再次会用到的页进行置换。此外，FIFO还有可能出现<code>belady现象</code>（变成女人???  exm??? 开个玩笑。。 ）这个现象阐述的是这样一种情况，若OS给进程分配的物理页面数量增加，缺页次数并不一定因为物理页面数量的增加而减少，反而会更多。</p>
+<p>所以，总的来说，FIFOF很少单独使用，会配合一些其他算法使用，例如后面会讲到的时钟算法。</p>
+<p>FIFO也来个栗子，假设在0时刻之前，abcd四个页面的到来顺序为abcd，可见，出现页面置换的次数较多。<br><img src="https://img-blog.csdnimg.cn/20190608161330788.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>值得注意的是，在FIFO算法中，会存在<code>Belady现象</code>，这个现象就是说，随着OS给每一个进程所分配的物理页数量增加，出现缺页异常的次数非但没有减少，反而增加了。</p>
+<blockquote>
+<p>注意：这里并不是说，一直增加物理页面数量，缺页异常一直增加，这显然是不对的，假设一个进程被分配到的物理页面数量无穷大，那缺页异常肯定是0. <code>Belady现象</code>只是说在某一小段区间内，出现缺页异常的次数随着分配的物理页面增多而增多。</p>
+</blockquote>
+<p><img src="https://img-blog.csdnimg.cn/20190609121632511.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20190609121646602.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="最近最久未使用算法-（Least-Recently-Used-LRU）"><a href="#最近最久未使用算法-（Least-Recently-Used-LRU）" class="headerlink" title="最近最久未使用算法 （Least Recently Used, LRU）"></a>最近最久未使用算法 （Least Recently Used, LRU）</h3><p>这个算法从英文的字面意思上就可以理解它在干什么了。其实还是一个模拟未来页面到来情况的思想，算是对<code>OPT算法</code>的一个近似，LRU算法认为，最近那个最近一直没被使用的页，在未来也最有可能不会被使用，所以将它置换出去（实际上，这也是基于我们程序有较好局部性的特征基础之上的）。</p>
+<p>缺页时，计算内存中每个逻辑页面的上一次访问时间，置换上一次访问时间距离现在最远的那个页面（即时间最小）    。</p>
+<p>栗子如下，假设在0时刻abcd四个页面已经驻留在内存中了。<br><img src="https://img-blog.csdnimg.cn/20190608161901143.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>LRU的实现方法大致有两种：</p>
+<ol>
+<li>基于链表的实现</li>
+</ol>
+<p>OS维护一个按最近一次访问时间排序的页面链表，其中，链表首节点是最近刚刚使用过的页面，而链表尾结点是最久未使用的页面，按照上图所示例子的话，在t=5时刻之前，链表的状态如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/20190608162848260.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>每次缺页的适合，就将链表尾部的页面进行置换，并把它移到链表的首部去。t=5时刻置换页动作完成后，链表的状态如下：<br><img src="https://img-blog.csdnimg.cn/20190608163249829.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ol>
+<li>基于栈的实现</li>
+</ol>
+<p>思路和链表的实现差不多，如下图：<br><img src="https://img-blog.csdnimg.cn/20190608163337907.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="时钟算法（clock）"><a href="#时钟算法（clock）" class="headerlink" title="时钟算法（clock）"></a>时钟算法（clock）</h3><p>像上面的LRU算法，性能其实是不错的，唯一的缺点就是维护链表或栈相对来说要麻烦一些，于是出现了时钟算法，它的思路是对页面的访做大致的统计，不一定是完全严格按照LRU的思路，比如，在t=1时刻的页面a和t=2时刻的页面b，时钟算法有可能第一个换页面b而不是a。</p>
+<p>时钟算法采用了一种特殊的数据结构——<code>环形列表</code>，且在页表项中增加了一个访问位（还记得吗？之前的博客<a href="https://blog.csdn.net/qq_37174526/article/details/90955169" target="_blank" rel="noopener">虚存管理</a>中提到过，当时说这个位是为了页面置换时用的），环形列表的指针指向最先调入的页面。</p>
+<p>算法的思想是，访问页面时，在页表项纪录页面的访问情况，缺页时，从指针出开始顺序地、循环地查找未被访问的页面进行置换。时钟算法其实是LRU和FIFO的折中。<br><img src="https://img-blog.csdnimg.cn/20190608171012387.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>算法实现的pseudo code如下：<br><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(目标页面不存在)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(当前指针所指的页表项的访问位为<span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		替换当前页；</span><br><span class="line">		赋值当前页表项的访问位为<span class="number">1</span>；</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		赋值当前指针所指的页表项的访问位为<span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	指针下移一位；</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>例子如下，假设在0时刻，时钟算法的当前指针指向第一项，蓝色的那一项就是当前指针所指项：<br><img src="https://img-blog.csdnimg.cn/20190608170945810.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>在上图中，需要注意的是，如果存在页表项，只是其对应的访问位为0的时候，在访问该页时，只会将访问位置为1。而出现页面置换时，操作完后，指针要下移一位。</p>
+<blockquote>
+<p>关于clock算法，还有其改进算法，称为二次机会法，由于笔者表达能力有限，这里给个视频讲解链接。 <a href="https://www.bilibili.com/video/av6538245/?p=29" target="_blank" rel="noopener">&gt;&gt;二次机会算法&lt;&lt;</a>，其思路和clock算法是很相似的。</p>
+<h3 id="最不常用算法（Least-Frequently-Used，LFU）"><a href="#最不常用算法（Least-Frequently-Used，LFU）" class="headerlink" title="最不常用算法（Least Frequently Used，LFU）"></a>最不常用算法（Least Frequently Used，LFU）</h3><p>最不常用算法并不是说这个算法不常用。。。</p>
+</blockquote>
+<p>其实，这也是对未来将出现的页面的另一种模拟。该算法认为，当前访问次数较少的页面，在未来也有较大概率不会被访问，于是，每次出现缺页异常时，选择访问次数最少的那个页面，并将之淘汰。</p>
+<p>举例如下，上标表示该页的访问次数：<br><img src="https://img-blog.csdnimg.cn/20190608173316700.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="2-全局页面置换算法"><a href="#2-全局页面置换算法" class="headerlink" title="2. 全局页面置换算法"></a>2. 全局页面置换算法</h2><p>所谓全局页面置换算法，就是指OS基于多个进程之间的考虑（即全局的思想），为进程分配<code>可变数目</code>的物理页帧。最终目的还是为了减少出现缺页异常的数量。</p>
+<hr>
+<p><img src="https://img-blog.csdnimg.cn/20190609122312916.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>下面介绍几个概念：</p>
+<h4 id="工作集（working-set）"><a href="#工作集（working-set）" class="headerlink" title="工作集（working set）"></a>工作集（working set）</h4><p>工作集指的是一个进程当前正在使用的逻辑页面的集合，可表示为一个二元函数$W(t,\triangle)$,其中$t$是进程当前执行的时刻，$\triangle$称为工作集窗口（working-set window），即一个定长的页面访问时间窗口。</p>
+<p>则：<br>$W(t,\triangle)$是指当前时刻t前的$\triangle$时间窗口中的所有访问页面组成的集合。<br>$|W(t,\triangle)|$是指工作集大学，即页面数量。<br><img src="https://img-blog.csdnimg.cn/20190609122915979.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>一般来说，进程的初始阶段，随着访问新页面的逐步建立，工作集的数量会增加，然后进程中间阶段会比较平稳，一旦又有新的页访问，工作集会产生一定波动，然后再保持平稳，整体呈以下图示状态：<br><img src="https://img-blog.csdnimg.cn/20190609123205521.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="常驻集"><a href="#常驻集" class="headerlink" title="常驻集"></a>常驻集</h4><p>常驻集指的是在当前某个时刻，进程实际驻留在内存当中的页面集合。</p>
+<blockquote>
+<p>常驻集和工作集的区别是，前者指在内存中的物理页，而工作集是指逻辑页。</p>
+</blockquote>
+<h3 id="工作集置换算法"><a href="#工作集置换算法" class="headerlink" title="工作集置换算法"></a>工作集置换算法</h3><p>该算法的思路是，在访存时，换出不在工作集中的页面；而在缺页时，换入缺失的页面。<br><img src="https://img-blog.csdnimg.cn/20190609123957200.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>如上图所示，稍加解释一下。在t=1时刻，由于缺页C，于是将之换入，在t=2时刻，由于C页面已经存在，是一次访存操作，因为工作集的窗口大小为4，所以当前的工作集为${d,a,c}$，于是需要将页面e替换出去，后面的操作同理。</p>
+<h3 id="缺页率置换算法（page-fault-frequency，PFF）"><a href="#缺页率置换算法（page-fault-frequency，PFF）" class="headerlink" title="缺页率置换算法（page fault frequency，PFF）"></a>缺页率置换算法（page fault frequency，PFF）</h3><p>该算法中，需要记录两个时间$t<em>{current}和t</em>{last}$，分别表示当前缺页时间和上一次产生缺页异常的时间。算法思路是：</p>
+<p>如果$t<em>{current}-t</em>{last}&gt;T$,则置换所有在$[t<em>{last},t</em>{current}]$间没有被访问过的页</p>
+<p>如果$t<em>{current}-t</em>{last} \le T$,则增加缺失的页到工作集中。</p>
+<p>这里的T指的是窗口大小。</p>
+<p>直观的一个理解是，当$t<em>{current}-t</em>{last}&gt;T$，这说明距离上一次产生缺页异常的时间较远，即在较长一段时间内没有发生缺页异常，于是将一些自上一次发生缺页异常以来，存在于工作集中又从未被访问过的页置换出去（因为它们很有可能不再会被访问了）；而当$t<em>{current}-t</em>{last} \le T$时，这说明距离上一次产生缺页异常的时间较近，，需要把缺失的页放进来。<br><img src="https://img-blog.csdnimg.cn/20190609125403243.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/06/16/Leetcode-30-串联所有单词的子串/" data-toggle="tooltip" data-placement="top" title="Leetcode-30-串联所有单词的子串">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/06/16/OS内存管理/" data-toggle="tooltip" data-placement="top" title="OS内存管理">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#操作系统" title="操作系统">操作系统</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

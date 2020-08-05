@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          OpenCV-py学习笔记（二）—— 核心运算/操作 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/10/26/OpenCV-py学习笔记（二）——核心运算操作/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#OpenCV" title="OpenCV">OpenCV</a>
+                        
+                    </div>
+                    <h1>OpenCV-py学习笔记（二）—— 核心运算/操作</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-10-26
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#图像的算术运算"><span class="toc-text">图像的算术运算</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-饱和加-cv2-add"><span class="toc-text">1.饱和加 cv2.add()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-图像混合-cv2-addWeighted"><span class="toc-text">2. 图像混合 cv2.addWeighted()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-图像位操作"><span class="toc-text">3. 图像位操作</span></a></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <p>@[TOC]</p>
+<h2 id="图像的算术运算"><a href="#图像的算术运算" class="headerlink" title="图像的算术运算"></a>图像的算术运算</h2><h3 id="1-饱和加-cv2-add"><a href="#1-饱和加-cv2-add" class="headerlink" title="1.饱和加 cv2.add()"></a>1.饱和加 cv2.add()</h3><p>OpenCV中的<code>add()</code>函数是饱和运算，也就是说，如果两个8位整数相加，超过了255，自动会截断成255.</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; x = np.<span class="built_in">uint</span>8([<span class="number">250</span>])</span><br><span class="line">&gt;&gt;&gt; y = np.<span class="built_in">uint</span>8([<span class="number">10</span>])</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; print cv2.add(x,y) # <span class="number">250</span>+<span class="number">10</span> = <span class="number">260</span> =&gt; <span class="number">255</span></span><br><span class="line">[[<span class="number">255</span>]]</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; print x+y          # <span class="number">250</span>+<span class="number">10</span> = <span class="number">260</span> % <span class="number">256</span> = <span class="number">4</span></span><br><span class="line">[<span class="number">4</span>]</span><br></pre></td></tr></table></figure>
+<h3 id="2-图像混合-cv2-addWeighted"><a href="#2-图像混合-cv2-addWeighted" class="headerlink" title="2. 图像混合 cv2.addWeighted()"></a>2. 图像混合 cv2.addWeighted()</h3><p>图像混合的数学表达式如下，原理就是将两张图片按照一定的比例（透明度）进行融合，产生的图片也一般会存在一种“透明”的感觉。<br><img src="https://img-blog.csdnimg.cn/20190801115510720.png#pic_center" alt="在这里插入图片描述"><br>在OpenCV中参数的表达与上式略有不同，有以下三个参数<code>α、β，γ</code>。<br><img src="https://img-blog.csdnimg.cn/20190801115743744.png#pic_center" alt="在这里插入图片描述"></p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">img1 = cv2.imread('ml.png')</span><br><span class="line">img2 = cv2.imread('opencv_logo.jpg')</span><br><span class="line"></span><br><span class="line">dst = cv2.addWeighted(img1,0.7,img2,0.3,0)</span><br><span class="line"></span><br><span class="line">cv2.imshow('dst',dst)</span><br><span class="line">cv2.waitKey(0)</span><br><span class="line">cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+<p>结果如下：<br><img src="https://img-blog.csdnimg.cn/20190801115855712.png" alt="在这里插入图片描述"><br>这里，我做了一个类似幻灯片淡入淡出效果的gif动图，由一张图动态过度到另一张，==一定记得把颜色通道翻转一下！！！== 代码如下：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">slide_view</span><span class="params">()</span></span><span class="symbol">:</span></span><br><span class="line">	img1 = cv2.resize(cv2.imread(<span class="string">'bear.jpg'</span>), (<span class="number">500</span>, <span class="number">500</span>))</span><br><span class="line">	img2 = cv2.imread(<span class="string">'OpenCV-logo.jpg'</span>)</span><br><span class="line"></span><br><span class="line">	fps = <span class="number">20</span></span><br><span class="line">	buff = []</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(fps)<span class="symbol">:</span></span><br><span class="line">		alpha = i / fps</span><br><span class="line">		beta = <span class="number">1</span> - i / fps</span><br><span class="line">		dst = cv2.addWeighted(img1, alpha, img2, beta, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">		cv2.imshow(<span class="string">'dst'</span>, dst)</span><br><span class="line">		<span class="comment"># 这里记得反转一下颜色通道，OpenCV中是BGR，imageio是RGB</span></span><br><span class="line">		buff.append(dst[<span class="symbol">:</span>, <span class="symbol">:</span>, <span class="symbol">:</span><span class="symbol">:-</span><span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">		cv2.waitKey(int(<span class="number">1000</span> / fps))</span><br><span class="line">	cv2.destroyAllWindows()</span><br><span class="line">	gif = imageio.mimsave(<span class="string">'logo2bear.gif'</span>, buff, <span class="string">'GIF'</span>, duration=<span class="number">0</span>.<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>这里效果图是gif不太好上传，你可以自己运行一下上述代码。</p>
+<h3 id="3-图像位操作"><a href="#3-图像位操作" class="headerlink" title="3. 图像位操作"></a>3. 图像位操作</h3><p>上述融合中有一个问题，就是会产生“透明”的效果，有时候我们又不想这样，而是直接把一个图片A放在图片B的上面，这时候位操作就发挥了作用，大致将一下思路（这里记待插入的前景图片为A，插入到的那个图片为B）：</p>
+<ol>
+<li>先取出图片B的ROI。    </li>
+<li>先将图片A灰度化（如果已经是灰度图当然就无需这步），记为grayA。</li>
+<li>将grayA二值化（取一个阈值，比如说10），小于10的像素为0，其他为1，记二值化后的图片为mask，为了后续需要，将mask按位取反得到mask_inv。</li>
+<li>利用<code>cv2.bitwise_and(roi, roi, mask=mask_inv)</code>将图片B的ROI区域变黑。注意：bitwise_and的运算机制如下：<br><img src="https://img-blog.csdnimg.cn/20190801130229208.png#pic_center" alt="在这里插入图片描述"></li>
+<li>利用<code>cv2.bitwise_and(imgA, imgA, mask=mask)</code>将图片A的前景取出。</li>
+<li>把前景加到背景变黑的区域。</li>
+</ol>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">def bitwise<span class="constructor">_ops()</span>:</span><br><span class="line">	# cv2.named<span class="constructor">Window('123', <span class="params">cv2</span>.WINDOW_NORMAL)</span></span><br><span class="line"></span><br><span class="line">	img = cv2.imread(<span class="string">"man.jpg"</span>)</span><br><span class="line">	img_logo = cv2.imread(<span class="string">"OpenCV-logo.jpg"</span>)</span><br><span class="line"></span><br><span class="line">	# ROI</span><br><span class="line">	rows, cols, channels = img_logo.shape</span><br><span class="line">	roi = img<span class="literal">[<span class="number">0</span>:<span class="identifier">rows</span>, <span class="number">0</span>:<span class="identifier">cols</span>]</span></span><br><span class="line"></span><br><span class="line">	# 新建一个logo的mask图片</span><br><span class="line">	img_logo_gray = cv2.cvt<span class="constructor">Color(<span class="params">img_logo</span>, <span class="params">cv2</span>.COLOR_BGR2GRAY)</span></span><br><span class="line">	cv2.imshow(<span class="string">"123"</span>, img_logo_gray)</span><br><span class="line">	cv2.wait<span class="constructor">Key(0)</span></span><br><span class="line">	ret, mask = cv2.threshold(img_logo_gray, <span class="number">10</span>, <span class="number">255</span>, cv2.THRESH_BINARY)</span><br><span class="line">	cv2.imshow(<span class="string">"123"</span>, mask)</span><br><span class="line">	cv2.wait<span class="constructor">Key(0)</span></span><br><span class="line">	mask_inv = cv2.bitwise<span class="constructor">_not(<span class="params">mask</span>)</span></span><br><span class="line">	cv2.imshow(<span class="string">"123"</span>, mask_inv)</span><br><span class="line">	cv2.wait<span class="constructor">Key(0)</span></span><br><span class="line"></span><br><span class="line">	# 先把背景的ROI区域变黑</span><br><span class="line">	img_bg = cv2.bitwise<span class="constructor">_and(<span class="params">roi</span>, <span class="params">roi</span>, <span class="params">mask</span>=<span class="params">mask_inv</span>)</span></span><br><span class="line">	cv2.imshow(<span class="string">"123"</span>, img_bg)</span><br><span class="line">	cv2.wait<span class="constructor">Key(0)</span></span><br><span class="line"></span><br><span class="line">	# 取出logo的前景</span><br><span class="line">	img_lg = cv2.bitwise<span class="constructor">_and(<span class="params">img_logo</span>, <span class="params">img_logo</span>, <span class="params">mask</span>=<span class="params">mask</span>)</span></span><br><span class="line">	cv2.imshow(<span class="string">"123"</span>, img_lg)</span><br><span class="line">	cv2.wait<span class="constructor">Key(0)</span></span><br><span class="line"></span><br><span class="line">	# 把logo前景放到变黑的背景图区域</span><br><span class="line">	dst = cv2.add(img_bg, img_lg)</span><br><span class="line">	img<span class="literal">[<span class="number">0</span>:<span class="identifier">rows</span>, <span class="number">0</span>:<span class="identifier">cols</span>]</span> = dst</span><br><span class="line"></span><br><span class="line">	cv2.imshow('<span class="number">123</span>', img)</span><br><span class="line">	cv2.wait<span class="constructor">Key(0)</span></span><br><span class="line">	cv2.destroy<span class="constructor">AllWindows()</span></span><br></pre></td></tr></table></figure>
+<p>效果如下：<br><img src="https://img-blog.csdnimg.cn/20190801130602185.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/10/26/OpenCV-py学习笔记（三）——图像处理（上）/" data-toggle="tooltip" data-placement="top" title="OpenCV-py学习笔记（三）—— 图像处理（上）">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/10/26/OpenCV-py学习笔记（四）——轮廓检测/" data-toggle="tooltip" data-placement="top" title="OpenCV-py学习笔记（四）—— 轮廓检测">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#OpenCV" title="OpenCV">OpenCV</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

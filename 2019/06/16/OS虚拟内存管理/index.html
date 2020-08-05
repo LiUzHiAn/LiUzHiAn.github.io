@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          OS虚拟内存管理 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/06/16/OS虚拟内存管理/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#操作系统" title="操作系统">操作系统</a>
+                        
+                    </div>
+                    <h1>OS虚拟内存管理</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-06-16
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#虚存管理"><span class="toc-text">虚存管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#覆盖技术-overlay"><span class="toc-text">覆盖技术 (overlay)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#介绍"><span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#不足"><span class="toc-text">不足</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#交换技术-swapping"><span class="toc-text">交换技术 (swapping)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#介绍-1"><span class="toc-text">介绍</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#不足-1"><span class="toc-text">不足</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#虚存技术"><span class="toc-text">虚存技术</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是代码局部性？"><span class="toc-text">什么是代码局部性？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#虚拟内存的管理"><span class="toc-text">虚拟内存的管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#缺页异常处理"><span class="toc-text">缺页异常处理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#虚存管理的开销"><span class="toc-text">虚存管理的开销</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考附录"><span class="toc-text">参考附录</span></a>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <p><em>说在前面的话：</em></p>
+<p><em>如果你对OS的一些基本概念在当初学习的时候都了然于胸，只是目前有点淡忘，你可以直接阅读本文；如果你对虚存管理不是很理解，请看我之前写的文章，涉及到了一些基本概念</em><br><a href="https://blog.csdn.net/qq_37174526/article/details/90606203" target="_blank" rel="noopener">OS内存管理</a><br><a href="https://blog.csdn.net/qq_37174526/article/details/90599365" target="_blank" rel="noopener">OS的中断、异常、系统调用</a></p>
+<h2 id="虚存管理"><a href="#虚存管理" class="headerlink" title="虚存管理"></a>虚存管理</h2><p>计算机内存越来越大，但是软件的内存开销也是随之增加的，计算机系统总是会出现内存不够的问题，于是出现了以下几种办法来解决内存空间不够的问题：</p>
+<ol>
+<li>覆盖（overlay）<br>应用程序手动把需要的指令和数据保存在内存中，这项技术的关键代表就是MS-DOS操作系统。</li>
+<li>交换（swapping）<br>OS自动把暂时不能执行的程序保存到外存中。</li>
+<li>虚拟内存（virtual  memory）<br>在有限容量的内存中，以页为单位自动状图更多更大的程序。</li>
+</ol>
+<p>下面一一叙述.</p>
+<h3 id="覆盖技术-overlay"><a href="#覆盖技术-overlay" class="headerlink" title="覆盖技术 (overlay)"></a>覆盖技术 (overlay)</h3><h5 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h5><p>覆盖技术的方法是，依据程序的逻辑结构，将程序划分为若干的功能模块，将不会同时执行的模块放在一块共享内存区域内。覆盖技术中主要设计两大部分：</p>
+<ul>
+<li>必选部分（常用部分）的代码和数据的常驻内存</li>
+<li>可选部分（非常用功能）放在其他程序模块中，只在需要用到的时候装入内存 </li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20190605161942673.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>这里主要是考虑代码之间的调用逻辑，比如上图，有一个程序，一共有A~F几个模块，模块之间的调用信息如树状图所示。于是我们可以确地，B和C肯定不会在同一时刻调用，但总有一个会被调用，DEF同理，那么我们只需要开一个空间，空间的大小是多少呢？就是可能被调用的程序的最大内存空间。</p>
+<h5 id="不足"><a href="#不足" class="headerlink" title="不足"></a>不足</h5><p>覆盖技术还是比较老的技术，其中增加了程序员的编程困难，需要去划分功能模块，确定他们之间复杂的调用关系，<code>个人感觉，也不太符合当今OOP的思想</code>。此外，这种从外存装入覆盖模块的时间开销比较大。</p>
+<h3 id="交换技术-swapping"><a href="#交换技术-swapping" class="headerlink" title="交换技术 (swapping)"></a>交换技术 (swapping)</h3><h5 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h5><p>交换技术和覆盖技术有很大的相似之处，关键区别是，交换是针对某个进程来说的（process），而覆盖技术是对某个进程中的某些模块来说的（module），如下图：<br><img src="https://img-blog.csdnimg.cn/20190605165055618.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>每次swap in和swap out的对象都是某个进程（或者说程序），而且这一过程完全由OS来管理，不需要程序员控制。说明一点，换入和换出的物理内存可以是不一样的（也应该是不一样的），地址空间可以使用的基于分页式的动态地址映射来完成。</p>
+<h4 id="不足-1"><a href="#不足-1" class="headerlink" title="不足"></a>不足</h4><p>交换技术的粒度可能太大，增加了CPU的开销。</p>
+<h2 id="虚存技术"><a href="#虚存技术" class="headerlink" title="虚存技术"></a>虚存技术</h2><p>虚存技术可以看做是上面两种技术的结合，首先，它也是类似swap的这种换入换出机制，不过粒度不是一个进程，而是我们之前提到的<code>页</code>或者说<code>帧</code>；此外，虚存也是由OS来管理的，我们程序员要做的，就是尽量写出满足<code>局部性较好</code>的代码。</p>
+<h4 id="什么是代码局部性？"><a href="#什么是代码局部性？" class="headerlink" title="什么是代码局部性？"></a>什么是代码局部性？</h4><p>所谓代码的局部性，就是尽量在写代码时，让程序在未来执行的过程中的一个较短时间内，所执行的指令地址和指令的操作数地址尽量在一个小范围区域内，这样CPU可以在较短的时间内访问数据及执行指令。如果你不是很理解，请看下面这个例子：</p>
+<p>我们都知道，C语言中的数组在内存空间中是按行优先的顺序进行存储的，即a[0]、a[1]、a[2]…a[n]的顺序，二维数组类似，可以看作是一维数组的数组，即a[0][0]、a[0][1]、a[0][2]…a[0][n]，a[1][0]、a[1][1]、a[1][2]…a[1][n]，a[3][0]、a[3][1]、a[3][2]…a[3][n]的顺序。</p>
+<p>现在,假设我们的机器是32位的，所以int就是4字节长度了，并且每个进程只能被分配到一个物理帧，假设页面大小为4K（还记得页的概念吗? 他是虚拟内存中的一个概念，和物理内存帧的大小一致），也就是1024个int的长度，现在你在写程序的时候，开了一个<code>int array[1024][1024]</code>,这就是1024个页的大小了，数组的每一行占一页。</p>
+<p>现在，我们要遍历这个数组，你可以按照以下两种方式。</p>
+<ol>
+<li>按行遍历<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">fot(int <span class="built_in">i</span>=<span class="number">0</span>;<span class="built_in">i</span>&lt;<span class="number">1024</span>;<span class="built_in">i</span>++)</span><br><span class="line">&#123;</span><br><span class="line">	fot(int <span class="built_in">j</span>=<span class="number">0</span>;<span class="built_in">j</span>&lt;<span class="number">1024</span>;<span class="built_in">j</span>++)</span><br><span class="line">	&#123;</span><br><span class="line">			cout&lt;&lt;array[<span class="built_in">i</span>][<span class="built_in">j</span>];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>按列遍历<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">fot(int <span class="built_in">j</span>=<span class="number">0</span>;<span class="built_in">j</span>&lt;<span class="number">1024</span>;<span class="built_in">j</span>++)</span><br><span class="line">&#123;</span><br><span class="line">	fot(int <span class="built_in">i</span>=<span class="number">0</span>;<span class="built_in">i</span>&lt;<span class="number">1024</span>;<span class="built_in">i</span>++)</span><br><span class="line">	&#123;</span><br><span class="line">			cout&lt;&lt;array[<span class="built_in">i</span>][<span class="built_in">j</span>];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+如果按列遍历，那么我们每得到下一个值，都会因为需要遍历的数据在下一个页中，总共会发生缺页故障1024*1024次，而按行遍历智慧产生1024次，按列遍历需要频繁的页换入换出，这样的代码就是<code>局部性不好</code>的代码。这也是在虚拟内存管理方式下，我们程序员需要关注的地方，写出更好的代码。</li>
+</ol>
+<h3 id="虚拟内存的管理"><a href="#虚拟内存的管理" class="headerlink" title="虚拟内存的管理"></a>虚拟内存的管理</h3><p>虚存的管理是基于段或基于页式的，大多数教科书上都是以按页的模式来讲解的，在该基础上，增加请求调页和页面置换的思路如下：</p>
+<ul>
+<li>当用户程序需要加载到内存时，只加载一部分页，就开始启动程序。</li>
+<li>进程在运行的过程中，如果发现有数据或代码不存在内存时，则向系统发出缺页异常请求。（异常是由用户程序产生的）</li>
+<li>os处理缺页异常，将外存相应的页换入到内存帧中</li>
+</ul>
+<p>所以，关键就是如何处理缺页异常？在讲解具体缺页异常如何处理之前，我们有必要对之前讲过的页表复习一下（还记得吗？页表就是实现虚拟地址到物理地址映射时的一个工具）<br><img src="https://img-blog.csdnimg.cn/20190605233305781.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><em>解释：</em></p>
+<ol>
+<li>逻辑页号：虚拟内存内存中的概念，也就是用户进程看到的内存空间，实际运行时会将一个<code>(virtualPageNum,offset)</code>的二元组去查页表，得到实际内存地址。</li>
+<li>驻留位：指的是当前该页号i对应的页是否真的在内存里面，如果在，驻留位为1，否则为0。这就是判断是否出现缺页异常的关键。</li>
+<li>修改位：这个主要是用在页的swap-out过程。你想，假如一个页在运行的时候先从外存（硬盘）导入内存中，然后运行的时候只是简单的读了下这个页中的信息，而没作相应修改，这样，在这个页被swap-out的时候，为了减少磁盘I/O，我们就可以不用将这个页当前内存中的数据导出到导入时对应的磁盘空间中去了。运行时修改了页，修改位为1，否则为0.</li>
+<li>访问位：这个是用来标记该页是否被访问，主要是用在页替换算法中的。</li>
+<li>保护位：有些页可能是只读、可读写、可执行等。</li>
+<li>物理页帧号：该页对应的物理内存地址。</li>
+</ol>
+<h3 id="缺页异常处理"><a href="#缺页异常处理" class="headerlink" title="缺页异常处理"></a>缺页异常处理</h3><p><img src="https://img-blog.csdnimg.cn/20190605234941755.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ol>
+<li>若在内存中如果有空闲的物理帧（不需要换入换出，就是简单的导入），就分配一个物理页帧，记为f，转向第5步。</li>
+<li>（此时必定是需要换入换出页）依据页面置换算法选择即将被替换的物理页帧f，以及对应的逻辑页q</li>
+<li>如果q被修改过（修改位==1），则把它写会外存</li>
+<li>修改q的页表项驻留位为0（因为已经被换出了）</li>
+<li>将新来的需要访问的页p装入到物理页帧f中</li>
+<li>修改p的页表项驻留位为1（因为现在被换入了），并设置其对应的物理页帧为f</li>
+<li>重新执行缺页异常前的指令。</li>
+</ol>
+<p>其实图示已经很清楚了，没看明白的话，可以参考我上面写的解释，特别是括号里面的东西。</p>
+<h4 id="虚存管理的开销"><a href="#虚存管理的开销" class="headerlink" title="虚存管理的开销"></a>虚存管理的开销</h4><p>我们都知道，内存的访问时间是快的(在ns级别)，而硬盘的操作较慢（在ms级别），之前差了6个数量级，由此可知，虚拟内存的管理方式的开销在于出现缺页异常时带来的硬盘读写耗时，有如下图的总结公式：<br><img src="https://img-blog.csdnimg.cn/20190606000542413.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>观察EAT表达式可知，p越小，则EAT越小。p怎么减小？尽量让他少缺页。怎么少缺页？right， 代码局部性好！</p>
+<h1 id="参考附录"><a href="#参考附录" class="headerlink" title="参考附录"></a>参考附录</h1><p>[1] 清华大学 操作系统(Operating Systems) (2019) 第八讲 虚拟存储概念 <a href="http://os.cs.tsinghua.edu.cn/oscourse/OS2019spring/lecture08" target="_blank" rel="noopener">http://os.cs.tsinghua.edu.cn/oscourse/OS2019spring/lecture08</a></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/06/16/OS的中断、异常、系统调用/" data-toggle="tooltip" data-placement="top" title="OS的中断、异常、系统调用">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/06/16/OS进程控制/" data-toggle="tooltip" data-placement="top" title="OS进程控制">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#操作系统" title="操作系统">操作系统</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

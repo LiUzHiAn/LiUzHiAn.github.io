@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/page/8/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg-5.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
+                <div class="site-heading">
+                    <h1>LiuZhian&#39;s Blog</h1>
+                    <!--<hr class="small">-->
+                    <span class="subheading">Welcome to my home~</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
+
+<!-- USE SIDEBAR -->
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                post-container
+            ">
+            
+                <!-- Main Content -->
+
+
+<div class="post-preview">
+
+    <a href="/2019/03/13/LeetCode-22-括号生成/">
+        <h2 class="post-title">
+            LeetCode-22-括号生成
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            题目描述给出 n 代表生成括号的对数，请你写出一个函数，使其能够生成所有可能的并且有效的括号组合。
+例如，给出 n = 3，生成结果为：1234567[  "((()))",  "(()())",  "(())()",  "()(())",  "()()()"]
+参考https://blog.csdn.net/yutianzuijin/article/details/13161721
+解法很......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-03-13
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/03/13/LeetCode-24-Swap Nodes in Pairs/">
+        <h2 class="post-title">
+            LeetCode-24-Swap Nodes in Pairs
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            题目给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。
+示例:给定 1-&gt;2-&gt;3-&gt;4, 你应该返回 2-&gt;1-&gt;4-&gt;3.
+
+说明:
+- 你的算法只能使用常数的额外空间。
+- 你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+
+坑点&amp;思路一开始理解错了，也没仔细看题目，两两交换，那不就是直接像冒泡一样，那么结果就是最前一个......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-03-13
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/03/13/LeetCode-29-两数相除/">
+        <h2 class="post-title">
+            LeetCode-29-两数相除
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            描述给定两个整数，被除数 dividend 和除数 divisor。将两数相除，要求不使用乘法、除法和 mod 运算符。
+返回被除数 dividend 除以除数 divisor 得到的商。1234567示例 1:输入: dividend = 10, divisor = 3输出: 3示例 2:输入: dividend = 7, divisor = -3输出: -2说明:
+被除数和除数均为 32......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-03-13
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/03/13/计算机网络-一文读懂网络报问中的检验和(checksum)/">
+        <h2 class="post-title">
+            一文读懂网络报问中的检验和（checksum）—— 原理+举例+代码
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            如何求解网络报文中的checksum？最近在学习计算机网络，在运输层和网络层部分存在各种协议TCP、UDP、IP、ICMP等等，而在这些报文中都存在一个公共的字段——检验和（checksum）。接下来，我将从什么是检验和、检验和怎么算、检验和计算示例、python代码计算检验和这几个部分详细介绍。
+什么是检验和？检验和是存在于各种报文中的一个字段，它存在的目的是验证报文在网络传输过程中的完整......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-03-13
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/11/15/LeetCod-4-两个排序数组的中位数/">
+        <h2 class="post-title">
+            LeetCod-4-两个排序数组的中位数
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            题目内容描述给定两个大小为 m 和 n 的有序数组 nums1 和 nums2 。
+请找出这两个有序数组的中位数。要求算法的时间复杂度为 O(log (m+n)) 。
+你可以假设 nums1 和 nums2 均不为空。
+示例：
+示例1
+
+1234nums1 = [1, 3]nums2 = [2]中位数是 2.0
+
+示例2
+
+1234nums1 = [1, 2]nums2 = [3, 4]中位......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2018-11-15
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/11/15/LeetCode-14-最长公共前缀/">
+        <h2 class="post-title">
+            LeetCode-14-最长公共前缀
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            描述编写一个函数来查找字符串数组中的最长公共前缀。
+如果不存在公共前缀，返回空字符串 “”。
+示例1：12输入: ["flower","flow","flight"]输出: "fl"
+示例2：123输入: ["dog","racecar","car"]输出: ""解释: 输入不存在公共前缀。
+说明所有输入只包含小写字母 a-z
+so easy的题12345678910111213141516......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2018-11-15
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/11/15/LeetCode-12&13-整数与罗马数字相互转化/">
+        <h2 class="post-title">
+            LeetCode-12&13-整数与罗马数字相互转化
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            说明如果你在写这个程序的时候，发现你在IDE上运行结果完全正确，而在网站上总是Wrong Answer，恭喜你，这将让你倍涨经验（起码我找了很久才发现这个问题）
+字典是存放顺序与你输入的顺序是不一样的！！！迭代读取的时候一定要小心！！！！！下面讲下经过。。。
+描述罗马数字包含以下七种字符： I， V， X， L，C，D 和 M。
+12345678字符          数值I        ......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2018-11-15
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/11/15/LeetCode-2-两数相加/">
+        <h2 class="post-title">
+            LeetCode-2-两数相加
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            其实很早之前就接触到了LeetCode，原来也刷过一些题，但是乱七八糟的事太多了也没空刷一刷，最近在家没事准备玩一玩了。好吧，我承认我python学的不好，一天速成的（OOP的python风格我都不太记得了），于是选择了用python，希望可以加强一下我的渣python。
+Okay，闲话不多说，今天写的也是一个比较简单的题目，LeetCode-2-两数相加。
+
+题目内容描述给定两个非空链表来......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2018-11-15
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/11/15/LeetCode-3-最长不重复子串/">
+        <h2 class="post-title">
+            LeetCode-3-最长不重复子串
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            题目内容描述给定一个字符串，找出不含有重复字符的最长子串的长度。
+示例：给定 “abcabcbb” ，没有重复字符的最长子串是 “abc” ，那么长度就是3。
+给定 “bbbbb” ，最长的子串就是 “b” ，长度是1。
+给定 “pwwkew” ，最长子串是 “wke” ，长度是3。请注意答案必须是一个子串，”pwke” 是 子序列  而不是子串。
+思路 1——暴力求解粗略的想法就是，把字符......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2018-11-15
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/11/15/LeetCode-5-最长回文子串/">
+        <h2 class="post-title">
+            LeetCode-5-最长回文子串
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            题目内容描述给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为1000。
+示例：
+示例1
+
+123输入: "babad"输出: "bab"注意: "aba"也是一个有效答案。
+
+示例2
+
+12输入: "cbbd"输出: "bb"
+解法1 —— 暴力法我觉得这应该是最开始的想法吧，简单粗暴，两个指针把所有可能的子串都定出来，然后写个判断是否是回文的函数。缺点就是时间复......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2018-11-15
+    </p>
+
+</div>
+<hr>
+
+
+
+<!-- Pager -->
+
+<ul class="pager">
+    
+        <li class="previous">
+            <a href="/page/7/">&larr; Newer Posts</a>
+        </li>
+    
+    
+        <li class="next">
+            <a href="/page/9/">Older Posts &rarr;</a>
+        </li>
+    
+</ul>
+
+
+
+                <!-- 如果开启评论功能 -->
+                
+
+            </div>
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-3 col-lg-offset-0
+                col-md-3 col-md-offset-0
+                col-sm-12
+                col-xs-12
+                sidebar-container
+            ">
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                            
+                            <a href="/tags/#计算机图形学" title="计算机图形学" rel="2">计算机图形学</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#Java" title="Java" rel="13">Java</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#LeetCode" title="LeetCode" rel="36">LeetCode</a>
+                            
+                        
+                            
+                            <a href="/tags/#Object Detection" title="Object Detection" rel="4">Object Detection</a>
+                            
+                        
+                            
+                            <a href="/tags/#操作系统" title="操作系统" rel="10">操作系统</a>
+                            
+                        
+                            
+                            <a href="/tags/#OpenCV" title="OpenCV" rel="4">OpenCV</a>
+                            
+                        
+                            
+                        
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#生活" title="生活" rel="3">生活</a>
+                            
+                        
+                            
+                            <a href="/tags/#Anomaly Detection" title="Anomaly Detection" rel="2">Anomaly Detection</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#数据库" title="数据库" rel="5">数据库</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#汇编" title="汇编" rel="3">汇编</a>
+                            
+                        
+                            
+                            <a href="/tags/#计算机网络" title="计算机网络" rel="2">计算机网络</a>
+                            
+                        
+                            
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Short About -->
+                <section class="visible-md visible-lg">
+                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
+                    <div class="short-about">
+
+                        
+                            <img src="/img/hachi.jpg" />
+                        
+						
+						<!-- Music Player -->
+						
+						
+                        
+                            <p>Learn for life!</p>
+                        
+
+                        <!-- SNS Link -->
+                        <ul class="list-inline">
+                            
+                            
+                            
+                                <li>
+                                    <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa  fa-stack-1x fa-inverse">知</i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+
+                            
+                                <li>
+                                    <a target="_blank" href="http://weibo.com/u/1952886932">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+							
+							
+                                <li>
+                                    <a target="_blank" href="https://leetcode-cn.com/u/liu_zhian">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-code fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+							
+                            
+
+                            
+                                <li>
+                                    <a target="_blank"  href="https://github.com/LiUzHiAn">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+                            
+                            
+                            
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+        
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

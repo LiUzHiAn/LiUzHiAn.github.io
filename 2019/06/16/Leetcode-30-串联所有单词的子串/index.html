@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Leetcode-30-串联所有单词的子串 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/06/16/Leetcode-30-串联所有单词的子串/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#LeetCode" title="LeetCode">LeetCode</a>
+                        
+                    </div>
+                    <h1>Leetcode-30-串联所有单词的子串</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-06-16
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目"><span class="toc-text">题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可能会想到的办法"><span class="toc-text">可能会想到的办法</span></a></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><hr>
+<div class="content__2ebE"><div><p>给定一个字符串&nbsp;<strong>s&nbsp;</strong>和一些长度相同的单词&nbsp;<strong>words。</strong>找出 <strong>s </strong>中恰好可以由&nbsp;<strong>words </strong>中所有单词串联形成的子串的起始位置。</p>
+
+<p>注意子串要与&nbsp;<strong>words </strong>中的单词完全匹配，中间不能有其他字符，但不需要考虑&nbsp;<strong>words&nbsp;</strong>中单词串联的顺序。</p>
+
+<p>&nbsp;</p>
+<p><strong>示例 1：</strong></p>
+
+<pre><strong>输入：
+  s =</strong> "barfoothefoobarman",
+<strong>  words = </strong>["foo","bar"]
+<strong>输出：</strong><code>[0,9]</code>
+<strong>解释：</strong>
+从索引 0 和 9 开始的子串分别是 "barfoor" 和 "foobar" 。
+输出的顺序不重要, [9,0] 也是有效答案。
+</pre>
+
+<p><strong>示例 2：</strong></p>
+
+<pre><strong>输入：
+  s =</strong> "wordgoodgoodgoodbestword",
+<strong>  words = </strong>["word","good","best","word"]
+<code><span style=""><strong>输出：</strong></span>[]</code>
+</pre>
+</div></div>
+
+<h2 id="可能会想到的办法"><a href="#可能会想到的办法" class="headerlink" title="可能会想到的办法"></a>可能会想到的办法</h2><p>开始，可能会想，将words中的所有单词去进行全排列，然后再用排列好的字符串作为待匹配串去s中找，子串匹配的话，KMP算法就好了，时间复杂度是O（n）级别的，当然KMP算法里面求next数组是O（m）级别的（假设待匹配串的长度为m），KMP算法可以看我之前写的一篇文章<a href="https://blog.csdn.net/qq_37174526/article/details/90141833" target="_blank" rel="noopener">&gt;KMP子串匹配&lt;</a>，所以如果这里用KMP算法的话，时间主要会花在将words中的所有单词去进行全排列上，是O（num!）级别的（这里假设words数组一共包含num个单词）。这种方法我没试过，不知道行不行，题目也好像没怎说words长度的数量级。</p>
+<p>因为这道题是被分类在LeetCode的双指针category里的，所以，还是想想双指针怎么用在这个场景中，这里参考了<a href="https://blog.csdn.net/sinat_36811967/article/details/86600761" target="_blank" rel="noopener">&gt;这篇博客&lt;</a>中的思路，我这里用C++实现的，大致讲下思想：</p>
+<p>因为题目中说了，words里面的各个单词之间如何组合是不重要的，可以打乱顺序，但是我们带球的是s串的一个子串，这个子串中间是不能被劈开的，必须是连续的。</p>
+<p>以下以示例1为例说明：</p>
+<p>首先，统计一下words词汇列表里面各单词的出现次数，我们在s串中匹配时是按单词为基本单位的。这里选用字典就好，python实现会很方便，c++的话用STL里面的map数据结构即可。<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">words_dict<span class="string">[“foo”]</span>=<span class="number">1</span></span><br><span class="line">words_dict<span class="string">[“bar”]</span>=<span class="number">1</span></span><br></pre></td></tr></table></figure><br>然后，双指针的任务到了，最开始左右指针指向一个地方。指针移动的过程中是以单词长度为单位的，因为words数组里面的单词长度都是一样的。先移动right，移动的过程中，匹配到了某个单词，就把该单词的出现次数也统计到一个新的字典（或者说map）里面，如果和words中的统计数量一样，那就是一个成功匹配，返回当前left下标，然后再右移left指针，继续往后匹配（别忘了更新left指针扫过的单词出现次数，即减1）。</p>
+<p><img src="https://img-blog.csdnimg.cn/2019051520273560.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>当然，如果在移动right的过程中，扫过的单词根本没在words里面出现过，那right继续右移一个单词长度，并且把left移到和right一样的地方，如下图left’，right’和黄色区域所示（可以看作是把前面的9个字符全切掉，从现在一个新的位置重新开始了）：<br><img src="https://img-blog.csdnimg.cn/20190515202342931.png" alt="在这里插入图片描述"></p>
+<p>还有就是，如果在right移动的过程中发现，某个单词出现的次数比words还多，那必须得移动left指针，让这个出现次数多了的单词出现次数减少。移到什么时候呢？是的，次数不比words中出现次数多即可，就像下面这种状态：<br><img src="https://img-blog.csdnimg.cn/20190515203020544.png" alt="在这里插入图片描述"><br>当然，还有可能出现下面这种情况，这里也肯定是可能出现的，假设words中每个单词的长度为r，所以left和right从0~（r-1）这几个下标分别开始寻找：<br><img src="https://img-blog.csdnimg.cn/20190515203355517.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>主要思路就是这样，看python代码可能会对算法的思路看的更清晰，我也推荐你看<a href="https://blog.csdn.net/sinat_36811967/article/details/86600761" target="_blank" rel="noopener">&gt;这篇博客&lt;</a>中的代码</p>
+<p>下面是我用c++实现的，用到了vector和map两种数据结构，非常简单的运用了一下，写代码时注意一下边界情况，如果words或s为空，那么返回空。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;map&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; findSubstring(<span class="built_in">string</span> s, <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; words) &#123;</span><br><span class="line">		<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; result;</span><br><span class="line">		<span class="keyword">if</span>(words.size()==<span class="number">0</span> || s.length()==<span class="number">0</span>)   <span class="comment">// 输入有空值</span></span><br><span class="line">			<span class="keyword">return</span> result;</span><br><span class="line">		<span class="comment">// 先统计words的信息</span></span><br><span class="line">		<span class="built_in">map</span>&lt;<span class="built_in">string</span>,<span class="keyword">int</span>&gt; words_map;</span><br><span class="line">		<span class="keyword">int</span> word_len=words[<span class="number">0</span>].length();  <span class="comment">// 单词长度</span></span><br><span class="line">		<span class="keyword">int</span> word_num=words.size();		 <span class="comment">// 单词数量</span></span><br><span class="line">		<span class="keyword">if</span>(word_len&gt;s.length())			<span class="comment">// 如果单词长度比s长度还长，也返回空</span></span><br><span class="line">			<span class="keyword">return</span> result; </span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;::iterator it = words.begin();it != words.end();it++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(words_map.count(*it))  <span class="comment">// 如果存在该键，对应统计出现次数+1</span></span><br><span class="line">				words_map[*it]++;</span><br><span class="line">			<span class="keyword">else</span>                      <span class="comment">// 否则添加一个键</span></span><br><span class="line">				words_map[*it]=<span class="number">1</span>;	</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; word_len;i++)   </span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">int</span> left = i, right = i;    <span class="comment">// 双指针，开始时，左右指针全在最左侧</span></span><br><span class="line">			<span class="keyword">int</span> cur_num = <span class="number">0</span>;		   <span class="comment">// 已经匹配成功的单词数</span></span><br><span class="line">			<span class="built_in">map</span>&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt; s_map;</span><br><span class="line">			<span class="built_in">string</span> right_str, left_string;</span><br><span class="line">			<span class="keyword">while</span> (right &lt;= s.length() - word_len)   <span class="comment">// 当右指针还没到最后一个</span></span><br><span class="line">			&#123;</span><br><span class="line">				right_str = s.substr(right, word_len);</span><br><span class="line">				<span class="comment">// 如果right_str根本不存在于words中，那双指针同时右移,并且回到同一起点</span></span><br><span class="line">				<span class="keyword">if</span> (!words_map.count(right_str))</span><br><span class="line">				&#123;</span><br><span class="line">					right += word_len;</span><br><span class="line">					left=right;</span><br><span class="line">					cur_num=<span class="number">0</span>;  <span class="comment">// 清空重来</span></span><br><span class="line">					s_map.clear();</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">				&#123;</span><br><span class="line">					<span class="comment">// right_str匹配，做统计工作</span></span><br><span class="line">					<span class="keyword">if</span> (!s_map.count(right_str))  <span class="comment">// 如果s_map中还没有当前键</span></span><br><span class="line">						s_map.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(right_str, <span class="number">1</span>));</span><br><span class="line">					<span class="keyword">else</span>    <span class="comment">// s_map中有当前键，则统计出现次数+1</span></span><br><span class="line">						s_map[right_str] += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">					cur_num += <span class="number">1</span>;			<span class="comment">// 匹配成功的数量+1</span></span><br><span class="line">					right += word_len;      <span class="comment">// 右指针移动，继续往下匹配</span></span><br><span class="line">					</span><br><span class="line">					<span class="comment">// 如果当前出现次数多于words中出现次数，必然之前曾统计过，删除掉之前的一个，指针右移</span></span><br><span class="line">					<span class="keyword">if</span> (s_map[right_str] &gt; words_map[right_str])  </span><br><span class="line">					&#123;</span><br><span class="line">						<span class="comment">// 一定注意！！！这里要是while循环，例如s=barfoofoothe，left=0，right=9时，</span></span><br><span class="line">						<span class="comment">// 如果foo太多，可能只移一次，当前匹配的foo次数并没减少</span></span><br><span class="line">						<span class="keyword">while</span> (s_map[right_str] &gt; words_map[right_str])</span><br><span class="line">						&#123;</span><br><span class="line">							<span class="built_in">string</span> left_str = s.substr(left, word_len);</span><br><span class="line">							s_map[left_str]--;</span><br><span class="line">							cur_num--;</span><br><span class="line">							left += word_len;</span><br><span class="line">						&#125;</span><br><span class="line">						</span><br><span class="line">					&#125;</span><br><span class="line"></span><br><span class="line">					<span class="keyword">if</span> (cur_num == word_num)</span><br><span class="line">					&#123;</span><br><span class="line">						<span class="comment">// 匹配到就放入结果集合</span></span><br><span class="line">						result.push_back(left);  </span><br><span class="line">						<span class="comment">// 继续右移左指针</span></span><br><span class="line">						s_map[s.substr(left,word_len)]--;</span><br><span class="line">						left+=word_len;</span><br><span class="line">						cur_num--;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">return</span> result;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Solution solution;</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">string</span> s = <span class="string">"wordgoodgoodgoodbestword"</span>;</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; word;</span><br><span class="line">	word.push_back(<span class="string">"word"</span>);</span><br><span class="line">	word.push_back(<span class="string">"good"</span>);</span><br><span class="line">	word.push_back(<span class="string">"best"</span>);</span><br><span class="line">	word.push_back(<span class="string">"good"</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; rs=solution.findSubstring(s,word);</span><br><span class="line">	<span class="keyword">for</span> (<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::iterator it = rs.begin();it != rs.end();it++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">cout</span>&lt;&lt;*it&lt;&lt;<span class="string">" "</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/10/24/hello-world/" data-toggle="tooltip" data-placement="top" title="欢迎来到我的博客~">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/06/16/OS之页面置换算法/" data-toggle="tooltip" data-placement="top" title="OS之页面置换算法">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#LeetCode" title="LeetCode">LeetCode</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

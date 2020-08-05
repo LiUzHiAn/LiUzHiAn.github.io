@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/page/2/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg-5.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
+                <div class="site-heading">
+                    <h1>LiuZhian&#39;s Blog</h1>
+                    <!--<hr class="small">-->
+                    <span class="subheading">Welcome to my home~</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
+
+<!-- USE SIDEBAR -->
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                post-container
+            ">
+            
+                <!-- Main Content -->
+
+
+<div class="post-preview">
+
+    <a href="/2020/03/17/CG-Lecture5&6-Rasterization/">
+        <h2 class="post-title">
+            GAMES101笔记-Lecture5&6-光栅化
+        </h2>
+        <h3 class="post-subtitle">
+            现代图形学入门
+        </h3>
+        <div class="post-content-preview">
+            1.光栅化1.1定义在经过了MVP变换之后，我们需要把3维空间中的任意一个点转到屏幕2维空间上对应的一个位置来，一般假设空间中的物体是由一个一个的三角形组成的，很多的三角形就组成了一个三角形网格(triangle mesh)，当然，也是有多边形网格的(polygon mesh)。下面的海豚就是一个三角形网格例子：
+在把某个空间中的三角形转到了屏幕上后（只关心x和y坐标），我们要做的就是把三角......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-03-17
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2020/03/14/CG-Lecture4-Transformation(Cont.)/">
+        <h2 class="post-title">
+            GAMES101笔记-Lecture4-基本变换
+        </h2>
+        <h3 class="post-subtitle">
+            现代图形学入门
+        </h3>
+        <div class="post-content-preview">
+            1. 3D旋转如果我们用齐次坐标(homegeneous coordinates)来表示3D空间中的点和向量，点的齐次坐标表达形式为$(x, y, z, 1)^{\top}$,而向量的齐次坐标表达形式为$(x, y, z, 0)^{\top}$
+通常来说，假设有3D空间中点的齐次坐标$(x, y, z, w)^{\top}$(其中$w$ !=0),我们可以转化得到其对应的普通坐标点$(x/w......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-03-14
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2020/03/10/RESTful-API/">
+        <h2 class="post-title">
+            RESTful API 实践
+        </h2>
+        <h3 class="post-subtitle">
+            Theory with Aciton
+        </h3>
+        <div class="post-content-preview">
+            1.定义REST是REpresentational State Transfer的首字母缩写，通常中文翻译为表征性状态转移，是一种分布式超媒体系统的架构风格，是由 Roy Fielding 在2000年提出的概念。REST指定了关于系统组织的一些约束条件和原则，REST本身并没有创造什么新的技术或者组件，一个系统如果满足了REST中的约束和设计原则，我们就可以称这个系统的RESTful的。虽......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-03-10
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2020/03/04/找出列表中的所有非0区间/">
+        <h2 class="post-title">
+            找出列表中的所有非0区间
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            找出列表中的所有非0区间1. 题目描述这个题目其实是我自己定义出来的，然后再Stack Overflow上看到一个很巧妙的解决思路，在这里记一下。
+大概是这样，在视频异常检测的任务中，你大概率会遇到这样的场景，比如一个视频中，有中间的某些段落是异常的（标记为1），而剩下的是正常的（标记为0）。现在我们需要把那些异常的段的起始帧和结束帧位置找到，也就是在[0...0,1...1,0...0,1......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-03-04
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2020/02/27/LeetCode-105-根据先序和中序遍历构造树/">
+        <h2 class="post-title">
+            LeetCode-105-根据先序和中序遍历构造树
+        </h2>
+        <h3 class="post-subtitle">
+            二叉树的3种遍历方式间的关系
+        </h3>
+        <div class="post-content-preview">
+            LeetCode-105-根据先序和中序遍历构造树1. 题目描述很简单的需求，给出一个二叉树的先序和中序遍历结果，返回这颗二叉树。123456789101112输入:前序遍历 preorder = [3,9,20,15,7]中序遍历 inorder = [9,3,15,20,7]输出:     3   / \  9  20    /  \   15   7
+2. 思路手动去分析倒是不难，我觉......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-02-27
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2020/02/26/接口的继承和抽象类/">
+        <h2 class="post-title">
+            接口的继承和抽象类
+        </h2>
+        <h3 class="post-subtitle">
+            Java
+        </h3>
+        <div class="post-content-preview">
+            0.闲谈2020年，一场突如起来的疫情，打乱了全国千千万万人的正常生活，也很庆幸，自己在情况最危险的时候之前，离开了武汉回到了家中。所有人都强制要求不能出门，经过1个多月的最严格的全方面把控，疫情似乎逐渐正在消退，十分感激那些奋战在前线的白衣工作者和千千万工作人员，中国加油！
+
+1.接口之间的继承最近在做SimpleDB这个项目，让我印象很深的地方就是接口和具体实现类的设计这一块。其中，有一......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-02-26
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2020/01/15/学习的乐趣/">
+        <h2 class="post-title">
+            对新事物的认知~
+        </h2>
+        <h3 class="post-subtitle">
+            为什么人会喜欢学习？
+        </h3>
+        <div class="post-content-preview">
+            闲谈今天早上起床，看到导师分享的一篇文章，大概将的是另一位计算机领域的老师对科研的感受，文章中把科研的过程比作是做饭，很多味道，辛、甜、苦等等，我也记得不是很清，但文中的有一句话让我很有感触，大概就是说，最开始那种对科研的兴趣逐渐地消逝了，发过一篇文章以后，再次写论文、发论文这些也不会引起心中很大的波澜，取而代之的是，更加喜欢学习的过程，喜欢那种对一种事物从一无所知到有所了解，再到了如指掌的......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-01-15
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2020/01/11/Spring+Mybatis项目搭建/">
+        <h2 class="post-title">
+            Spring+Mybatis项目搭建
+        </h2>
+        <h3 class="post-subtitle">
+            idea项目搭建
+        </h3>
+        <div class="post-content-preview">
+            1. idea项目创建先按照下图，创建一个新的Maven webapp项目：
+
+再填写相应的项目名称：
+
+创建好的项目结构如下：
+再把需要的包在pom.xml中引入，包比较多，也可以在开发需要时再补充进来：1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-01-11
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/12/20/Spring装配Bean/">
+        <h2 class="post-title">
+            Spring装配Bean
+        </h2>
+        <h3 class="post-subtitle">
+            Spring 实战第二章
+        </h3>
+        <div class="post-content-preview">
+            1.Spring配置的三种方案1.1 自动装配
+首先，需要将Bean类添加@Component注解，便于Spring进行扫描（默认是关闭的）12345678910@Componentpublic class BeyondCD implements CD &#123;    private String title = "Beyond合集唱片";    private String artis......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-12-20
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/12/19/LeetCode-143-重排链表/">
+        <h2 class="post-title">
+            LeetCode-143-重排链表
+        </h2>
+        <h3 class="post-subtitle">
+            链表切分 + 第二段链表逆序 + 链表归并
+        </h3>
+        <div class="post-content-preview">
+            LeetCode-143-重排链表1. 题目描述给定一个单链表 L：L0→L1→…→Ln-1→Ln ，将其重新排列后变为： L0→Ln→L1→Ln-1→L2→Ln-2→…
+
+示例 1：给定链表 1-&gt;2-&gt;3-&gt;4, 重新排列为 1-&gt;4-&gt;2-&gt;3.
+
+示例 2：给定链表 1-&gt;2-&gt;3-&gt;4-&gt;5, 重新排列为 1-&gt;5-......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-12-19
+    </p>
+
+</div>
+<hr>
+
+
+
+<!-- Pager -->
+
+<ul class="pager">
+    
+        <li class="previous">
+            <a href="/">&larr; Newer Posts</a>
+        </li>
+    
+    
+        <li class="next">
+            <a href="/page/3/">Older Posts &rarr;</a>
+        </li>
+    
+</ul>
+
+
+
+                <!-- 如果开启评论功能 -->
+                
+
+            </div>
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-3 col-lg-offset-0
+                col-md-3 col-md-offset-0
+                col-sm-12
+                col-xs-12
+                sidebar-container
+            ">
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                            
+                            <a href="/tags/#计算机图形学" title="计算机图形学" rel="2">计算机图形学</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#Java" title="Java" rel="13">Java</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#LeetCode" title="LeetCode" rel="36">LeetCode</a>
+                            
+                        
+                            
+                            <a href="/tags/#Object Detection" title="Object Detection" rel="4">Object Detection</a>
+                            
+                        
+                            
+                            <a href="/tags/#操作系统" title="操作系统" rel="10">操作系统</a>
+                            
+                        
+                            
+                            <a href="/tags/#OpenCV" title="OpenCV" rel="4">OpenCV</a>
+                            
+                        
+                            
+                        
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#生活" title="生活" rel="3">生活</a>
+                            
+                        
+                            
+                            <a href="/tags/#Anomaly Detection" title="Anomaly Detection" rel="2">Anomaly Detection</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#数据库" title="数据库" rel="5">数据库</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#汇编" title="汇编" rel="3">汇编</a>
+                            
+                        
+                            
+                            <a href="/tags/#计算机网络" title="计算机网络" rel="2">计算机网络</a>
+                            
+                        
+                            
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Short About -->
+                <section class="visible-md visible-lg">
+                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
+                    <div class="short-about">
+
+                        
+                            <img src="/img/hachi.jpg" />
+                        
+						
+						<!-- Music Player -->
+						
+						
+                        
+                            <p>Learn for life!</p>
+                        
+
+                        <!-- SNS Link -->
+                        <ul class="list-inline">
+                            
+                            
+                            
+                                <li>
+                                    <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa  fa-stack-1x fa-inverse">知</i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+
+                            
+                                <li>
+                                    <a target="_blank" href="http://weibo.com/u/1952886932">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+							
+							
+                                <li>
+                                    <a target="_blank" href="https://leetcode-cn.com/u/liu_zhian">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-code fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+							
+                            
+
+                            
+                                <li>
+                                    <a target="_blank"  href="https://github.com/LiUzHiAn">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+                            
+                            
+                            
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+        
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

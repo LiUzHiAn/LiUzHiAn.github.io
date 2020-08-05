@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Leetcode 39- 组合总和 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/10/28/LeetCode-39-组合总和/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/posts_imgs/leetcode.png')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#LeetCode" title="LeetCode">LeetCode</a>
+                        
+                    </div>
+                    <h1>Leetcode 39- 组合总和</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-10-28
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Leetcode-39-组合总和"><span class="toc-text">Leetcode 39- 组合总和</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-题目描述"><span class="toc-text">1. 题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-思路"><span class="toc-text">2. 思路</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#别人的解法"><span class="toc-text">别人的解法</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-代码"><span class="toc-text">3. 代码</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-动态规划"><span class="toc-text">3.1 动态规划</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-递归-回溯剪枝"><span class="toc-text">3.2 递归+回溯剪枝</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-相似的题目"><span class="toc-text">4.相似的题目</span></a></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="Leetcode-39-组合总和"><a href="#Leetcode-39-组合总和" class="headerlink" title="Leetcode 39- 组合总和"></a>Leetcode 39- 组合总和</h1><h2 id="1-题目描述"><a href="#1-题目描述" class="headerlink" title="1. 题目描述"></a>1. 题目描述</h2><p>给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。</p>
+<p>candidates 中的数字可以无限制重复被选取。</p>
+<p>说明：</p>
+<ul>
+<li>所有数字（包括 target）都是正整数。</li>
+<li>解集不能包含重复的组合。 </li>
+</ul>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">示例?<span class="number">1</span>:</span><br><span class="line"></span><br><span class="line">输入: candidates = [<span class="number">2</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">7</span>], target = <span class="number">7</span>,</span><br><span class="line">所求解集为:</span><br><span class="line">[</span><br><span class="line">  [<span class="number">7</span>],</span><br><span class="line">  [<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">示例?<span class="number">2</span>:</span><br><span class="line"></span><br><span class="line">输入: candidates = [<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>], target = <span class="number">8</span>,</span><br><span class="line">所求解集为:</span><br><span class="line">[</span><br><span class="line">? [<span class="number">2</span>,<span class="number">2</span>,<span class="number">2</span>,<span class="number">2</span>],</span><br><span class="line">? [<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span>],</span><br><span class="line">? [<span class="number">3</span>,<span class="number">5</span>]</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h2 id="2-思路"><a href="#2-思路" class="headerlink" title="2. 思路"></a>2. 思路</h2><p>似曾相识的感觉，我第一反应就是递归，比如说找target为7的时候，其实就相当于找target5再在各个list中append一个2，但是递归难免会有重复求解子问题的情况，于是，我又想到了动态规划。</p>
+<p>总的来说，就是像如下这样去列举，map中每个value用的是集合，目的是防止重复：<br><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">input : [<span class="number">2</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">7</span>]</span><br><span class="line">res[<span class="number">0</span>] = &#123;&#125;</span><br><span class="line">res[<span class="number">1</span>] = &#123;&#125;</span><br><span class="line">res[<span class="number">2</span>] = res[<span class="number">0</span>]+<span class="number">2</span> = &#123;[<span class="number">2</span>]&#125;</span><br><span class="line">res[<span class="number">3</span>] = res[<span class="number">0</span>]+<span class="number">3</span> = &#123;[<span class="number">3</span>]&#125;</span><br><span class="line">res[<span class="number">4</span>] = (res[<span class="number">2</span>]+<span class="number">2</span>) U (res[<span class="number">1</span>]+<span class="number">3</span>) = &#123;[<span class="number">2</span>,<span class="number">2</span>]&#125;</span><br><span class="line">res[<span class="number">5</span>] = (res[<span class="number">3</span>]+<span class="number">2</span>) U (res[<span class="number">2</span>]+<span class="number">3</span>) = &#123;[<span class="number">2</span>,<span class="number">3</span>]&#125;</span><br><span class="line">res[<span class="number">6</span>] = (res[<span class="number">4</span>]+<span class="number">2</span>) U (res[<span class="number">3</span>]+<span class="number">3</span>) U (res[<span class="number">0</span>]+<span class="number">6</span>) = &#123;[<span class="number">2</span>,<span class="number">2</span>,<span class="number">2</span>],[<span class="number">3</span>,<span class="number">3</span>],[<span class="number">6</span>]&#125;</span><br><span class="line">res[<span class="number">7</span>] = (res[<span class="number">5</span>]+<span class="number">2</span>) U (res[<span class="number">4</span>]+<span class="number">3</span>) U (res[<span class="number">1</span>]+<span class="number">6</span>)  U (res[<span class="number">0</span>]+<span class="number">7</span>) = &#123;[<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">7</span>]&#125; </span><br><span class="line"></span><br><span class="line">等等</span><br></pre></td></tr></table></figure></p>
+<h5 id="别人的解法"><a href="#别人的解法" class="headerlink" title="别人的解法"></a>别人的解法</h5><p>提交动态规划的代码后发现效率不高，只战胜了8%左右的人，于是看了一下别人的题解，第一名是采用<code>递归+剪枝回溯的办法</code>，为了避免重复，最开始也对candidates数组排了个序，因为每个元素又可以重复使用，然后在递归函数中的<code>start</code>参数和保持当前一样就行了。<br><img src="https://pic.leetcode-cn.com/ade93b4f0678b2b1385ad1362ff426ce0a5a800a5b0ae07dfb65f58677374559-39-3.png" alt="递归+回溯思路"></p>
+<h2 id="3-代码"><a href="#3-代码" class="headerlink" title="3. 代码"></a>3. 代码</h2><p>Java 实现</p>
+<h4 id="3-1-动态规划"><a href="#3-1-动态规划" class="headerlink" title="3.1 动态规划"></a>3.1 动态规划</h4><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="markdown">/**</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet"> * </span>@ClassName CandidateSum</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet"> * </span>@Deacription // TODO</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet"> * </span>@Author LiuZhian</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet"> * </span>@Date 2019-10-28 15:31</span></span></span><br><span class="line"><span class="comment"><span class="markdown"><span class="bullet"> * </span>@Version 1.0</span></span></span><br><span class="line"><span class="comment"><span class="markdown"> **/</span></span></span><br><span class="line"></span><br><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">CandidateSum</span> </span>&#123;</span><br><span class="line">    public <span class="built_in">List</span>&lt;<span class="built_in">List</span>&lt;Integer&gt;&gt; combinationSum(<span class="built_in">int</span>[] candidates, <span class="built_in">int</span> target) &#123;</span><br><span class="line">        <span class="built_in">List</span>&lt;<span class="built_in">List</span>&lt;Integer&gt;&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 动态规划保存的中间结果 (这里用了一个集合防止重复)</span></span><br><span class="line">        <span class="built_in">Map</span>&lt;Integer, <span class="built_in">Set</span>&lt;<span class="built_in">List</span>&lt;Integer&gt;&gt;&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 先将candidates排序</span></span><br><span class="line">        Arrays.sort(candidates);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt;= target; i++) &#123;</span><br><span class="line">            <span class="comment">// 初始化map</span></span><br><span class="line">            map.put(i, <span class="keyword">new</span> HashSet&lt;&gt;());</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> j = <span class="number">0</span>; j &lt; candidates.length &amp;&amp; candidates[j] &lt;= i; j++) &#123;</span><br><span class="line">                <span class="comment">// map[i-canditates[j]]中各项加上一个数字candidates[j]</span></span><br><span class="line"></span><br><span class="line">                <span class="comment">// 如果当前选出的元素和i相等，直接把这个元素作为一个新的list加入map[i]中</span></span><br><span class="line">                <span class="keyword">if</span> (candidates[j] == i) &#123;</span><br><span class="line">                    <span class="built_in">List</span>&lt;Integer&gt; tmp = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                    tmp.add(candidates[j]);</span><br><span class="line">                    map.<span class="keyword">get</span>(i).add(tmp);</span><br><span class="line">                &#125; <span class="keyword">else</span>  <span class="comment">// 否则在 map[i-canditates[j]]中各添加一个candidates[j]</span></span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">for</span> (<span class="built_in">Iterator</span> it = map.<span class="keyword">get</span>(i - candidates[j]).iterator(); it.hasNext(); ) &#123;</span><br><span class="line">                        <span class="built_in">List</span> l = (<span class="built_in">List</span>) it.next();</span><br><span class="line"></span><br><span class="line">                        <span class="built_in">List</span> tmpList = <span class="keyword">new</span> ArrayList();</span><br><span class="line">                        tmpList.addAll(l);</span><br><span class="line">                        tmpList.add(candidates[j]);</span><br><span class="line">                        <span class="comment">//排序是为了通过set集合去重</span></span><br><span class="line">                        Collections.sort(tmpList);</span><br><span class="line">                        map.<span class="keyword">get</span>(i).add(tmpList);</span><br><span class="line"></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        res.addAll(map.<span class="keyword">get</span>(target));</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="built_in">String</span>[] args) &#123;</span><br><span class="line">        CandidateSum c = <span class="keyword">new</span> CandidateSum();</span><br><span class="line">        <span class="built_in">int</span>[] candidates = &#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">7</span>&#125;;</span><br><span class="line">        <span class="built_in">List</span>&lt;<span class="built_in">List</span>&lt;Integer&gt;&gt; res = c.combinationSum(candidates, <span class="number">8</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">List</span>&lt;Integer&gt; ls : res) &#123;</span><br><span class="line">            System.out.<span class="built_in">print</span>(<span class="string">"["</span>);</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> <span class="built_in">num</span> : ls) &#123;</span><br><span class="line">                System.out.<span class="built_in">print</span>(<span class="built_in">num</span> + <span class="string">","</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.<span class="built_in">print</span>(<span class="string">"]\n"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-2-递归-回溯剪枝"><a href="#3-2-递归-回溯剪枝" class="headerlink" title="3.2 递归+回溯剪枝"></a>3.2 递归+回溯剪枝</h4><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">public <span class="keyword">class</span> Solution &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;List&lt;Integer&gt;&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;<span class="literal">()</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span><span class="literal">[]</span> candidates;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> len;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> void find<span class="constructor">CombinationSum(<span class="params">int</span> <span class="params">residue</span>, <span class="params">int</span> <span class="params">start</span>, Stack&lt;Integer&gt; <span class="params">pre</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (residue<span class="operator"> == </span><span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// Java 中可变对象是引用传递，因此需要将当前 path 里的值拷贝出来</span></span><br><span class="line">            res.add(<span class="keyword">new</span> ArrayList&lt;&gt;(pre));</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 优化添加的代码2：在循环的时候做判断，尽量避免系统栈的深度</span></span><br><span class="line">        <span class="comment">// residue - candidates[i] 表示下一轮的剩余，如果下一轮的剩余都小于 0 ，就没有必要进行后面的循环了</span></span><br><span class="line">        <span class="comment">// 这一点基于原始数组是排序数组的前提，因为如果计算后面的剩余，只会越来越小</span></span><br><span class="line">        for (<span class="built_in">int</span> i = start; i &lt; len<span class="operator"> &amp;&amp; </span>residue - candidates<span class="literal">[<span class="identifier">i</span>]</span> &gt;= <span class="number">0</span>; i++) &#123;</span><br><span class="line">            pre.add(candidates<span class="literal">[<span class="identifier">i</span>]</span>);</span><br><span class="line">            <span class="comment">// 【关键】因为元素可以重复使用，这里递归传递下去的是 i 而不是 i + 1</span></span><br><span class="line">            find<span class="constructor">CombinationSum(<span class="params">residue</span> - <span class="params">candidates</span>[<span class="params">i</span>], <span class="params">i</span>, <span class="params">pre</span>)</span>;</span><br><span class="line">            pre.pop<span class="literal">()</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public List&lt;List&lt;Integer&gt;&gt; combination<span class="constructor">Sum(<span class="params">int</span>[] <span class="params">candidates</span>, <span class="params">int</span> <span class="params">target</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">int</span> len = candidates.length;</span><br><span class="line">        <span class="keyword">if</span> (len<span class="operator"> == </span><span class="number">0</span>) &#123;</span><br><span class="line">            return res;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 优化添加的代码1：先对数组排序，可以提前终止判断</span></span><br><span class="line">        <span class="module-access"><span class="module"><span class="identifier">Arrays</span>.</span></span>sort(candidates);</span><br><span class="line">        this.len = len;</span><br><span class="line">        this.candidates = candidates;</span><br><span class="line">        find<span class="constructor">CombinationSum(<span class="params">target</span>, 0, <span class="params">new</span> Stack&lt;&gt;()</span>);</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String<span class="literal">[]</span> args) &#123;</span><br><span class="line">        <span class="built_in">int</span><span class="literal">[]</span> candidates = &#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">7</span>&#125;;</span><br><span class="line">        <span class="built_in">int</span> target = <span class="number">7</span>;</span><br><span class="line">        Solution solution = <span class="keyword">new</span> <span class="constructor">Solution()</span>;</span><br><span class="line">        List&lt;List&lt;Integer&gt;&gt; combinationSum = solution.combination<span class="constructor">Sum(<span class="params">candidates</span>, <span class="params">target</span>)</span>;</span><br><span class="line">        <span class="module-access"><span class="module"><span class="identifier">System</span>.</span></span>out.println(combinationSum);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">作者：liweiwei1419</span><br><span class="line">链接：https:<span class="comment">//leetcode-cn.com/problems/combination-sum/solution/hui-su-suan-fa-jian-zhi-python-dai-ma-java-dai-m-2/</span></span><br><span class="line">来源：力扣（LeetCode）</span><br><span class="line">著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</span><br></pre></td></tr></table></figure>
+<h1 id="4-相似的题目"><a href="#4-相似的题目" class="headerlink" title="4.相似的题目"></a>4.相似的题目</h1><ul>
+<li>Leetcode 40 - 组合总和 ②</li>
+</ul>
+<p>这个题和39题几乎一样，不同在于candidates可能有重复元素，且每个元素只能用一次。这里就有一个坑了，假如candidates为<code>[1,2,2,5]</code>，现在我要找target=8的时候，如果按照39题的递归的解法，并我们限制每个元素只取一次，也就是每次调用递归函数的时候，<code>begin</code>下标从当前元素的下一个元素开始试探。代码大概张这个样子：<br><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="symbol">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span>[] candidates;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> candidates_len;</span><br><span class="line">    <span class="keyword">private</span> List&lt;List&lt;Integer&gt;&gt; res;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> List&lt;List&lt;Integer&gt;&gt; combinationSum2(<span class="built_in">int</span>[] candidates, <span class="built_in">int</span> target) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.candidates = candidates;</span><br><span class="line">        <span class="keyword">this</span>.candidates_len = candidates.length;</span><br><span class="line">        <span class="keyword">this</span>.res = new ArrayList&lt;&gt;();</span><br><span class="line">        <span class="comment">// 先对candidates排序，防止出现重复</span></span><br><span class="line">        Arrays.sort(candidates);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 递归求解+剪枝回溯</span></span><br><span class="line">        search(target, <span class="number">0</span>, new Stack&lt;Integer&gt;());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.res;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 从当前下标i对应的值开始试探，直到试探成功或者residue为负数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> search(<span class="built_in">int</span> residue, <span class="built_in">int</span> begin, Stack&lt;Integer&gt; prePath) &#123;</span><br><span class="line">        <span class="comment">// 试探成功，加入结果集合</span></span><br><span class="line">        <span class="keyword">if</span> (residue == <span class="number">0</span>) &#123;</span><br><span class="line">            List&lt;Integer&gt; tmpList = new ArrayList&lt;&gt;();</span><br><span class="line">            tmpList.addAll(prePath);</span><br><span class="line">            res.add(tmpList);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 递归地试探</span></span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> i = begin; i &lt; candidates_len &amp;&amp; candidates[i] &lt;= residue; i++) &#123;</span><br><span class="line">                prePath.push(candidates[i]);</span><br><span class="line">                <span class="comment">// 这里下一次从i+1下标对应的值开始试探，因为题目规定一个值只能用一次</span></span><br><span class="line">                search(residue - candidates[i], i + <span class="number">1</span>, prePath);</span><br><span class="line">                prePath.pop();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> static <span class="built_in">void</span> main(String[] args) &#123;</span><br><span class="line">        <span class="built_in">int</span>[] cdds = &#123;<span class="number">10</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">6</span>, <span class="number">1</span>, <span class="number">5</span>&#125;;</span><br><span class="line">        <span class="built_in">int</span> target = <span class="number">8</span>;</span><br><span class="line">        Solution s = new Solution();</span><br><span class="line">        List&lt;List&lt;Integer&gt;&gt; res = s.combinationSum2(cdds, target);</span><br><span class="line">        System.<span class="keyword">out</span>.println(res);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>然鹅。。。我们会找到两个[1,2,5]，虽然说这好像也的确满足每个元素只能用一次，只不过第一个[1,2,5]用的是第一个2，第二个[1,2,5]用的是第二个2，但是还是要注意这种重复情况。所以在下一次递归调用的时候需要判断一下是否有两个一样的元素连在一起。修改好的代码如下：<br><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="symbol">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span>[] candidates;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> candidates_len;</span><br><span class="line">    <span class="keyword">private</span> List&lt;List&lt;Integer&gt;&gt; res;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> List&lt;List&lt;Integer&gt;&gt; combinationSum2(<span class="built_in">int</span>[] candidates, <span class="built_in">int</span> target) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.candidates = candidates;</span><br><span class="line">        <span class="keyword">this</span>.candidates_len = candidates.length;</span><br><span class="line">        <span class="keyword">this</span>.res = new ArrayList&lt;&gt;();</span><br><span class="line">       </span><br><span class="line">       <span class="comment">// 先对candidates排序，防止出现重复</span></span><br><span class="line">        Arrays.sort(candidates);</span><br><span class="line">        <span class="comment">// 递归求解+剪枝回溯</span></span><br><span class="line">        search(target, <span class="number">0</span>, new Stack&lt;Integer&gt;());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.res;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 从当前下标i对应的值开始试探，直到试探成功或者residue为负数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> search(<span class="built_in">int</span> residue, <span class="built_in">int</span> begin, Stack&lt;Integer&gt; prePath) &#123;</span><br><span class="line">        <span class="comment">// 试探成功，加入结果集合</span></span><br><span class="line">        <span class="keyword">if</span> (residue == <span class="number">0</span>) &#123;</span><br><span class="line">            List&lt;Integer&gt; tmpList = new ArrayList&lt;&gt;();</span><br><span class="line">            tmpList.addAll(prePath);</span><br><span class="line">            res.add(tmpList);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 递归地试探</span></span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> i = begin; i &lt; candidates_len &amp;&amp; candidates[i] &lt;= residue; i++) &#123;</span><br><span class="line">                <span class="comment">// 这里尤其还要注意一种情况，例如candidates为[1,2,2,5]</span></span><br><span class="line">                <span class="comment">// 现在我们要找target=8时，根据我们的算法会生成两个[1,2,5],讲道理，这样也算满足每个元素只用了一次的</span></span><br><span class="line">                <span class="comment">// 但是这样还是算重复,于是要考虑删除这种重复。</span></span><br><span class="line">                <span class="comment">// 也就是当下一更深层的试探时，如果发现和之前的那个元素值相同，就跳过本轮试探,即：</span></span><br><span class="line">                <span class="keyword">if</span> (i &gt; begin  &amp;&amp; candidates[i] == candidates[i - <span class="number">1</span>])</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">                prePath.push(candidates[i]);</span><br><span class="line">                <span class="comment">// 这里下一次从i+1下标对应的值开始试探，因为题目规定一个值只能用一次</span></span><br><span class="line">                search(residue - candidates[i], i + <span class="number">1</span>, prePath);</span><br><span class="line">                prePath.pop();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> static <span class="built_in">void</span> main(String[] args) &#123;</span><br><span class="line">        <span class="built_in">int</span>[] cdds = &#123;<span class="number">10</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">6</span>, <span class="number">1</span>, <span class="number">5</span>&#125;;</span><br><span class="line">        <span class="built_in">int</span> target = <span class="number">8</span>;</span><br><span class="line">        Solution s = new Solution();</span><br><span class="line">        List&lt;List&lt;Integer&gt;&gt; res = s.combinationSum2(cdds, target);</span><br><span class="line">        System.<span class="keyword">out</span>.println(res);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/10/30/LeetCode-48-旋转数组/" data-toggle="tooltip" data-placement="top" title="Leetcode 48- 向右旋转图片90°">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/10/28/LeetCode-33-搜索旋转排序数组/" data-toggle="tooltip" data-placement="top" title="Leetcode 33- 搜索旋转排序数组">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#LeetCode" title="LeetCode">LeetCode</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

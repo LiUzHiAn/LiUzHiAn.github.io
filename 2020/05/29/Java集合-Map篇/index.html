@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Java集合—Map篇 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2020/05/29/Java集合-Map篇/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/posts_imgs/java-logo.png')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Java" title="Java">Java</a>
+                        
+                    </div>
+                    <h1>Java集合—Map篇</h1>
+                    <h2 class="subheading">HashMap、ConcurrentMap</h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2020-05-29
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Map简介"><span class="toc-text">Map简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Map接口"><span class="toc-text">1. Map接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-HashMap实现类"><span class="toc-text">2. HashMap实现类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-构造函数"><span class="toc-text">2.1 构造函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-put方法"><span class="toc-text">2.2 put方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-扩容方法"><span class="toc-text">2.2 扩容方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-get方法"><span class="toc-text">2.3 get方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-ConcurrentHashMap"><span class="toc-text">3. ConcurrentHashMap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-参考资料"><span class="toc-text">4. 参考资料</span></a></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="Map简介"><a href="#Map简介" class="headerlink" title="Map简介"></a>Map简介</h1><p>Map，即哈希表，也称字典，是一个<code>键值对(Kry-Value)</code>的数据结构，<code>put()</code>和<code>get()</code>函数几乎可以在常数级别内完成，哈希表有两种实现方式，一种被称为<code>开放地址法(open addressing)</code>，另一只被称为<code>冲突链表法（seperate chaining）</code>，和之间的分析步骤一样，我们先看一下相关接口的设计，再深入到具体实现类。</p>
+<h2 id="1-Map接口"><a href="#1-Map接口" class="headerlink" title="1. Map接口"></a>1. Map接口</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Map</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>;  						<span class="comment">// k-v 对的数量</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>;  				<span class="comment">// map是否为空</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">containsKey</span><span class="params">(Object key)</span></span>;	<span class="comment">// 是否包含指定的key</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">containsValue</span><span class="params">(Object value)</span></span>; <span class="comment">// 是否包含指定的value</span></span><br><span class="line">    <span class="function">V <span class="title">get</span><span class="params">(Object key)</span></span>;					<span class="comment">// 获取指定key对应的value</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> V <span class="title">getOrDefault</span><span class="params">(Object key, V defaultValue)</span>		<span class="comment">// get or default，非常常用</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function">    <span class="comment">// Modification Operations</span></span></span><br><span class="line"><span class="function">    V <span class="title">put</span><span class="params">(K key, V value)</span></span>;				<span class="comment">// 设置 map[key]=value,返回该key之前对应的value</span></span><br><span class="line">    <span class="function">V <span class="title">remove</span><span class="params">(Object key)</span></span>;				<span class="comment">// 移除指定key的键值对，返回该key之前对应的value</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Bulk Operations 块操作</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">putAll</span><span class="params">(Map&lt;? extends K, ? extends V&gt; m)</span></span>;  <span class="comment">// 把哈希表m中的键值对全部放到当前map中来</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>;						<span class="comment">// 清空当前map中的所有键值对</span></span><br><span class="line">    <span class="function">Set&lt;K&gt; <span class="title">keySet</span><span class="params">()</span></span>;					<span class="comment">// 返回所有key</span></span><br><span class="line">    <span class="function">Collection&lt;V&gt; <span class="title">values</span><span class="params">()</span></span>;				<span class="comment">// 返回所有values</span></span><br><span class="line">    Set&lt;Map.Entry&lt;K, V&gt;&gt; entrySet(); 	<span class="comment">// 返回所有键值对</span></span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>常用的方法也就是上述的这些，由上述接口我们可以发现，在<code>Map</code>接口中其实还包含了另一个内部接口<code>Map.Entry&lt;K,V&gt;</code>，用来表示一个个键值对。这个<code>Entry&lt;K,V&gt;</code>接口中最关键的方法就是<code>int hashCode()</code>,到时候该键值对放在哪个地方，就是根据这里返回的哈希值来决定的。</p>
+<p>在上述方法中还需要注意一个点，那就是<code>Map.values()</code>方法返回的是一个<code>Collection</code>对象，而<code>Map.keys()</code>返回的是一个<code>Set</code>对象，这个也很显然，哈希表中的key是唯一的、不会重复的，而value可以随便是什么值、支持重复。</p>
+<h2 id="2-HashMap实现类"><a href="#2-HashMap实现类" class="headerlink" title="2. HashMap实现类"></a>2. HashMap实现类</h2><p>这个类可以说是Java中用的最多的集合类之一了，<code>HashMap</code>采用的就是冲突链表法来实现的，一个很好的示意图如下：</p>
+<p><img src="HashMap_base.png" alt=""></p>
+<p>常用的例子如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">map.put(<span class="string">"Andy"</span>, <span class="number">123</span>);</span><br><span class="line">map.put(<span class="string">"Jack"</span>, <span class="number">333</span>);</span><br><span class="line">map.put(<span class="string">"Rose"</span>, <span class="number">233</span>);</span><br></pre></td></tr></table></figure>
+<p><code>HashMap</code>本身的继承和实现关系如下，<code>AbstractMap</code>抽象类中已经为我们已经实现好了一些默认的方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Map</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;, <span class="title">Cloneable</span>, <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	# ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-1-构造函数"><a href="#2-1-构造函数" class="headerlink" title="2.1 构造函数"></a>2.1 构造函数</h3><p>首先，我们要知道，HashMap底层实现是按照数组+链表来实现的，我们在源码中可以发现<code>transient Node&lt;K,V&gt;[] table;</code>的存在，其中，每一个数组项，我们称之为桶。与之相关的有个属性叫做<code>loadFactor</code>，当哈希表中的桶的数量超过该装填因子时，会引发扩容，导致哈希表重新哈希。</p>
+<p>构造函数有如下4个：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">float</span> DEFAULT_LOAD_FACTOR = <span class="number">0.75f</span>;  <span class="comment">// 默认装填因子</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAXIMUM_CAPACITY = <span class="number">1</span> &lt;&lt; <span class="number">30</span>;	<span class="comment">// 最大容量 2^31-1</span></span><br><span class="line"><span class="comment">// The next size value at which to resize (capacity * load factor).</span></span><br><span class="line"><span class="keyword">int</span> threshold;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 全部默认</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HashMap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.loadFactor = DEFAULT_LOAD_FACTOR; <span class="comment">// all other fields defaulted</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定初始化容量</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HashMap</span><span class="params">(<span class="keyword">int</span> initialCapacity)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">this</span>(initialCapacity, DEFAULT_LOAD_FACTOR);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定初始化容量和装填因子</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HashMap</span><span class="params">(<span class="keyword">int</span> initialCapacity, <span class="keyword">float</span> loadFactor)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (initialCapacity &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Illegal initial capacity: "</span> +</span><br><span class="line">                                           initialCapacity);</span><br><span class="line">    <span class="keyword">if</span> (initialCapacity &gt; MAXIMUM_CAPACITY)</span><br><span class="line">        initialCapacity = MAXIMUM_CAPACITY;</span><br><span class="line">    <span class="keyword">if</span> (loadFactor &lt;= <span class="number">0</span> || Float.isNaN(loadFactor))</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Illegal load factor: "</span> +</span><br><span class="line">                                           loadFactor);</span><br><span class="line">    <span class="keyword">this</span>.loadFactor = loadFactor;</span><br><span class="line">    <span class="comment">// 确定扩容操作时的阈值 -- 这里实现有问题吗？其实没有</span></span><br><span class="line">    <span class="keyword">this</span>.threshold = tableSizeFor(initialCapacity);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 用另外一个哈希表m来初始当前map</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HashMap</span><span class="params">(Map&lt;? extends K, ? extends V&gt; m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.loadFactor = DEFAULT_LOAD_FACTOR;</span><br><span class="line">    putMapEntries(m, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里需要注意的就是<code>tableSizeFor()</code>这个函数，这个函数的作用就是<strong>大于或等于输入参数，且最近的2的整数次幂的数</strong>。比如参数为10时，则返回16；参数为4时，返回也是4，其代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">tableSizeFor</span><span class="params">(<span class="keyword">int</span> cap)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = cap - <span class="number">1</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">1</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">2</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">4</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">8</span>;</span><br><span class="line">    n |= n &gt;&gt;&gt; <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">return</span> (n &lt; <span class="number">0</span>) ? <span class="number">1</span> : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我感觉怪怪的，<code>this.threshold = tableSizeFor(initialCapacity);</code>这一句是不是有bug呀？比方说，用户指定的capacity为15，<code>tableSizeFor()</code>方法返回一个16，你居然把16赋值给扩容阈值？什么情况？后来，我继续阅读后续源码才发现，此时哈希表的桶其实还没有初始化，即<code>table</code>数组还实际上没有申请内存，这一工作被推迟到了<code>put()</code>函数中，到时候<code>threshold</code>变量会被重新赋值成<code>capacity * loadFactor</code>。这里的位移操作还是很高效的。</p>
+<h3 id="2-2-put方法"><a href="#2-2-put方法" class="headerlink" title="2.2 put方法"></a>2.2 put方法</h3><p>这里我们需要知道几个点：</p>
+<ul>
+<li>在HashMap的底层，是按照数组+链表来实现的，如果链表长度大于等于8，就会将链表变为红黑树；</li>
+<li>对于链表的操作，插入和获取某个结点的时间复杂度是<code>O(N)</code>,而红黑树可以达到<code>O(log N)</code>级别；</li>
+<li>对于某个k-v对，首先我们要求key的hash值，然后将这个hash值与哈希表的容量做某个运算，得到具体放在哪个桶处。</li>
+</ul>
+<p>Okay，暂时就将这么多，我们来看下源码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TREEIFY_THRESHOLD = <span class="number">8</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> UNTREEIFY_THRESHOLD = <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> putVal(hash(key), key, value, <span class="keyword">false</span>, <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// hash方法</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> h;</span><br><span class="line">    <span class="keyword">return</span> (key == <span class="keyword">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">final</span> V <span class="title">putVal</span><span class="params">(<span class="keyword">int</span> hash, K key, V value, <span class="keyword">boolean</span> onlyIfAbsent, <span class="keyword">boolean</span> evict)</span> </span>&#123;</span><br><span class="line">    Node&lt;K, V&gt;[] tab;</span><br><span class="line">    Node&lt;K, V&gt; p;</span><br><span class="line">    <span class="keyword">int</span> n, i;</span><br><span class="line">    <span class="comment">// 如果原来的桶是空的，就按照初始化时指定的容量扩容</span></span><br><span class="line">    <span class="keyword">if</span> ((tab = table) == <span class="keyword">null</span> || (n = tab.length) == <span class="number">0</span>)</span><br><span class="line">        n = (tab = resize()).length;</span><br><span class="line">    <span class="comment">// 如果对应的桶原来是空</span></span><br><span class="line">    <span class="keyword">if</span> ((p = tab[i = (n - <span class="number">1</span>) &amp; hash]) == <span class="keyword">null</span>)</span><br><span class="line">        tab[i] = newNode(hash, key, value, <span class="keyword">null</span>);</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        Node&lt;K, V&gt; e;</span><br><span class="line">        K k;</span><br><span class="line">        <span class="comment">// 如果桶的第一个结点，和当前入参的key相同(null 或 非null都可以)，那覆盖原来的键值对</span></span><br><span class="line">        <span class="keyword">if</span> (p.hash == hash &amp;&amp;((k = p.key) == key || (key != <span class="keyword">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">            e = p;</span><br><span class="line">        <span class="comment">// 如果对应的桶中是红黑树，就在树中插入一个结点</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">            e = ((TreeNode&lt;K, V&gt;) p).putTreeVal(<span class="keyword">this</span>, tab, hash, key, value);</span><br><span class="line">        <span class="comment">// 对应的桶处是链表</span></span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> binCount = <span class="number">0</span>; ; ++binCount) &#123;</span><br><span class="line">                <span class="keyword">if</span> ((e = p.next) == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    p.next = newNode(hash, key, value, <span class="keyword">null</span>);</span><br><span class="line">                    <span class="comment">// 如果插入新结点后，该桶对应的链表节点数大于8，就变成红黑树</span></span><br><span class="line">                    <span class="keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="number">1</span>) <span class="comment">// -1 for 1st</span></span><br><span class="line">                        treeifyBin(tab, hash);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 中间某个地方存在一个相同的key</span></span><br><span class="line">                <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                    ((k = e.key) == key || (key != <span class="keyword">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                p = e;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 写入键值对，e已经是待放置的位置了</span></span><br><span class="line">        <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123; <span class="comment">// existing mapping for key</span></span><br><span class="line">            V oldValue = e.value;</span><br><span class="line">            <span class="keyword">if</span> (!onlyIfAbsent || oldValue == <span class="keyword">null</span>)</span><br><span class="line">                e.value = value;</span><br><span class="line">            afterNodeAccess(e);</span><br><span class="line">            <span class="keyword">return</span> oldValue;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 修改次数加1</span></span><br><span class="line">    ++modCount;</span><br><span class="line">    <span class="comment">// 如果添加结点后容量大于扩容阈值，就扩容</span></span><br><span class="line">    <span class="keyword">if</span> (++size &gt; threshold)</span><br><span class="line">        resize();</span><br><span class="line">    afterNodeInsertion(evict);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们先看下hash值和index是怎么计算的吧！这一部分来源于<a href="http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/" target="_blank" rel="noopener">Yikun兄的分析</a>，非常感谢！计算下标时，先对key的hashCode进行hash操作，然后再通过hash值进一步计算下标，如下图所示：</p>
+<p><img src="hash.png" alt=""></p>
+<p>这个函数大概的作用就是：高16bit不变，低16bit和高16bit做了一个异或。然后根据hash值求桶index时，用的是<code>i = (n - 1) &amp; hash</code>与运算操作。</p>
+<p><strong>Q：为啥子要这样求hash呢？</strong> </p>
+<p><strong>A：主要是从速度、功效、质量来考虑的，这么做可以在bucket的n比较小的时候，也能保证考虑到高低bit都参与到hash的计算中，同时不会有太大的开销。</strong></p>
+<p>我们可以总结一下<code>put()</code>方法的大致流程：</p>
+<ol>
+<li>对键值对的key求hash，然后再计算出index；</li>
+<li>如果index对应的桶为空，直接放到桶中去；</li>
+<li><p>如果index对应的桶不为空（即所谓碰撞了），那就用链表来存储该桶中的所有结点；</p>
+</li>
+<li><p>如果插入新结点后，链表长度大于等于<code>TREEIFY_THRESHOLD</code>，就把链表转为红黑树；</p>
+</li>
+<li><p>如果当前入参的key在哈希表中已经存在，就替换之前的键值对，返回原来的value；</p>
+</li>
+<li><p>如果put后超过了下一次扩容的阈值，就执行一次扩容操作。</p>
+</li>
+</ol>
+<h3 id="2-2-扩容方法"><a href="#2-2-扩容方法" class="headerlink" title="2.2 扩容方法"></a>2.2 扩容方法</h3><p>HashMap中扩容的方法是<code>resize()</code>，这个我觉得是JDK 1.8 中对HashMap修改的精华部分，一开始我也没怎么看懂，后来在参考了<a href="http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/" target="_blank" rel="noopener">Yikun兄的分析</a>后恍然大悟，别担心，看完本文，你也会明白其中的道理的。</p>
+<p>首先我想澄清两个事实，那就是：</p>
+<ul>
+<li><strong>HashMap中的数组，也就是桶的数量，无论何时，总是2的次方！</strong></li>
+<li><strong>HashMap在扩容时，如果可以扩容的话，也总是扩容为原来的两倍！</strong></li>
+</ul>
+<p>Okay，有了这两个前提，我想先举一个例子来说明情况，假设我们原来的哈希表中的情况如下图所示：</p>
+<p><img src="resize.png" alt=""></p>
+<p>假设最开始，哈希表的容量为16，扩容后大小为32，即<code>oldCap=16，newCap=32</code>，原来哈希表中各键值对情况如左图所示。</p>
+<p>然后我们继续假设，扩容前，index=5处的桶中有一个链表存在，链表中有两个键值对，记为node1和node2，node1的hash值为<code>1111 1111 1111 1111 0000 1111 0000 0101</code>，而node2的hash值为<code>1111 1111 1111 1111 0000 1111 0001 0101</code>，二者就是在第5个二进制位上有区别。根据当前的index求解方法<code>i = (n - 1) &amp; hash</code>,再次确认，这两个键值对都会放在index=5处的桶中。</p>
+<p>现在执行一次扩容，扩容后的变换如下：</p>
+<p><img src="rehash.png" alt=""></p>
+<p>因此元素在重新计算hash之后，因为n变为2倍，那么n-1的mask范围在高位多1bit(红色)，因此新的index就会发生这样的变化：</p>
+<p><img src="rehash_2.png" alt=""></p>
+<p>扩容后，我们肯定要对哈希表中的键值对重新分布一次，而这里，我们实际上不需要做rehash，我们只要根据<code>(e.hash &amp; oldCap) == 0</code>对原来桶中的结点进行一次判断，如果某结点<code>e</code>的hash值和oldCap进行<code>&amp;</code>运算后为0，也就是扩容后的n-1对应的那个最高二进制位是0，就说明重新散列后，这个结点其实还是会待在原来的桶处；相反，如果<code>(e.hash &amp; oldCap) == 1</code>，就说明重新散列后，这个结点会被放在<code>原索引 + oldCap</code>位置处。这里，我把这两种情况分别叫做高低链，高链对应<code>(e.hash &amp; oldCap) == 1</code>的结点，低链对应<code>(e.hash &amp; oldCap) == 0</code>的结点。OK，看代码吧：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Initializes or doubles table size.  If null, allocates in</span></span><br><span class="line"><span class="comment"> * accord with initial capacity target held in field threshold.</span></span><br><span class="line"><span class="comment"> * Otherwise, because we are using power-of-two expansion, the</span></span><br><span class="line"><span class="comment"> * elements from each bin must either stay at same index, or move</span></span><br><span class="line"><span class="comment"> * with a power of two offset in the new table.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> the table</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">final</span> Node&lt;K, V&gt;[] resize() &#123;</span><br><span class="line">    Node&lt;K, V&gt;[] oldTab = table;</span><br><span class="line">    <span class="keyword">int</span> oldCap = (oldTab == <span class="keyword">null</span>) ? <span class="number">0</span> : oldTab.length;</span><br><span class="line">    <span class="keyword">int</span> oldThr = threshold;</span><br><span class="line">    <span class="keyword">int</span> newCap, newThr = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 如果oldCap&gt;0,也就是桶中已经有键值对</span></span><br><span class="line">    <span class="keyword">if</span> (oldCap &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 如果旧的桶容量已经是最大容量,即2^31-1</span></span><br><span class="line">        <span class="keyword">if</span> (oldCap &gt;= MAXIMUM_CAPACITY) &#123;</span><br><span class="line">            threshold = Integer.MAX_VALUE; <span class="comment">// threshold也设置为2^31-1</span></span><br><span class="line">            <span class="keyword">return</span> oldTab; <span class="comment">// 返回原来的数组，相当于没扩容</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果扩容后也没超过最大容量，并且旧的容量大于默认初始容量（16）,就扩为原来的2倍</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> ((newCap = oldCap &lt;&lt; <span class="number">1</span>) &lt; MAXIMUM_CAPACITY &amp;&amp;</span><br><span class="line">                oldCap &gt;= DEFAULT_INITIAL_CAPACITY)</span><br><span class="line">            newThr = oldThr &lt;&lt; <span class="number">1</span>; <span class="comment">// 阈值也自然扩为2倍</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果oldCap&lt;=0,也就是初始化后，table数组并未分配内存的情况</span></span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (oldThr &gt; <span class="number">0</span>)</span><br><span class="line">        <span class="comment">// 初始化容量是存在了threshold变量中的</span></span><br><span class="line">        newCap = oldThr;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果旧的容量小于默认初始容量（16）,最大为8，因为容量配时只按照2的次方分配</span></span><br><span class="line">    <span class="comment">// 不可能出现旧的容量为15或者12这样的情况</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 那么就把新的容量赋值我默认初始容量（16）</span></span><br><span class="line">        newCap = DEFAULT_INITIAL_CAPACITY;</span><br><span class="line">        newThr = (<span class="keyword">int</span>) (DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 对应else if (oldThr &gt; 0)中的情况，此时把阈值算好</span></span><br><span class="line">    <span class="keyword">if</span> (newThr == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">float</span> ft = (<span class="keyword">float</span>) newCap * loadFactor;</span><br><span class="line">        newThr = (newCap &lt; MAXIMUM_CAPACITY &amp;&amp; ft &lt; (<span class="keyword">float</span>) MAXIMUM_CAPACITY ?</span><br><span class="line">                (<span class="keyword">int</span>) ft : Integer.MAX_VALUE);</span><br><span class="line">    &#125;</span><br><span class="line">    threshold = newThr;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    Node&lt;K, V&gt;[] newTab = (Node&lt;K, V&gt;[]) <span class="keyword">new</span> Node[newCap];  <span class="comment">// 申请一块新的内存空间</span></span><br><span class="line">    table = newTab;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果原来的桶不是空的，就需要相应地作出键值对移动</span></span><br><span class="line">    <span class="keyword">if</span> (oldTab != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; oldCap; ++j) &#123;</span><br><span class="line">            Node&lt;K, V&gt; e;</span><br><span class="line">            <span class="keyword">if</span> ((e = oldTab[j]) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                oldTab[j] = <span class="keyword">null</span>;  <span class="comment">// 释放原来的空间，GC会发现</span></span><br><span class="line">                <span class="keyword">if</span> (e.next == <span class="keyword">null</span>)  <span class="comment">// 如果就旧桶为空，那新桶对应位置也为空</span></span><br><span class="line">                    newTab[e.hash &amp; (newCap - <span class="number">1</span>)] = e;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> TreeNode)  <span class="comment">// 如果桶中是一棵红黑树</span></span><br><span class="line">                    ((TreeNode&lt;K, V&gt;) e).split(<span class="keyword">this</span>, newTab, j, oldCap);</span><br><span class="line">                <span class="keyword">else</span> &#123; <span class="comment">// preserve order</span></span><br><span class="line">                    Node&lt;K, V&gt; loHead = <span class="keyword">null</span>, loTail = <span class="keyword">null</span>;  <span class="comment">// 低位链</span></span><br><span class="line">                    Node&lt;K, V&gt; hiHead = <span class="keyword">null</span>, hiTail = <span class="keyword">null</span>;  <span class="comment">// 高位连</span></span><br><span class="line">                    Node&lt;K, V&gt; next; <span class="comment">// 游标指针</span></span><br><span class="line">                    <span class="keyword">do</span> &#123;</span><br><span class="line">                        next = e.next;</span><br><span class="line">                        <span class="comment">// 如果当前节点扩容后还放在原索引</span></span><br><span class="line">                        <span class="keyword">if</span> ((e.hash &amp; oldCap) == <span class="number">0</span>) &#123;</span><br><span class="line">                            <span class="comment">// 下面是低位链的尾插法</span></span><br><span class="line">                            <span class="keyword">if</span> (loTail == <span class="keyword">null</span>)</span><br><span class="line">                                loHead = e;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                                loTail.next = e;</span><br><span class="line">                            loTail = e;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">// 如果当前节点扩容，放在原索引+oldCap桶处</span></span><br><span class="line">                        <span class="keyword">else</span> &#123;</span><br><span class="line">                            <span class="comment">// 下面是高位链的尾插法</span></span><br><span class="line">                            <span class="keyword">if</span> (hiTail == <span class="keyword">null</span>)</span><br><span class="line">                                hiHead = e;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                                hiTail.next = e;</span><br><span class="line">                            hiTail = e;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">while</span> ((e = next) != <span class="keyword">null</span>);</span><br><span class="line">                    <span class="comment">// 把低位链放到扩容后数组的 原索引 桶处</span></span><br><span class="line">                    <span class="keyword">if</span> (loTail != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        loTail.next = <span class="keyword">null</span>;</span><br><span class="line">                        newTab[j] = loHead;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">// 把高位链放到扩容后数组的 原索引+oldCap 桶处</span></span><br><span class="line">                    <span class="keyword">if</span> (hiTail != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        hiTail.next = <span class="keyword">null</span>;</span><br><span class="line">                        newTab[j + oldCap] = hiHead;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> newTab;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-get方法"><a href="#2-3-get方法" class="headerlink" title="2.3 get方法"></a>2.3 get方法</h3><p><code>get()</code>方法相对来说就比较简单了，只要按照key的hash值依次查找就行了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">get</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    Node&lt;K, V&gt; e;</span><br><span class="line">    <span class="keyword">return</span> (e = getNode(hash(key), key)) == <span class="keyword">null</span> ? <span class="keyword">null</span> : e.value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">final</span> Node&lt;K, V&gt; <span class="title">getNode</span><span class="params">(<span class="keyword">int</span> hash, Object key)</span> </span>&#123;</span><br><span class="line">    Node&lt;K, V&gt;[] tab;</span><br><span class="line">    Node&lt;K, V&gt; first, e;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    K k;</span><br><span class="line">    <span class="comment">// 如果要找的键值对所在的桶不是空的</span></span><br><span class="line">    <span class="keyword">if</span> ((tab = table) != <span class="keyword">null</span> &amp;&amp; (n = tab.length) &gt; <span class="number">0</span> &amp;&amp;</span><br><span class="line">        (first = tab[(n - <span class="number">1</span>) &amp; hash]) != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 看下第一个结点是否对应</span></span><br><span class="line">        <span class="keyword">if</span> (first.hash == hash &amp;&amp; <span class="comment">// always check first node</span></span><br><span class="line">            ((k = first.key) == key || (key != <span class="keyword">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">            <span class="keyword">return</span> first;</span><br><span class="line">        <span class="comment">// 继续在后面的结点中查找</span></span><br><span class="line">        <span class="keyword">if</span> ((e = first.next) != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果桶中是红黑树</span></span><br><span class="line">            <span class="keyword">if</span> (first <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                <span class="keyword">return</span> ((TreeNode&lt;K, V&gt;) first).getTreeNode(hash, key);</span><br><span class="line">            <span class="comment">// 链表的顺序遍历查找</span></span><br><span class="line">            <span class="keyword">do</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                    ((k = e.key) == key || (key != <span class="keyword">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                    <span class="keyword">return</span> e;</span><br><span class="line">            &#125; <span class="keyword">while</span> ((e = e.next) != <span class="keyword">null</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-ConcurrentHashMap"><a href="#3-ConcurrentHashMap" class="headerlink" title="3. ConcurrentHashMap"></a>3. ConcurrentHashMap</h2><p>下次再补充</p>
+<h2 id="4-参考资料"><a href="#4-参考资料" class="headerlink" title="4. 参考资料"></a>4. 参考资料</h2><ul>
+<li><p><a href="http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0" target="_blank" rel="noopener">Java-HashMap工作原理及实现</a></p>
+</li>
+<li><p><a href="https://github.com/CarpenterLee/JCFInternals/blob/master/markdown/6-HashSet and HashMap.md" target="_blank" rel="noopener">HashSet and HashMap</a></p>
+</li>
+</ul>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2020/06/08/Java内存模型/" data-toggle="tooltip" data-placement="top" title="Java内存模型">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2020/04/28/Java集合-Queue篇/" data-toggle="tooltip" data-placement="top" title="Java集合—Queue篇">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Java" title="Java">Java</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

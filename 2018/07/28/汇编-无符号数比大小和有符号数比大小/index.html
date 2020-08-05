@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          汇编——无符号数比大小和有符号数比大小 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2018/07/28/汇编-无符号数比大小和有符号数比大小/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#汇编" title="汇编">汇编</a>
+                        
+                    </div>
+                    <h1>汇编——无符号数比大小和有符号数比大小</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2018-07-28
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <div id="article_content" class="article_content csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post">
+                    <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/htmledit_views-0a60691e80.css">
+            <div class="htmledit_views">
+                <p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">本文来源于</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';"> www.14edu.com(</span></span><span style="font-family:'宋体';">论文网</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">) </span></span><span style="font-family:'宋体';">原文链接：</span><span lang="en-us" xml:lang="en-us"><a href="http://www.14edu.com/ligong/jisuanji/ligong/rjgc/0RX01152010_2.html" target="_blank"><span style="color:#800080;font-family:'Times New Roman';">http://www.14edu.com/ligong/jisuanji/ligong/rjgc/0RX01152010_2.html</span></a></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">（这篇文章</span><span style="font-family:'Times New Roman';"> </span><span style="font-family:'宋体';">对本人收获很大</span><span style="font-family:'Times New Roman';"> </span><span style="font-family:'宋体';">推荐）</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">摘要</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:</span></span><span style="font-family:'宋体';">在汇编语言中</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">对于数据谁大谁小的判断是经常会碰到的</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">数大小的判断包括判断<span style="color:#FF0000;">两个无符号数</span>之间的大小</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">也包括判断<span style="color:#FF0000;">两个带符号数</span>之间的大小</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">对于前者的判断可通过进位标志位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CF</span></span><span style="font-family:'宋体';">来判断</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">但对于后者却要涉及到对符号标志位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF</span></span><span style="font-family:'宋体';">以及溢出标志位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF</span></span><span style="font-family:'宋体';">这两个状态标志位的综合分析</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">所以这两种数的处理方法是不一样的</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">如果混为一谈是很容易出错的</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">因此数大小的判断在汇编中必须值得注意。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">在汇编语言里</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">对于数来说</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">可以将它们分成<span style="color:#FF0000;">带符号数和无符号数</span></span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">顾名思义</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="color:#FF0000;font-family:'宋体';">带符号数就是数的最高位为符号位</span><span style="color:#FF0000;" lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="color:#FF0000;font-family:'宋体';">其余的为数值位</span><span style="color:#FF0000;" lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">;</span></span><span style="font-family:'宋体';">相反</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">若最高位不是符号位则称作为无符号数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">;</span></span><span style="font-family:'宋体';">但数的大小比较是不是也要分为这两种呢</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">?</span></span><span style="font-family:'宋体';">也就是无符号数和带符号数的比较呢</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">?</span></span><span style="font-family:'宋体';">下面就几个状态标志位来讨论一下。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">1 </span></span><span style="font-family:'宋体';">讨论</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">1.1 </span></span><span style="font-family:'宋体';">标志寄存器</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">FLAGS</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">标志</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">(Flag)</span></span><span style="font-family:'宋体';">用于反映指令执行结果或控制指令执行形式。它是汇编语言程序设计中必须特别注意的一个方面。许多指令执行之后将影响有关的标志位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">;</span></span><span style="font-family:'宋体';">不少指令的执行要利用某些标志</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">;</span></span><span style="font-family:'宋体';">当然</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">也有很多指令与标志无关。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">8086</span></span><span style="font-family:'宋体';">有一个</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">16</span></span><span style="font-family:'宋体';">位的标志寄存器</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">FLAGS(</span></span><span style="font-family:'宋体';">其中存储的信息被称为程序状态字寄存器</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">PSW:Program Status Word)</span></span><span style="font-family:'宋体';">。标志寄存器的标志有两类</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:6</span></span><span style="font-family:'宋体';">个状态标志和</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">3</span></span><span style="font-family:'宋体';">个控制标志。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">下面就简单介绍一下跟数的符号以及数的大小相关的几个状态标志位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF (Sign Flag): </span></span><span style="font-family:'宋体';">符号标志位。它记录相关指令执行后</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">其结果是否为负。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CF (Carry Flag): </span></span><span style="font-family:'宋体';">进位标志位。它记录了无符号数运算结果的最高位向更高位的进位值</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">或从更高位的借位值。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF (Overflow Flag): </span></span><span style="font-family:'宋体';">溢出标志位。它记录了有符号数运算的结果是否发生了溢出。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">我们知道</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">数据处理是计算机的的基本功能之一</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">那么这些需要处理的数据是如何在计算机中表示的呢</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">?</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">日常生活中</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">人们习惯使用十进制来表示数据</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">而计算机中采用的却是二进制数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">并且可将数据分为无符号数与带符号数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">无符号数全部的位都是数值位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">而带符号数在最高位是符号位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">若为</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">1,</span></span><span style="font-family:'宋体';">则该数为负数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">反之则为正数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">;</span></span><span style="font-family:'宋体';">而跟数据大小有关的标志位包括了</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CF</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF</span></span><span style="font-family:'宋体';">和</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF</span></span><span style="font-family:'宋体';">。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">1.2 </span></span><span style="font-family:'宋体';">进位标志位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CF</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">当进行加减运算时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">若高位发生进位或借位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">则</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CF</span></span><span style="font-family:'宋体';">为</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">1,</span></span><span style="font-family:'宋体';">否则为</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">0</span></span><span style="font-family:'宋体';">。<span style="color:#FF0000;">该标志位通常用于判断无符号数运算结果是否超出了计算机所能表示的无符号数的范围。</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">例如</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:255-67,</span></span><span style="font-family:'宋体';">这个减法中</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">被减数对应十进制数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">255,</span></span><span style="font-family:'宋体';">而减数是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">67,</span></span><span style="font-family:'宋体';">通过结果显示</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">最高位是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">0,</span></span><span style="font-family:'宋体';">说明该减法没有发生借位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">此时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CF=0,</span></span><span style="font-family:'宋体';">表示被减数是大于减数。从结果来看</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">是在</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">0</span></span><span style="font-family:'宋体';">～</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">255</span></span><span style="font-family:'宋体';">之间</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">没有超过范围</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">结果是正确的。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">又再如</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:67-255,</span></span><span style="font-family:'宋体';">在这个减法中</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">被减数是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">67,</span></span><span style="font-family:'宋体';">减数是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">255,</span></span><span style="font-family:'宋体';">结果显示最高位是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">1,</span></span><span style="font-family:'宋体';">说明减法发生了借位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">此时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CF=1,</span></span><span style="font-family:'宋体';">表示被减数是小于减数。从结果来看</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">并不是在</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">0</span></span><span style="font-family:'宋体';">～</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">255</span></span><span style="font-family:'宋体';">之间</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">超过了范围</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">说明结果是错误的。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">比如有一比较两无符号数大小的编程题</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">有两个字节型无符号数分别放在</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">X</span></span><span style="font-family:'宋体';">和</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">Y</span></span><span style="font-family:'宋体';">两存储单元中</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">试比较两数大小</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">并且将较大者放在</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">X</span></span><span style="font-family:'宋体';">单元里。源程序如下</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">MOV<span>&nbsp; </span>AL, X</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">CMP<span>&nbsp; </span>AL, Y</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JNC NEXT (</span></span><span style="font-family:'宋体';">或</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';"> JBENEXT) ;</span></span><span style="font-family:'宋体';">若</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">X</span></span><span style="font-family:'宋体';">等于或等于</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">Y,</span></span><span style="font-family:'宋体';">则</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">AL</span></span><span style="font-family:'宋体';">直接存回</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">X</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">MOV<span>&nbsp; </span>AL, Y ;</span></span><span style="font-family:'宋体';">若</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">X</span></span><span style="font-family:'宋体';">小于</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">Y,</span></span><span style="font-family:'宋体';">则是将</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">Y</span></span><span style="font-family:'宋体';">的值存入</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">X</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;"><span style="font-family:'Times New Roman';">NEXT: MOVX, AL</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">从上面的分析可以得知</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="color:#FF0000;font-family:'宋体';">对于无符号数的大小比较关键是看</span><span style="color:#FF0000;" lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CF</span></span><span style="color:#FF0000;font-family:'宋体';">的值。若</span><span style="color:#FF0000;" lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CF=0,</span></span><span style="color:#FF0000;font-family:'宋体';">说明前者大于后者</span><span style="color:#FF0000;" lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="color:#FF0000;font-family:'宋体';">反之则是后者大于前者。</span><span style="color:#FF0000;" lang="en-us" xml:lang="en-us"></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">1.3 </span></span><span style="font-family:'宋体';">符号标志位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">前面介绍的是无符号数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">对于带符号数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">在计算机中是以补码的形式存放的</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">就拿简单的字节型数据来说</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">它所表示十进制数的范围是</span><span style="color:#FF0000;" lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-128</span></span><span style="color:#FF0000;font-family:'宋体';">～</span><span style="font-family:'Times New Roman';"><span style="color:#FF0000;" lang="en-us" xml:lang="en-us"> 127</span><span lang="en-us" xml:lang="en-us">,</span></span><span style="font-family:'宋体';">现在来看一下字节型带符号数大小的比较</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:-1-(-2),</span></span><span style="font-family:'宋体';">从结果可以得知</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">最高符号位是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">0,</span></span><span style="font-family:'宋体';">表示差值是一个正数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">对应十进制数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';"> 1,</span></span><span style="font-family:'宋体';">而在式中</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">被减数是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-1,</span></span><span style="font-family:'宋体';">减数是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-2,</span></span><span style="font-family:'宋体';">显然前者大于后者</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">所以可以判断结果是正确的。如果这两个数的位置对调一下</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">差值是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">11111111,</span></span><span style="font-family:'宋体';">对应十进制数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-1,</span></span><span style="font-family:'宋体';">所以结果也是正确的。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">1.4 </span></span><span style="font-family:'宋体';">溢出标志位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="color:#FF0000;font-family:'宋体';">先来看一下什么是溢出——如果运算结果超出能够表达的数据范围</span><span style="color:#FF0000;" lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="color:#FF0000;font-family:'宋体';">就产生了溢出。</span><span style="font-family:'宋体';">而处理器内部以补码表示带符号数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,8</span></span><span style="font-family:'宋体';">位表达的整数范围是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">: 127</span></span><span style="font-family:'宋体';">～</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-128,16</span></span><span style="font-family:'宋体';">位表达的范围是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">: 32767</span></span><span style="font-family:'宋体';">～</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-32768</span></span><span style="font-family:'宋体';">。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">对于前一部分所列举的例子一个是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-1</span></span><span style="font-family:'宋体';">减</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-2,</span></span><span style="font-family:'宋体';">结果没有溢出</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">另外一个是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-2</span></span><span style="font-family:'宋体';">减</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-1,</span></span><span style="font-family:'宋体';">结果也没溢出。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">现在来看一下如果结果发生了溢出又是如何来判断两个带符号数的大小的。例如</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-3-( 126)</span></span><span style="font-family:'宋体';">。结果</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">7FH<span>&nbsp;&nbsp; </span>SF=0</span></span><span style="font-family:'宋体';">（正）</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">且</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF=1,</span></span><span style="font-family:'宋体';">可以看出结果是错误的</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">但是这两个条件却能说明前者小于后者</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">;</span></span><span style="font-family:'宋体';">再来看个例子</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">: 3-(-126),</span></span><span style="font-family:'宋体';">所得结果</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';"><span>&nbsp;&nbsp; </span>8 1H<span>&nbsp; </span>SF=1</span></span><span style="font-family:'宋体';">（负）</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">且</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF=1,</span></span><span style="font-family:'宋体';">可以看出结果也是错误的</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">但是这两个条件却说明了前者大于后者。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">如果</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF=0 </span></span><span style="font-family:'宋体';">有</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">-3-</span></span><span style="font-family:'宋体';">（</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">125</span></span><span style="font-family:'宋体';">）</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">= -128</span></span><span style="font-family:'宋体';">（未溢出）</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF= 1;</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">3-(-124)=127(</span></span><span style="font-family:'宋体';">未溢出</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">) SF=0</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-family:'宋体';"><span style="font-size:small;">故</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;text-indent:10.5pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF=0 SF=0 </span></span><span style="font-family:'宋体';">前</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">&gt; </span></span><span style="font-family:'宋体';">后</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;text-indent:10.5pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF=0 SF=1 </span></span><span style="font-family:'宋体';">前</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">&lt; </span></span><span style="font-family:'宋体';">后</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;text-indent:10.5pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF=1 SF=0 </span></span><span style="font-family:'宋体';">前</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">&lt; </span></span><span style="font-family:'宋体';">后</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;text-indent:10.5pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF=1 SF=1 </span></span><span style="font-family:'宋体';">前</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">&gt; </span></span><span style="font-family:'宋体';">后</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">2 </span></span><span style="font-family:'宋体';">小结</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">通过以上的几个关于带符号数大小比较的例子来看</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">不能简单地归纳为</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:</span></span><span style="font-family:'宋体';">如果</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF=1,</span></span><span style="font-family:'宋体';">就意味着前者一定小于后者</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">反过来</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF=0</span></span><span style="font-family:'宋体';">就一定是前者大于或等于后者。对于带符号数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">其大小的比较的规律比无符号数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">(</span></span><span style="font-family:'宋体';">只要看进位标志位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CF</span></span><span style="font-family:'宋体';">的值</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">)</span></span><span style="font-family:'宋体';">要更复杂</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">它不能仅仅只看一个状态标志位——符号标志位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF,</span></span><span style="font-family:'宋体';">还得要看另外一个重要的标志位——溢出标志位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">(OF),</span></span><span style="font-family:'宋体';">应该归纳如下</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">1)</span></span><span style="font-family:'宋体';">无符号数的比较</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">①</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';"> CF=0,</span></span><span style="font-family:'宋体';">前者大于或等于后者</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">;</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">②</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';"> CF=1,</span></span><span style="font-family:'宋体';">前者小于后者</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">;</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">2)</span></span><span style="font-family:'宋体';">带符号数的比较</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">①</span><span style="font-family:'Times New Roman';"> </span><span style="font-family:'宋体';">如果结果是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF=0,</span></span><span style="font-family:'宋体';">且</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF=0</span></span><span style="font-family:'宋体';">（正）</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">或者当</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF=1,</span></span><span style="font-family:'宋体';">且</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF=1</span></span><span style="font-family:'宋体';">（负）时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">说明两个数是前者大于或等于后者。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">②</span><span style="font-family:'Times New Roman';"> </span><span style="font-family:'宋体';">如果结果是</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF=0,</span></span><span style="font-family:'宋体';">且</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF=1</span></span><span style="font-family:'宋体';">（负）</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">或者当</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF=1,</span></span><span style="font-family:'宋体';">且</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF=0</span></span><span style="font-family:'宋体';">（正）时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">说明两个数是前者小于后者。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">在用比较指令</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CMP</span></span><span style="font-family:'宋体';">来实现两个无符号数大小比较时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">条件转移指令应当涉及到以下三个字符</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:A(Above</span></span><span style="font-family:'宋体';">高于</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">)</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">B(Below</span></span><span style="font-family:'宋体';">低于</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">)</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">E(Equal</span></span><span style="font-family:'宋体';">等于</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">),</span></span><span style="font-family:'宋体';">包括</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JA(JNBE)</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JAE(JNB)</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JB(JNAE)</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JBE(JNA),</span></span><span style="font-family:'宋体';">或者用减法指令</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SUB</span></span><span style="font-family:'宋体';">来实现两个无符号数大小比较时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">会涉及到带</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CF</span></span><span style="font-family:'宋体';">的条件转移指令</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:JC</span></span><span style="font-family:'宋体';">和</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JNC;</span></span><span style="font-family:'宋体';">而在用比较指令</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">CMP</span></span><span style="font-family:'宋体';">实现两个带符号数大小比较时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">条件转移指令涉及却是另外三个字符</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:G(Greater</span></span><span style="font-family:'宋体';">大于</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">)</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">L(Less</span></span><span style="font-family:'宋体';">小于</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">)</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">E(Equal</span></span><span style="font-family:'宋体';">等于</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">),</span></span><span style="font-family:'宋体';">包括</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JG(JNLE)</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JGE(JNL)</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JL(JNGE)</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JLE(JNG),</span></span><span style="font-family:'宋体';">或者用减法指令</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SUB</span></span><span style="font-family:'宋体';">来实现两个带符号数大小比较时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">会涉及到带</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF</span></span><span style="font-family:'宋体';">和</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">OF</span></span><span style="font-family:'宋体';">的条件转移指令</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:JS</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JNS</span></span><span style="font-family:'宋体';">和</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JO</span></span><span style="font-family:'宋体';">、</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JNO</span></span><span style="font-family:'宋体';">。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">例</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:</span></span><span style="font-family:'宋体';">计算</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">|X-Y|,X</span></span><span style="font-family:'宋体';">和</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">Y</span></span><span style="font-family:'宋体';">为存放于</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">X</span></span><span style="font-family:'宋体';">单元和</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">Y</span></span><span style="font-family:'宋体';">单元的</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">8</span></span><span style="font-family:'宋体';">位带符号数数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">结果存入</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">result</span></span><span style="font-family:'宋体';">。</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">MOVAL, X</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SUB AL, Y ;AX</span></span><span style="font-family:'宋体';">←</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">X-Y,</span></span><span style="font-family:'宋体';">下面求绝对值</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JNS NONNEG ;</span></span><span style="font-family:'宋体';">为正数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">无需处理</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">直接转向保存结果</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">NEGAX ;</span></span><span style="font-family:'宋体';">为负数</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">进行求补得到绝对值</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">NONNEG: MOVresult, AL;</span></span><span style="font-family:'宋体';">保存结果</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">乍一看</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">这程序好像无可挑剔</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">但是如果</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">X=-2,Y= 127</span></span><span style="font-family:'宋体';">的话</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,SF=0,</span></span><span style="font-family:'宋体';">满足条件转到标号</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">NONNEG,</span></span><span style="font-family:'宋体';">显然这是错误的</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">应当是这个差值先要求补</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">再保存结果。究其原因</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">它没有考虑是否会发生溢出</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">其程序应当做如下修改</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">:</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">MOVAL, X</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SUBAL, Y ;AX</span></span><span style="font-family:'宋体';">←</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">X-Y,</span></span><span style="font-family:'宋体';">下面求绝对值</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JNONEXT ;</span></span><span style="font-family:'宋体';">先判断是否溢出</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">若未溢出</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">接着判断符号位</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">SF</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JS NONNEG ;</span></span><span style="font-family:'宋体';">溢出</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">且结果为负时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">直接保存结果</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';"> </span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">JMPFAN ;</span></span><span style="font-family:'宋体';">溢出</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">且结果为正时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">要先求补</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">NEXT:JNS NONNEG ;</span></span><span style="font-family:'宋体';">未溢出</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">且结果为非负时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">直接保存结果</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';"> </span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">FAN:NEGAL ;</span></span><span style="font-family:'宋体';">未溢出</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">且结果为负时</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">,</span></span><span style="font-family:'宋体';">要求补</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">NONNEG:MOVresult, AL ;</span></span><span style="font-family:'宋体';">保存结果</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span lang="en-us" xml:lang="en-us"><span style="font-size:small;font-family:'Times New Roman';">&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span style="font-family:'宋体';">本文来源于</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';"> www.14edu.com(</span></span><span style="font-family:'宋体';">论文网</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';">) </span></span><span style="font-family:'宋体';">原文链接：</span><span lang="en-us" xml:lang="en-us"><a href="http://www.14edu.com/ligong/jisuanji/ligong/rjgc/0RX01152010_2.html" target="_blank"><span style="color:#800080;font-family:'Times New Roman';">http://www.14edu.com/ligong/jisuanji/ligong/rjgc/0RX01152010_2.html</span></a></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:small;"><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>-1 -2 -3 -4 </span></span><span style="font-family:'宋体';">。。。</span><span lang="en-us" xml:lang="en-us"><span style="font-family:'Times New Roman';"> -127 -128</span></span></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;text-align:left;" align="left"><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">0<span>&nbsp;&nbsp; </span>1<span>&nbsp;&nbsp; </span>2 </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。。。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><span>&nbsp; </span>126 127</span><span style="font-size:small;"><span style="font-family:'Times New Roman';"> </span></span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span></p>
+<p class="MsoNormal" style="margin:0cm 0cm 0pt;"><span style="font-size:9pt;color:#333333;font-family:'宋体';">一些运算、比较类指令会影响到相应的标志位，如</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">CF</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">、</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">OF</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">、</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">SF</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><span style="font-size:9pt;color:#333333;font-family:'宋体';">如上图，我自己定义加法运算为顺时针，减法运算为逆时针。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><span style="font-size:9pt;color:#333333;font-family:'宋体';">加减法运算分为两种，一种是有符号数运算；另一种是无符号数运算。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><span style="font-size:9pt;color:#333333;font-family:'宋体';">无符号数运算会影响进位或借位标志</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> CF</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><span style="font-size:9pt;color:#333333;font-family:'宋体';">而标志位</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> OF </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">和</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> SF </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">则会在带符号运算中受到影响。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><span style="font-size:9pt;color:#333333;font-family:'宋体';">其实，系统在进行一个运算指令时，是同时在进行两种运算的，这两种运算的结果通过相关的标志位反应出来。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><strong><span style="font-size:13.5pt;color:#333333;font-family:'宋体';">带符号位运算实质</span></strong><span style="font-size:9pt;color:#333333;font-family:'宋体';">：</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">符号数的范围是（</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">-128 ~&nbsp;0 &lt; 80H ~ 0&gt;&nbsp;</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">）</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">(0 ~ 127 &lt; 0 ~ 7FH&gt; )</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><strong><span style="font-size:9pt;color:#FF00FF;font-family:Arial;" lang="en-us" xml:lang="en-us">exp1</span></strong><span style="font-size:9pt;color:#333333;font-family:'宋体';">：</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br>&nbsp;mov ah, 22h<br>&nbsp;mov bh, 0a0h<br>&nbsp;sub ah, bh <br></span><span style="font-size:9pt;color:#333333;font-family:'宋体';">按无符号数运算来看</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> 22 &lt; a0h </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">，所以要产生借位，此时</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> CF = 1</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">，结果为</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> 82H</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">；</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><span style="font-size:9pt;color:#333333;font-family:'宋体';">按有符号运算来看，结果仍然是</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">82H</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">，</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">82H</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">为负数。一个正数减去一个负数，实际就是加法运算，按上图，应该顺时针旋转。但是</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">82H</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">越过正数的最大边界</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">7FH(127)</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">，所以产生了溢出，故</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">OF = 1</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。因为</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> SF </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">只和运算结果想联系，</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">82H</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">为负数，结果</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> SF = 1</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><span style="font-size:9pt;color:#333333;font-family:'宋体';">假如仅从</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> SF </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">和</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> OF </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">来看，</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">SF = 1</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">，则说明运算结果为负数。但此时</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> OF </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">也为</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">1</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">，表明发生了溢出。</span><span style="font-size:9pt;color:#FF0000;font-family:'宋体';">溢出的说法是，本来应该是正数的，一旦发生了溢出，就会变成负数；反之，本来要是负数的结果，发生了溢出，结果就变成了正数。</span><span style="font-size:9pt;color:#FF0000;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><strong><span style="font-size:9pt;color:#FF00FF;font-family:Arial;" lang="en-us" xml:lang="en-us">exp2</span></strong><span style="font-size:9pt;color:#333333;font-family:'宋体';">：</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br>mov ah,0a0h<br>mov bh,0cbh<br>cmp ah,bh<br></span><span style="font-size:9pt;color:#333333;font-family:'宋体';">分析：</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br>cmp </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">的本质是进行减法运算。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br></span><span style="font-size:9pt;color:#333333;font-family:'宋体';">按照无符号运算，</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">a0h </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">小于</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> cbh </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">，所以要产生借位，</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">CF = 1</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。运算在</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">ah</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">中的结果为：</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">D5</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br>&nbsp;-53&nbsp; </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">的补码为</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> 0CBH </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">-96 </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">的补码为</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> a0h</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">a0h&nbsp;- 0cbh </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">就相当于</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> -96 - </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">（</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">-53</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">）</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">= -96 + 53= -43</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">，而</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> -43 </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">的补码为</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> D5 </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。从图上看，就是从</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> A0</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">的位置，顺时针旋转</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> 53 </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">个单位，然后停留在</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> D5H </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">处，这里并没有超越边界</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">0 </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">，所以没有产生溢出，故</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> OF = 0</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">；结果仍然为负数，所以</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> SF = 1</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">。</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"><br><br></span><span style="font-size:9pt;color:#333333;font-family:'宋体';">仅从</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> OF </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">和</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us"> SF </span><span style="font-size:9pt;color:#333333;font-family:'宋体';">观察，</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">SF = 1</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">，知道结果为负数；</span><span style="font-size:9pt;color:#333333;font-family:Arial;" lang="en-us" xml:lang="en-us">OF = 0</span><span style="font-size:9pt;color:#333333;font-family:'宋体';">，结果没有溢出，所以实际结果的负数和逻辑结果上的负数一致，结果正确。若是溢出了，那么实际结果和逻辑结果的正负性就是相反的。</span></p>            </div>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/07/28/汇编-INT21h中断的使用/" data-toggle="tooltip" data-placement="top" title="汇编——INT 21h 中断的使用">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#汇编" title="汇编">汇编</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

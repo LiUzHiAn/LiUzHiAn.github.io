@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Java集合—List篇 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2020/04/24/Java集合-List篇/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/posts_imgs/java-logo.png')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Java" title="Java">Java</a>
+                        
+                    </div>
+                    <h1>Java集合—List篇</h1>
+                    <h2 class="subheading">List、ArrayList、LinkedList</h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2020-04-24
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#List相关"><span class="toc-text">List相关</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-List接口"><span class="toc-text">1. List接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-ArrayList实现"><span class="toc-text">2.ArrayList实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-构造函数"><span class="toc-text">2.1 构造函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-add-方法"><span class="toc-text">2.2 add()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-remove-方法"><span class="toc-text">2.3 remove()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-其他方法"><span class="toc-text">2.4 其他方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-LinkedList"><span class="toc-text">3.LinkedList</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-内部结点"><span class="toc-text">3.1 内部结点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-构造函数"><span class="toc-text">3.2 构造函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-add-方法"><span class="toc-text">3.3 add()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-remove"><span class="toc-text">3.4 remove()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-其他方法"><span class="toc-text">3.5 其他方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-参考"><span class="toc-text">4. 参考</span></a></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="List相关"><a href="#List相关" class="headerlink" title="List相关"></a>List相关</h1><p>我们从最简单的List开始入手，一步步往下分析。List是一个列表，是一个顺序容器，对容器中对象的<code>get</code>和<code>set</code>都可以在常数级别时间内完成。</p>
+<h2 id="1-List接口"><a href="#1-List接口" class="headerlink" title="1. List接口"></a>1. List接口</h2><p><code>List</code>接口如下,这里只分析了一些主要的函数。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">Collection</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">// 返回当前列表容器中对象的数量</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 判断容器是否是空的</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 判断容器中是否存在指定对象</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Object o)</span></span>;</span><br><span class="line">    <span class="comment">// 返回迭代器</span></span><br><span class="line">    <span class="function">Iterator&lt;E&gt; <span class="title">iterator</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// toArray</span></span><br><span class="line">    Object[] toArray();</span><br><span class="line">   </span><br><span class="line">    <span class="comment">// get</span></span><br><span class="line">    <span class="function">E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span></span>;</span><br><span class="line">    <span class="comment">// set</span></span><br><span class="line">    <span class="function">E <span class="title">set</span><span class="params">(<span class="keyword">int</span> index, E element)</span></span>;</span><br><span class="line">    <span class="comment">// 往容器中添加一个对象</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> index, E element)</span></span>;</span><br><span class="line">    <span class="comment">// 移除一个元素</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object o)</span></span>;</span><br><span class="line">    <span class="comment">// 清空容器</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 对容器排序，指定一个comparator</span></span><br><span class="line">    <span class="comment">// Java8 中支持用default关键字来对接口中的一些方法进行默认实现</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparator&lt;? <span class="keyword">super</span> E&gt; c)</span>； </span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="2-ArrayList实现"><a href="#2-ArrayList实现" class="headerlink" title="2.ArrayList实现"></a>2.ArrayList实现</h2><p><code>ArrayList</code>底层是用数组来实现的，每个<code>ArrayList</code>对象有个Capacity，这个容量的默认大小为10，随着对象的不断添加，这个容量会增加。</p>
+<p><code>ArrayList</code>一般的用法是这样的：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list= <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">list.add(<span class="string">"andy"</span>);</span><br><span class="line">list.add(<span class="string">"jack"</span>);</span><br><span class="line">list.add(<span class="string">"rose"</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(list.toString());  <span class="comment">// 输出 [andy, jack, rose]</span></span><br><span class="line"></span><br><span class="line">list.remove(<span class="string">"andy"</span>);</span><br><span class="line">list.remove(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(list.toString());  <span class="comment">// 输出 [jack]</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="2-1-构造函数"><a href="#2-1-构造函数" class="headerlink" title="2.1 构造函数"></a>2.1 构造函数</h3><p>ArrayList的构造函数有两个，即<code>ArrayList()</code>和<code>ArrayList(Collection &lt;? extends E&gt;)</code>,下面分别看下它们的源码。</p>
+<ul>
+<li><code>ArrayList()</code>就很简单了，把capacity和size都初始化为0就OK了。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">transient</span> Object[] elementData; <span class="comment">// non-private to simplify nested class access</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> size; <span class="comment">// 容器中对象的数量，这和capacity是不一样的概念！</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 初始化容量为空</span></span><br><span class="line">    <span class="keyword">this</span>.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>ArrayList(Collection &lt;? extends E&gt; c)</code>相对来说就复杂一点，需要判断一下入参的状况，也就是会按照入参<code>c</code>的当前size去初始化容量。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">(Collection&lt;? extends E&gt; c)</span> </span>&#123;</span><br><span class="line">    elementData = c.toArray();</span><br><span class="line">    <span class="keyword">if</span> ((size = elementData.length) != <span class="number">0</span>) &#123;  <span class="comment">// 如果c不为空，则按照c的size扩容好</span></span><br><span class="line">        <span class="comment">// c.toArray might (incorrectly) not return Object[] (see 6260652)</span></span><br><span class="line">        <span class="keyword">if</span> (elementData.getClass() != Object[].class)</span><br><span class="line">            elementData = Arrays.copyOf(elementData, size, Object[].class);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;  <span class="comment">// 如果c为空，那就和ArrayList()一样，初始化为空</span></span><br><span class="line">        <span class="comment">// replace with empty array.  </span></span><br><span class="line">        <span class="keyword">this</span>.elementData = EMPTY_ELEMENTDATA;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意，构造函数执行完后，只是初始化了容量（也就是说，我们大概准备好了即将分配多大的容量），并没有实际去扩容！</p>
+<h3 id="2-2-add-方法"><a href="#2-2-add-方法" class="headerlink" title="2.2 add()方法"></a>2.2 add()方法</h3><p>Okay，初始化好了，肯定就是添加元素了。添加也有2个重载的方法<code>boolean add(E e)</code>和<code>void add(int index, E e)</code>,二者的功能分别是在最后面追加一个对象，和，在指定位置加一个对象（这个位置必须在范围[0,size]之间）。注意，两个方法的返回值类型不一样。</p>
+<ul>
+<li>我们先看下<code>add(E e)</code>的源码：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!  // 开始扩容，列表结构被修改的次数加1</span></span><br><span class="line">    elementData[size++] = e;  <span class="comment">// 把待添加的对象放到最后</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) &#123;    <span class="comment">// 如果容器当前为空容器</span></span><br><span class="line">        minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity);  <span class="comment">// 最小的capacity为10</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ensureExplicitCapacity(minCapacity);  <span class="comment">// 显式地确保容器容量</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    modCount++;  <span class="comment">// 列表的结构性修改次数</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// overflow-conscious code</span></span><br><span class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)  <span class="comment">// 如果容器当前的capacity小于待扩容后的容量</span></span><br><span class="line">        grow(minCapacity);  <span class="comment">// 扩容！</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// overflow-conscious code</span></span><br><span class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;  <span class="comment">// 原来的容量</span></span><br><span class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);  <span class="comment">// 新容量扩容为原来的1.5倍</span></span><br><span class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)  <span class="comment">// 如果扩容1.5倍后还达不到想要的容量</span></span><br><span class="line">        newCapacity = minCapacity;  <span class="comment">// 那直接扩到想要的容量</span></span><br><span class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</span><br><span class="line">        newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">    <span class="comment">// minCapacity is usually close to size, so this is a win:</span></span><br><span class="line">    elementData = Arrays.copyOf(elementData, newCapacity);  <span class="comment">// 数组扩容</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有个地方需要注意一下，就是<code>modCount</code>这玩意儿(这个变量是在抽象类<code>AbstractList</code>中声明的)，我们看下文档是怎么说的：</p>
+<blockquote>
+<p>The number of times this list has been structurally modified. Structural modifications are those that change the size of the list, or otherwise perturb it in such a fashion that iterations in progress may yield incorrect results.</p>
+</blockquote>
+<p>哦，这个变量指的是list结构被修改的次数，用来到时候迭代器遍历的途中确保list没被修改过。恍然大悟！这让我想起了一点，原来不太会用的时候，曾经这么干过：用迭代器遍历一个list，如果中途发现一个想要删除的对象，则删除它，呵呵！大错特错！！！遍历的途中是不能修改list本身的样子的。</p>
+<p>每次<code>add()</code>或<code>remove()</code>，<code>modCount</code>都会自增1。不妨通过例子来验证一下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list= <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">list.add(<span class="string">"andy"</span>);</span><br><span class="line">list.add(<span class="string">"jack"</span>);</span><br><span class="line">list.add(<span class="string">"rose"</span>);</span><br></pre></td></tr></table></figure><br>经过上述3次add，<code>modCount=3,size=3,capacity=10(即 elemData.length=10)</code>，debug验证了这个结果。<br><img src="1.png#pic_center" alt=""></p>
+<p>看了源码，我们知道了，其实<code>ArrayList</code>这玩意儿默认的最小容量是10，也就算说，如果我显式地初始化它的容量为5，最后代码还是会最开始就分配10个容量（想一下？怎么做到显式地初始化？对的，用带参数的构造函数呀！因为带参的构造函数会按照当前的size初始化容量）；随着对象不断添加进来，总有一天它容量不够，会要扩容，而且每次扩容后的容量为原来的1.5倍！</p>
+<p>为了再次验证可以通过调用带参的构造函数来使得初始化的容量不为10，我们设计如下test case:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">   List&lt;String&gt; list= <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">   list.add(<span class="string">"andy"</span>);</span><br><span class="line">   list.add(<span class="string">"jack"</span>);</span><br><span class="line">   list.add(<span class="string">"rose"</span>);</span><br><span class="line"></span><br><span class="line">   System.out.println(list.toString());  <span class="comment">// 输出 [andy, jack, rose]</span></span><br><span class="line"></span><br><span class="line">   List&lt;String&gt; list2= <span class="keyword">new</span> ArrayList&lt;&gt;(list);</span><br><span class="line"><span class="comment">// list2此时的size为3，容量也为3，</span></span><br><span class="line">list2.add(<span class="string">"whut"</span>); <span class="comment">// add前肯定是会扩容的，扩容后容量为 (3&gt;&gt;1)+3 = 4，size也为4</span></span><br><span class="line">   list2.add(<span class="string">"cs"</span>); <span class="comment">// add前再次扩容，扩容后容量为 (4&gt;&gt;1)+4 = 6，size为5</span></span><br><span class="line">   list2.add(<span class="string">"java"</span>);  <span class="comment">// 此时不会扩容，add后容量为6，size为6</span></span><br><span class="line">   </span><br><span class="line">   System.out.println(list2.toString());  <span class="comment">// 输出 [andy, jack, rose, whut, cs, java]</span></span><br><span class="line">   </span><br><span class="line">   list2.remove(<span class="string">"andy"</span>);</span><br><span class="line">   list2.remove(<span class="number">1</span>);</span><br></pre></td></tr></table></figure><br>单步debug很容易验证，这里就不放图了。</p>
+<ul>
+<li>有了上面的基础，再看<code>add(int index, E e)</code>就比较简单了。</li>
+</ul>
+<p>比方说，现在list中有3个元素为<code>[&quot;andy&quot;,&quot;jack&quot;,&quot;rose&quot;]</code>，那我们只能<code>add(0~3,&quot;WHUT&quot;)</code>。如果<code>add(1,&quot;WHUT&quot;)</code>的话，操作后的list为<code>[&quot;andy&quot;,&quot;WHUT&quot;,&quot;jack&quot;,&quot;rose&quot;]</code>。</p>
+<p>源码如下，主要是多了一个检查下标范围的代码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> index, E element)</span> </span>&#123;</span><br><span class="line">    rangeCheckForAdd(index); <span class="comment">// 范围检查</span></span><br><span class="line"></span><br><span class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></span><br><span class="line">    System.arraycopy(elementData, index, elementData, index + <span class="number">1</span>,</span><br><span class="line">                     size - index);  <span class="comment">// 把index后面的元素全部右移一个单位</span></span><br><span class="line">    elementData[index] = element;  <span class="comment">// e被放到指定的位置</span></span><br><span class="line">    size++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">rangeCheckForAdd</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (index &gt; size || index &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfBoundsException(outOfBoundsMsg(index));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>总结:<code>ArrayList</code>在末尾add()的时间复杂度为<code>O(1)</code>；而在指定位置add()的时间复杂度随插入的位置不同而不同，最差情况是在添加在第一个位置，需要右移size个元素，最好情况自然就是一个都不要移动了，时间复杂度为<code>O(N)</code>。</strong></p>
+<h3 id="2-3-remove-方法"><a href="#2-3-remove-方法" class="headerlink" title="2.3 remove()方法"></a>2.3 remove()方法</h3><p><code>remove()</code>方法同样也重载了两个，分别是<code>E remove(int index)</code>和<code>boolean remove(Object o)</code>,各种功能为删除指定下标处的对象和删除指定的对象（如果该对象不存在，返回false），前者是<code>List</code>接口中的方法，而后者是<code>Collection</code>接口中的方法。</p>
+<ul>
+<li><code>E remove(int index)</code>方法的源码：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">remove</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    rangeCheck(index);  <span class="comment">// 范围检查</span></span><br><span class="line"></span><br><span class="line">    modCount++;</span><br><span class="line">    E oldValue = elementData(index);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> numMoved = size - index - <span class="number">1</span>;  <span class="comment">// 要移动的元素个数</span></span><br><span class="line">    <span class="keyword">if</span> (numMoved &gt; <span class="number">0</span>)</span><br><span class="line">        System.arraycopy(elementData, index+<span class="number">1</span>, elementData, index,</span><br><span class="line">                         numMoved); <span class="comment">// 向前平移一个量</span></span><br><span class="line">    <span class="comment">// 把最后一个赋值为null，并且让GC发现，从而回收空间</span></span><br><span class="line">    elementData[--size] = <span class="keyword">null</span>; <span class="comment">// clear to let GC do its work  </span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> oldValue; <span class="comment">// 返回删除的值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于Java GC这里需要特别说明一下，<strong>有了垃圾收集器并不意味着一定不会有内存泄漏</strong>。对象能否被GC的依据是是否还有引用指向它，上面代码中如果不手动赋null值，除非对应的位置被其他元素覆盖，否则原来的对象就一直不会被回收。</p>
+<ul>
+<li><code>boolean remove(Object o)</code>方法的源代码：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (o == <span class="keyword">null</span>) &#123;  <span class="comment">// 允许容器中存放null对象</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; size; index++)</span><br><span class="line">            <span class="keyword">if</span> (elementData[index] == <span class="keyword">null</span>) &#123;</span><br><span class="line">                fastRemove(index);  <span class="comment">// 执行删除操作</span></span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; size; index++)</span><br><span class="line">            <span class="keyword">if</span> (o.equals(elementData[index])) &#123;</span><br><span class="line">                fastRemove(index);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">fastRemove</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="keyword">int</span> numMoved = size - index - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (numMoved &gt; <span class="number">0</span>)</span><br><span class="line">        System.arraycopy(elementData, index+<span class="number">1</span>, elementData, index,</span><br><span class="line">                         numMoved);</span><br><span class="line">    elementData[--size] = <span class="keyword">null</span>; <span class="comment">// clear to let GC do its work</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>移除的过程比较简单，就是遍历，看看待移除的对象是否的确存在，如果存在就删除掉，返回true,否则返回false，这里有2个点我们需要考虑：</p>
+<ol>
+<li>如果同时存在多个相同的对象（我这里说的相同指的是<code>equals()</code>）,那么代码会删掉第一个；</li>
+<li>从源码我们可以知道，<code>ArrayList()</code>支持插入的时候插入<code>null</code>。</li>
+</ol>
+<p>同样，我们设计下述的test case：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list= <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">list.add(<span class="string">"andy"</span>);</span><br><span class="line">list.add(<span class="string">"jack"</span>);</span><br><span class="line">list.add(<span class="keyword">null</span>);</span><br><span class="line">list.add(<span class="string">"rose"</span>);</span><br><span class="line">System.out.println(list.toString());  <span class="comment">// 输出 [andy, jack, null, rose]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">list.remove(<span class="keyword">null</span>);</span><br><span class="line">System.out.println(list.toString());  <span class="comment">// 输出 [andy, jack, rose]</span></span><br></pre></td></tr></table></figure><br><strong>总结：在list的末尾执行<code>remove()</code>方法执行的时间复杂度为<code>O(1)</code>，而在其他位置移除的时间复杂度为<code>O(N)</code>，而且，如果调用的是<code>remove(Objetc o)</code>方法，除了移动元素之外，还需要遍历原list，直到遇到一个和<code>o</code>equal的对象。</strong></p>
+<h3 id="2-4-其他方法"><a href="#2-4-其他方法" class="headerlink" title="2.4 其他方法"></a>2.4 其他方法</h3><p><code>ArrayList</code>里面还有一些其他的方法，比方说<code>clear()</code>、<code>indexOf()</code>、<code>set()</code>，这些都比较简单，就不在这里贴代码了。</p>
+<h2 id="3-LinkedList"><a href="#3-LinkedList" class="headerlink" title="3.LinkedList"></a>3.LinkedList</h2><p><code>LinkedList</code>是一个顺序访问的列表，而<code>ArrayList</code>则是一个任意访问的列表。<code>LinkedList</code>同时实现了Deque接口，因此又可以作为队列<code>Queue</code>来使用。继承关系如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LinkedList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractSequentialList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt;, <span class="title">Deque</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span></span><br></pre></td></tr></table></figure><br><code>LinkedList</code>底层是用双向链表实现的，分别是用了<code>first</code>和<code>last</code>来指向第一个和最后一个结点，且实现中是没带头结点的（即Dummy Node）。<br><img src="2.png#pic_center" alt=""></p>
+<p><code>LinkedList</code>一般的用法和<code>ArrayList</code>其实没有太大的区别，只不过作为用户的我们，应该对它的操作性能了如执掌：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">list.add(<span class="string">"andy"</span>);</span><br><span class="line">list.add(<span class="number">0</span>,<span class="string">"jack"</span>);</span><br><span class="line">list.add(<span class="string">"rose"</span>);</span><br><span class="line">System.out.println(list.toString());  <span class="comment">// 输出 [jack, andy, rose]</span></span><br><span class="line"></span><br><span class="line">System.out.println(list.remove(<span class="string">"java"</span>)); <span class="comment">// 因为链表中没有java这个结点，故输出false</span></span><br><span class="line">list.remove(<span class="string">"andy"</span>);</span><br><span class="line">System.out.println(list.toString());  <span class="comment">// 输出 [jack, rose]</span></span><br><span class="line"></span><br><span class="line">list.remove(<span class="number">1</span>);</span><br><span class="line">System.out.println(list.toString());  <span class="comment">// 输出 [jack]</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="3-1-内部结点"><a href="#3-1-内部结点" class="headerlink" title="3.1 内部结点"></a>3.1 内部结点</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    E item;</span><br><span class="line">    Node&lt;E&gt; next;</span><br><span class="line">    Node&lt;E&gt; prev;</span><br><span class="line"></span><br><span class="line">    Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) &#123;</span><br><span class="line">        <span class="keyword">this</span>.item = element;</span><br><span class="line">        <span class="keyword">this</span>.next = next;</span><br><span class="line">        <span class="keyword">this</span>.prev = prev;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个很简单，没什么好说的。</p>
+<h3 id="3-2-构造函数"><a href="#3-2-构造函数" class="headerlink" title="3.2 构造函数"></a>3.2 构造函数</h3><p>构造函数也有两个，<code>LinkedList()</code>和<code>LinkedList(Collection &lt;? extends E&gt; c)</code>，这两个方法其实和<code>ArrayList</code>的两个构造函数差不多，只不过<code>LinkedList</code>是没有capacity这个概念的。<code>LinkedList()</code>初始化size为0，而<code>LinkedList(Collection &lt;? extends E&gt; c)</code>则会初始化为<code>c</code>的大小。</p>
+<h3 id="3-3-add-方法"><a href="#3-3-add-方法" class="headerlink" title="3.3 add()方法"></a>3.3 add()方法</h3><p><img src="3.png#pic_center" alt=""></p>
+<p><code>LinkedList</code>的<code>add()</code>方法也是有两个的，即<code>boolean add(E e)</code>和<code>void add(int index, E element)</code>,前者是尾插法插在链表的最后，而后者则会把新的元素插入到index位置，这里肯定会存在遍历链表，找到第index处的元素了，下面我们来看下各自的实现方式。</p>
+<ul>
+<li><code>boolean add(E e)</code>的源代码：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    linkLast(e);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 尾插法</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">linkLast</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; l = last;</span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; newNode = <span class="keyword">new</span> Node&lt;&gt;(l, e, <span class="keyword">null</span>);</span><br><span class="line">    last = newNode;  <span class="comment">// 尾插法</span></span><br><span class="line">    <span class="keyword">if</span> (l == <span class="keyword">null</span>) <span class="comment">// 如果当前是空链表</span></span><br><span class="line">        first = newNode;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        l.next = newNode;</span><br><span class="line">    size++;</span><br><span class="line">    modCount++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这就是典型的链表的尾插法，注意要考虑当前链表为空的情况。</p>
+<ul>
+<li><code>void add(int index, E element)</code>的源代码如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> index, E element)</span> </span>&#123;</span><br><span class="line">    checkPositionIndex(index); <span class="comment">// 检查下标是否合法</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (index == size)</span><br><span class="line">        linkLast(element);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        linkBefore(element, node(index));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 得到链表的第index个结点</span></span><br><span class="line"><span class="function">Node&lt;E&gt; <span class="title">node</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// assert isElementIndex(index);</span></span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 如果index在当前链表的前半段，就从first指针开始遍历</span></span><br><span class="line">    <span class="keyword">if</span> (index &lt; (size &gt;&gt; <span class="number">1</span>)) &#123; </span><br><span class="line">        Node&lt;E&gt; x = first;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; index; i++)</span><br><span class="line">            x = x.next;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;  <span class="comment">// 否则从后半段开始找</span></span><br><span class="line">        Node&lt;E&gt; x = last;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = size - <span class="number">1</span>; i &gt; index; i--)</span><br><span class="line">            x = x.prev;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在某个结点之前插入一个新的元素e</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">linkBefore</span><span class="params">(E e, Node&lt;E&gt; succ)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// assert succ != null;</span></span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; pred = succ.prev;  <span class="comment">// 找到待插入位置的前驱结点</span></span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; newNode = <span class="keyword">new</span> Node&lt;&gt;(pred, e, succ); <span class="comment">// 创建新的结点</span></span><br><span class="line">    succ.prev = newNode;  <span class="comment">// 别忘了把后继的prev指向新结点</span></span><br><span class="line">    <span class="keyword">if</span> (pred == <span class="keyword">null</span>)  <span class="comment">// 如果前驱结点为空，也就是新结点插在头部</span></span><br><span class="line">        first = newNode;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        pred.next = newNode;  <span class="comment">// 在中间某处插入</span></span><br><span class="line">    size++;</span><br><span class="line">    modCount++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>个人感觉<code>add()</code>这部分的代码也比较朴素，唯一觉得需要关注的就是在根据index找到指定的node的时候，代码中有一个trick，即<code>if (index &lt; (size &gt;&gt; 1))</code>这个判断，这个操作会视链表为前后两半，如果index在前半段，那就从first开始从前往后找；否则就从last指针开始从后往前找。</p>
+<p><strong>总结：<code>LinkedList()</code>的<code>add(E e)</code>方法的时间复杂度为<code>O(1)</code>,用的是尾插法；而<code>void add(int index, E element)</code>方法的时间复杂度为<code>O(N/2)</code>，$N$为链表当前的size，这个地方最多只需要遍历一半，也就是上面说到的trick。</strong></p>
+<h3 id="3-4-remove"><a href="#3-4-remove" class="headerlink" title="3.4 remove()"></a>3.4 remove()</h3><p>删除操作重载的方法就比较多了，我们将按照链表中的删除操作和队列中的删除操作进行分类：</p>
+<ol>
+<li><p>链表中的删除操作</p>
+<p> 链表中的删除操作有<code>boolean remove(Object o)</code>和<code>E remove(int index)</code>，二者功能分别为删除指定的对象和删除指定位置的结点，即如下图所示。<br> <img src="4.png" alt=""></p>
+<p> 再看下各自的源码：</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">// 从前往后遍历，删除第一个和o相等的结点</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (o == <span class="keyword">null</span>) &#123;  <span class="comment">// 允许链表中存在null</span></span><br><span class="line">            <span class="keyword">for</span> (Node&lt;E&gt; x = first; x != <span class="keyword">null</span>; x = x.next) &#123;</span><br><span class="line">                <span class="keyword">if</span> (x.item == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    unlink(x);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (Node&lt;E&gt; x = first; x != <span class="keyword">null</span>; x = x.next) &#123;</span><br><span class="line">                <span class="keyword">if</span> (o.equals(x.item)) &#123;  <span class="comment">// 从前往后开始，找到第一个equals的元素</span></span><br><span class="line">                    unlink(x);  <span class="comment">// 断链</span></span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="comment">// 把指定的结点从链表中断链</span></span><br><span class="line">   <span class="function">E <span class="title">unlink</span><span class="params">(Node&lt;E&gt; x)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// assert x != null;</span></span><br><span class="line">        <span class="keyword">final</span> E element = x.item;</span><br><span class="line">        <span class="keyword">final</span> Node&lt;E&gt; next = x.next;</span><br><span class="line">        <span class="keyword">final</span> Node&lt;E&gt; prev = x.prev;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (prev == <span class="keyword">null</span>) &#123;   <span class="comment">// 如果待删除的结点在第一个</span></span><br><span class="line">            first = next;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            prev.next = next; <span class="comment">// 修改prev的next指针</span></span><br><span class="line">            x.prev = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (next == <span class="keyword">null</span>) &#123;  <span class="comment">// 如果待删除的结点在最后一个</span></span><br><span class="line">            last = prev;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            next.prev = prev;  <span class="comment">// 修改next的prev指针</span></span><br><span class="line">            x.next = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        x.item = <span class="keyword">null</span>;</span><br><span class="line">        size--;</span><br><span class="line">        modCount++;</span><br><span class="line">        <span class="keyword">return</span> element;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>随后就是<code>E remove(int index)</code>的源码了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">remove</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        checkElementIndex(index); <span class="comment">// 确保下标合法</span></span><br><span class="line">        <span class="keyword">return</span> unlink(node(index)); <span class="comment">// 断链掉指定位置的结点</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>总结：<code>remove(Object o)</code>的时间复杂度为<code>O(N)</code>,因为不可避免地需要从前往后依次找到一个和<code>o</code>相等的结点；而<code>remove(int index)</code>的时间复杂度为<code>O(N/2)</code>,这里同样会用到上面提到的trick。</strong></p>
+</li>
+<li><p>队列中的删除操作</p>
+<p> 队列中的删除操作有比较多，例如<code>removeFirst()</code>,<code>removeFirstOccurance(Object o)</code>,<code>removeLast()</code>,<code>removeLastOcurrance()</code>。功能分别是删除第一个结点、从前往后遍历删除第一个出现的结点、删除最后一个结点、从后往前遍历删除第一个出现的结点。这些操作的时间复杂度和上述分析类似。</p>
+</li>
+</ol>
+<h3 id="3-5-其他方法"><a href="#3-5-其他方法" class="headerlink" title="3.5 其他方法"></a>3.5 其他方法</h3><p>其他的一些方法包括<code>get()</code>.<code>clear()</code>、<code>indexOf()</code>、<code>set()</code>，有了上面的源码解读基础，自然就很容易可以做类似的分析了。</p>
+<h2 id="4-参考"><a href="#4-参考" class="headerlink" title="4. 参考"></a>4. 参考</h2><p>部分图来源于网络，在此表示感谢。</p>
+<ul>
+<li><a href="https://github.com/CarpenterLee/JCFInternals" target="_blank" rel="noopener">深入理解Java集合</a></li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/" target="_blank" rel="noopener">Java8 官方API</a></li>
+</ul>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2020/04/28/Java集合-Queue篇/" data-toggle="tooltip" data-placement="top" title="Java集合—Queue篇">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2020/04/24/Java集合-初见/" data-toggle="tooltip" data-placement="top" title="Java集合—初见">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Java" title="Java">Java</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

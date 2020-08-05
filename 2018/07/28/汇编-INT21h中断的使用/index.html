@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          汇编——INT 21h 中断的使用 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2018/07/28/汇编-INT21h中断的使用/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#汇编" title="汇编">汇编</a>
+                        
+                    </div>
+                    <h1>汇编——INT 21h 中断的使用</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2018-07-28
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <div id="article_content" class="article_content csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post">
+                    <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/htmledit_views-0a60691e80.css">
+            <div class="htmledit_views">
+
+<div style="margin:0px;padding:0px;font-family:'微软雅黑', verdana, 'ms song', '宋体', Arial, Helvetica, sans-serif;font-size:14px;line-height:25.2px;">
+http://www.cnblogs.com/ynwlgh/archive/2011/12/12/2285017.html<br></div>
+<div style="margin:0px;padding:0px;font-family:'微软雅黑', verdana, 'ms song', '宋体', Arial, Helvetica, sans-serif;font-size:14px;line-height:25.2px;">
+<br></div>
+<div style="margin:0px;padding:0px;font-family:'微软雅黑', verdana, 'ms song', '宋体', Arial, Helvetica, sans-serif;font-size:14px;line-height:25.2px;">
+例如：需要键盘输入，并且回显。</div>
+<div style="margin:0px;padding:0px;font-family:'微软雅黑', verdana, 'ms song', '宋体', Arial, Helvetica, sans-serif;font-size:14px;line-height:25.2px;">
+<span style="margin:0px;padding:0px;background-color:rgb(255,255,128);">AH的值需要查表取得，表在下面</span></div>
+<div style="margin:0px;padding:0px;font-family:'微软雅黑', verdana, 'ms song', '宋体', Arial, Helvetica, sans-serif;font-size:14px;line-height:25.2px;">
+指令：<span style="margin:0px;padding:0px;background-color:rgb(128,255,128);">MOV AH,01</span></div>
+<div style="margin:0px;padding:0px;font-family:'微软雅黑', verdana, 'ms song', '宋体', Arial, Helvetica, sans-serif;font-size:14px;line-height:25.2px;">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="margin:0px;padding:0px;background-color:rgb(128,255,128);">INT 21H</span></div>
+<div style="margin:0px;padding:0px;font-family:'微软雅黑', verdana, 'ms song', '宋体', Arial, Helvetica, sans-serif;font-size:14px;line-height:25.2px;">
+<span style="margin:0px;padding:0px;">通过这样两条指令，输入的字符就会被存储在AL中。</span></div>
+<div style="margin:0px;padding:0px;font-family:'微软雅黑', verdana, 'ms song', '宋体', Arial, Helvetica, sans-serif;font-size:14px;line-height:25.2px;">
+&nbsp;</div>
+<div align="center" style="margin:0px;padding:0px;font-family:'微软雅黑', verdana, 'ms song', '宋体', Arial, Helvetica, sans-serif;font-size:14px;line-height:25.2px;">
+<span style="margin:0px;padding:0px;background-color:rgb(255,255,128);"><span style="margin:0px;padding:0px;">表：DOS系统功能调INT 21H</span></span></div>
+<div style="margin:0px;padding:0px;font-family:'微软雅黑', verdana, 'ms song', '宋体', Arial, Helvetica, sans-serif;font-size:14px;line-height:25.2px;">
+<table border="1" cellspacing="0" cellpadding="0" style="margin:0px;padding:0px;border-collapse:collapse;border-spacing:0px;border:1px solid #C0C0C0;"><tbody style="margin:0px;padding:0px;"><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="center" style="margin:0px;padding:0px;"><span style="margin:0px;padding:0px;background-color:rgb(255,153,51);">AH</span></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="center" style="margin:0px;padding:0px;"><span style="margin:0px;padding:0px;background-color:rgb(255,153,51);">功能</span></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="center" style="margin:0px;padding:0px;"><span style="margin:0px;padding:0px;background-color:rgb(255,153,51);">调用参数</span></div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="center" style="margin:0px;padding:0px;"><span style="margin:0px;padding:0px;background-color:rgb(255,153,51);">返回参数</span></div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">00</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">程序终止(同INT 20H)</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">CS=程序段前缀</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">01</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">键盘输入并回显</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=输入字符</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">02</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">显示输出</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DL=输出字符</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">03</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">异步通迅输入</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=输入数据</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">04</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">异步通迅输出</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DL=输出数据</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">05</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">打印机输出</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DL=输出字符</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">06</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">直接控制台I/O</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DL=FF(输入)<br style="margin:0px;padding:0px;">
+DL=字符(输出)</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=输入字符</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">07</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">键盘输入(无回显)</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=输入字符</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">08</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">键盘输入(无回显)<br style="margin:0px;padding:0px;">
+检测Ctrl-Break</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=输入字符</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">09</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">显示字符串</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=串地址<br style="margin:0px;padding:0px;">
+'$'结束字符串</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">0A</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">键盘输入到缓冲区</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=缓冲区首地址<br style="margin:0px;padding:0px;">
+(DS:DX)=缓冲区最大字符数</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">(DS:DX+1)=实际输入的字符数</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">0B</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">检验键盘状态</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 有输入<br style="margin:0px;padding:0px;">
+AL=FF 无输入</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">0C</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">清除输入缓冲区并<br style="margin:0px;padding:0px;">
+请求指定的输入功能</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=输入功能号<br style="margin:0px;padding:0px;">
+(1,6,7,8,A)</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">0D</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">磁盘复位</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">清除文件缓冲区</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">0E</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">指定当前缺省的磁盘驱动器</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DL=驱动器号 0=A,1=B,...</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=驱动器数</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">0F</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">打开文件</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 文件找到<br style="margin:0px;padding:0px;">
+AL=FF 文件未找到</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">10</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">关闭文件</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 目录修改成功<br style="margin:0px;padding:0px;">
+AL=FF 目录中未找到文件</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">11</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">查找第一个目录项</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 找到<br style="margin:0px;padding:0px;">
+AL=FF 未找到</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">12</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">查找下一个目录项</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址<br style="margin:0px;padding:0px;">
+(文件中带有*或?)</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 找到<br style="margin:0px;padding:0px;">
+AL=FF 未找到</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">13</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">删除文件</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 删除成功<br style="margin:0px;padding:0px;">
+AL=FF 未找到</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">14<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">顺序读<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 读成功<br style="margin:0px;padding:0px;">
+&nbsp; =01 文件结束,记录中无数据<br style="margin:0px;padding:0px;">
+&nbsp; =02 DTA空间不够<br style="margin:0px;padding:0px;">
+&nbsp; =03 文件结束,记录不完整</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">15</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">顺序写</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 写成功<br style="margin:0px;padding:0px;">
+&nbsp; =01 盘满<br style="margin:0px;padding:0px;">
+&nbsp; =02 DTA空间不够</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">16</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">建文件</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 建立成功<br style="margin:0px;padding:0px;">
+&nbsp; =FF 无磁盘空间</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">17</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">文件改名</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址<br style="margin:0px;padding:0px;">
+(DS:DX+1)=旧文件名<br style="margin:0px;padding:0px;">
+(DS:DX+17)=新文件名</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 成功<br style="margin:0px;padding:0px;">
+AL=FF 未成功</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">19</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取当前缺省磁盘驱动器</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=缺省的驱动器号 0=A,1=B,2=C,...</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">1A</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">置DTA地址</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=DTA地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">1B<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取缺省驱动器FAT信息<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=每簇的扇区数<br style="margin:0px;padding:0px;">
+DS:BX=FAT标识字节<br style="margin:0px;padding:0px;">
+CX=物理扇区大小<br style="margin:0px;padding:0px;">
+DX=缺省驱动器的簇数</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">1C</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取任一驱动器FAT信息</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DL=驱动器号</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">同上</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">21<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">随机读<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 读成功<br style="margin:0px;padding:0px;">
+&nbsp; =01 文件结束<br style="margin:0px;padding:0px;">
+&nbsp; =02 缓冲区溢出<br style="margin:0px;padding:0px;">
+&nbsp; =03 缓冲区不满</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">22</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">随机写</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 写成功<br style="margin:0px;padding:0px;">
+&nbsp; =01 盘满<br style="margin:0px;padding:0px;">
+&nbsp; =02 缓冲区溢出</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">23</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">测定文件大小</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 成功(文件长度填入FCB)<br style="margin:0px;padding:0px;">
+AL=FF 未找到</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">24</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">设置随机记录号</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">25</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">设置中断向量</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=中断向量<br style="margin:0px;padding:0px;">
+AL=中断类型号</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">26</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">建立程序段前缀</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DX=新的程序段前缀</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">27<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">随机分块读<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址<br style="margin:0px;padding:0px;">
+CX=记录数</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 读成功<br style="margin:0px;padding:0px;">
+&nbsp; =01 文件结束<br style="margin:0px;padding:0px;">
+&nbsp; =02 缓冲区太小,传输结束<br style="margin:0px;padding:0px;">
+&nbsp; =03 缓冲区不满</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">28</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">随机分块写</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=FCB首地址<br style="margin:0px;padding:0px;">
+CX=记录数</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 写成功<br style="margin:0px;padding:0px;">
+&nbsp; =01 盘满<br style="margin:0px;padding:0px;">
+&nbsp; =02 缓冲区溢出</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">29</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">分析文件名</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">ES:DI=FCB首地址<br style="margin:0px;padding:0px;">
+DS:SI=ASCIIZ串<br style="margin:0px;padding:0px;">
+AL=控制分析标志</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 标准文件<br style="margin:0px;padding:0px;">
+&nbsp; =01 多义文件<br style="margin:0px;padding:0px;">
+&nbsp; =02 非法盘符</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">2A</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取日期</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">CX=年<br style="margin:0px;padding:0px;">
+DH:DL=月:日(二进制)</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">2B</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">设置日期</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">CX:DH:DL=年:月:日</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 成功<br style="margin:0px;padding:0px;">
+&nbsp; =FF 无效</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">2C</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取时间</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">CH:CL=时:分<br style="margin:0px;padding:0px;">
+DH:DL=秒:1/100秒</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">2D</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">设置时间</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">CH:CL=时:分<br style="margin:0px;padding:0px;">
+DH:DL=秒:1/100秒</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 成功<br style="margin:0px;padding:0px;">
+&nbsp; =FF 无效</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">2E</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">置磁盘自动读写标志</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 关闭标志<br style="margin:0px;padding:0px;">
+AL=01 打开标志</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">2F</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取磁盘缓冲区的首址</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">ES:BX=缓冲区首址</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">30</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取DOS版本号</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AH=发行号,AL=版本</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">31</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">结束并驻留</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=返回码<br style="margin:0px;padding:0px;">
+DX=驻留区大小</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">33<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">Ctrl-Break检测<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00 取状态<br style="margin:0px;padding:0px;">
+&nbsp; =01 置状态(DL)<br style="margin:0px;padding:0px;">
+DL=00 关闭检测<br style="margin:0px;padding:0px;">
+&nbsp; =01 打开检测</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DL=00 关闭Ctrl-Break检测<br style="margin:0px;padding:0px;">
+&nbsp; =01 打开Ctrl-Break检测</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">35</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取中断向量</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=中断类型</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">ES:BX=中断向量</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">36<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取空闲磁盘空间<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DL=驱动器号&nbsp;<br style="margin:0px;padding:0px;">
+0=缺省,1=A,2=B,...<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">成功:AX=每簇扇区数<br style="margin:0px;padding:0px;">
+&nbsp;&nbsp;&nbsp;&nbsp; BX=有效簇数<br style="margin:0px;padding:0px;">
+&nbsp;&nbsp;&nbsp;&nbsp; CX=每扇区字节数<br style="margin:0px;padding:0px;">
+&nbsp;&nbsp;&nbsp;&nbsp; DX=总簇数<br style="margin:0px;padding:0px;">
+失败:AX=FFFF</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">38</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">置/取国家信息</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=信息区首地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">BX=国家码(国际电话前缀码)<br style="margin:0px;padding:0px;">
+AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">39</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">建立子目录(MKDIR)</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=ASCIIZ串地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">3A</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">删除子目录（RMDIR）</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=ASCIIZ串地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">3B</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">改变当前目录(CHDIR)</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=ASCIIZ串地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">3C</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">建立文件</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=ASCIIZ串地址<br style="margin:0px;padding:0px;">
+CX=文件属性</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">成功:AX=文件代号<br style="margin:0px;padding:0px;">
+错误:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">3D<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">打开文件<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=ASCIIZ串地址<br style="margin:0px;padding:0px;">
+AL=0 读<br style="margin:0px;padding:0px;">
+&nbsp; =1 写<br style="margin:0px;padding:0px;">
+&nbsp; =3 读/写</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">成功:AX=文件代号<br style="margin:0px;padding:0px;">
+错误:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">3E</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">关闭文件</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">BX=文件代号</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">失败:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">3F<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">读文件或设备<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=数据缓冲区地址<br style="margin:0px;padding:0px;">
+BX=文件代号<br style="margin:0px;padding:0px;">
+CX=读取的字节数</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">读成功:<br style="margin:0px;padding:0px;">
+&nbsp; AX=实际读入的字节数<br style="margin:0px;padding:0px;">
+&nbsp; AX=0 已到文件尾<br style="margin:0px;padding:0px;">
+读出错:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">40</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">写文件或设备</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=数据缓冲区地址<br style="margin:0px;padding:0px;">
+BX=文件代号<br style="margin:0px;padding:0px;">
+CX=写入的字节数</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">写成功:<br style="margin:0px;padding:0px;">
+&nbsp; AX=实际写入的字节数<br style="margin:0px;padding:0px;">
+写出错:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">41</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">删除文件</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=ASCIIZ串地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">成功:AX=00<br style="margin:0px;padding:0px;">
+出错:AX=错误码(2,5)</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">42<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">移动文件指针<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">BX=文件代号<br style="margin:0px;padding:0px;">
+CX:DX=位移量<br style="margin:0px;padding:0px;">
+AL=移动方式(0:从文件头绝对位移,1:从当前位置相对移动,2:从文件尾绝对位移)</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">成功:DX:AX=新文件指针位置<br style="margin:0px;padding:0px;">
+出错:AX=错误码<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">43<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">置/取文件属性<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=ASCIIZ串地址<br style="margin:0px;padding:0px;">
+AL=0 取文件属性<br style="margin:0px;padding:0px;">
+AL=1 置文件属性<br style="margin:0px;padding:0px;">
+CX=文件属性</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">成功:CX=文件属性<br style="margin:0px;padding:0px;">
+失败:CX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">44<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">设备文件I/O控制<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">BX=文件代号<br style="margin:0px;padding:0px;">
+AL=0 取状态<br style="margin:0px;padding:0px;">
+&nbsp; =1 置状态DX<br style="margin:0px;padding:0px;">
+&nbsp; =2 读数据<br style="margin:0px;padding:0px;">
+&nbsp; =3 写数据<br style="margin:0px;padding:0px;">
+&nbsp; =6 取输入状态<br style="margin:0px;padding:0px;">
+&nbsp; =7 取输出状态</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DX=设备信息<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">45</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">复制文件代号</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">BX=文件代号1</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">成功:AX=文件代号2<br style="margin:0px;padding:0px;">
+失败:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">46</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">人工复制文件代号</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">BX=文件代号1<br style="margin:0px;padding:0px;">
+CX=文件代号2</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">失败:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">47</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取当前目录路径名</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DL=驱动器号<br style="margin:0px;padding:0px;">
+DS:SI=ASCIIZ串地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">(DS:SI)=ASCIIZ串<br style="margin:0px;padding:0px;">
+失败:AX=出错码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">48</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">分配内存空间</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">BX=申请内存容量</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">成功:AX=分配内存首地<br style="margin:0px;padding:0px;">
+失败:BX=最大可用内存</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">49</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">释放内容空间</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">ES=内存起始段地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">失败:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">4A</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">调整已分配的存储块</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">ES=原内存起始地址<br style="margin:0px;padding:0px;">
+BX=再申请的容量</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">失败:BX=最大可用空间<br style="margin:0px;padding:0px;">
+&nbsp;&nbsp;&nbsp;&nbsp; AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">4B<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">装配/执行程序<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=ASCIIZ串地址<br style="margin:0px;padding:0px;">
+ES:BX=参数区首地址<br style="margin:0px;padding:0px;">
+AL=0 装入执行<br style="margin:0px;padding:0px;">
+AL=3 装入不执行</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">失败:AX=错误码<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">4C</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">带返回码结束</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=返回码</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">4D</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取返回代码</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AX=返回代码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">4E</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">查找第一个匹配文件</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=ASCIIZ串地址<br style="margin:0px;padding:0px;">
+CX=属性</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AX=出错代码(02,18)</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">4F</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">查找下一个匹配文件</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=ASCIIZ串地址<br style="margin:0px;padding:0px;">
+(文件名中带有?或*)</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AX=出错代码(18)</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">54</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取盘自动读写标志</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=当前标志值</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">56</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">文件改名</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DS:DX=ASCIIZ串(旧)<br style="margin:0px;padding:0px;">
+ES:DI=ASCIIZ串(新)</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AX=出错码(03,05,17)</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">57</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">置/取文件日期和时间</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">BX=文件代号<br style="margin:0px;padding:0px;">
+AL=0 读取<br style="margin:0px;padding:0px;">
+AL=1 设置(DX:CX)</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">DX:CX=日期和时间<br style="margin:0px;padding:0px;">
+失败:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">58</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取/置分配策略码</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=0 取码<br style="margin:0px;padding:0px;">
+AL=1 置码(BX)</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">成功:AX=策略码<br style="margin:0px;padding:0px;">
+失败:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">59<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取扩充错误码<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AX=扩充错误码<br style="margin:0px;padding:0px;">
+BH=错误类型<br style="margin:0px;padding:0px;">
+BL=建议的操作<br style="margin:0px;padding:0px;">
+CH=错误场所</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">5A</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">建立临时文件</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">CX=文件属性<br style="margin:0px;padding:0px;">
+DS:DX=ASCIIZ串地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">成功:AX=文件代号<br style="margin:0px;padding:0px;">
+失败:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">5B</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">建立新文件</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">CX=文件属性<br style="margin:0px;padding:0px;">
+DS:DX=ASCIIZ串地址</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">成功:AX=文件代号<br style="margin:0px;padding:0px;">
+失败:AX=错误码</div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">5C<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">控制文件存取<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">AL=00封锁<br style="margin:0px;padding:0px;">
+&nbsp; =01开启<br style="margin:0px;padding:0px;">
+BX=文件代号<br style="margin:0px;padding:0px;">
+CX:DX=文件位移<br style="margin:0px;padding:0px;">
+SI:DI=文件长度</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">失败:AX=错误码<br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"><br style="margin:0px;padding:0px;"></div>
+</td>
+</tr><tr style="margin:0px;padding:0px;font-size:12px;font-family:song, Verdana;"><td width="6%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">62</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">取程序段前缀</div>
+</td>
+<td width="31%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">　</div>
+</td>
+<td width="32%" style="margin:0px;padding:3px;border:1px solid #C0C0C0;border-collapse:collapse;font-family:song, Verdana;">
+<div align="left" style="margin:0px;padding:0px;">BX=PSP地址</div>
+</td>
+</tr></tbody></table></div>
+            </div>
+                </div>
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/07/28/汇编-指令集合/" data-toggle="tooltip" data-placement="top" title="汇编指令集合">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/07/28/汇编-无符号数比大小和有符号数比大小/" data-toggle="tooltip" data-placement="top" title="汇编——无符号数比大小和有符号数比大小">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#汇编" title="汇编">汇编</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

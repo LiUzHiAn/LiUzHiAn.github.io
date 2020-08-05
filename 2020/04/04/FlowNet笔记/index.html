@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          基于FlowNet的光流估计 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2020/04/04/FlowNet笔记/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Optical Flow" title="Optical Flow">Optical Flow</a>
+                        
+                    </div>
+                    <h1>基于FlowNet的光流估计</h1>
+                    <h2 class="subheading">Deep Learning Based Approach</h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2020-04-04
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#基于FlowNet的光流估计"><span class="toc-text">基于FlowNet的光流估计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-光流的基本概念"><span class="toc-text">1. 光流的基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Horn-amp-Schunck"><span class="toc-text">2. Horn &amp; Schunck</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-FlowNet"><span class="toc-text">3. FlowNet</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-网络整体设计"><span class="toc-text">3.1 网络整体设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-Correlation-Layer"><span class="toc-text">3.2 Correlation Layer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Refine部分"><span class="toc-text">3.3 Refine部分</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-FlowNet2"><span class="toc-text">4. FlowNet2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-代码"><span class="toc-text">5. 代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References</span></a></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="基于FlowNet的光流估计"><a href="#基于FlowNet的光流估计" class="headerlink" title="基于FlowNet的光流估计"></a>基于FlowNet的光流估计</h1><p><strong>我为什么要写这篇文章？</strong></p>
+<p>因为我最近在读FlowNet【1】这篇论文，虽然网上多多少少有一些相关的博客，例如【2】【3】，但我发现很少有对这个论文中的一些细节介绍得比较详细的review，所以本文就出现了。本文会先简要介绍一下光流的概念，主要的重心还是在FlowNet这个论文一些细节的介绍上。</p>
+<p>我会延续自己的风格，尽最大的努力，用intuitive的表述来介绍相关概念和算法流程，当然也包括数学公式。如果你觉得本文哪里还是有问题，请毫不犹豫地怀疑是我错了，无论是理解错误、表述错误、还是打字错误，并在评论区指出。</p>
+<h2 id="1-光流的基本概念"><a href="#1-光流的基本概念" class="headerlink" title="1. 光流的基本概念"></a>1. 光流的基本概念</h2><p>光流（Optical Flow）呢，这是一个有关物体运动的概念。这个概念最早由Gibson提出，描述的是空间中运动的物体在成像平面上，造成像素运动的瞬时速度。这个运动主要包括三大类：</p>
+<ul>
+<li>场景中前景目标本身在移动；</li>
+<li>成像平面在移动（比如，相机）；</li>
+<li>或者两者共同运动而所产生的混合动作。</li>
+</ul>
+<p>反正无论怎么运动吧，在时序上，必然是会产生一些列连续的图像帧，而且这些帧之间的像素有有一定的对应关系。比方说，视频的第$t$帧在左上角有一只鸟，经过10帧后（即第$t+10$帧时），这只鸟成像在了图片的右上角，并且这个“飞”的过程是连续，从而形成一系列连续变化的图像（也就是连续的10帧），产生类似光“流动”的效果，故被简称为光流（Optical Flow）。</p>
+<p>光流是一个有方向、有长度的矢量，我们需要做的就是，根据2个连续的帧来求解对应像素的运动速度（你说偏移量也没问题），下图是光流问题的一个示意图。<br><img src="1.png" alt=""></p>
+<p>在光流中，有个亮度恒定假设（Brightness Constancy Assumption）,即同一物体在连续的帧间运动时，其像素值都不会改变（也就是上面举例说的，那只鸟不会因为飞了一下就变了样子）。根据该假设可以得到：</p>
+<script type="math/tex; mode=display">
+f(x, y, t)=f(x+d x, y+d y, t+d t)</script><p>而根据泰勒公式可得$f(x, y, t)=f(x, y, t)+\frac{\partial f}{\partial x} d x+\frac{\partial f}{\partial y} d y+\frac{\partial f}{\partial t} d t$，<br>从而有$f_x \frac{dx}{dt}+ f_y\frac{dy}{dt}+f_t=0$，记$u=\frac{dx}{dt},v=\frac{dy}{dt}$分别为光流沿着$x$和$y$方向上的变化量，从而可以得到以下光流基本方程：</p>
+<script type="math/tex; mode=display">
+f_x u+ f_y v +f_t=0</script><p>其中$f_x,f_y,f_t$均可以有连续两帧计算得到，这显然是一个由一个方程求解两个未知量的问题，需要添加约束，而根据约束条件的不同，就导致了不同的光流场计算方法。下面简单介绍两种已有的方法，传统的H&amp;S【参考文献】和FlowNet【参考文献】，各自代表了传统方法和基于深度学习的方法两类。</p>
+<h2 id="2-Horn-amp-Schunck"><a href="#2-Horn-amp-Schunck" class="headerlink" title="2. Horn &amp; Schunck"></a>2. Horn &amp; Schunck</h2><p>Horn &amp; Schunck【4】光流估计法在光流基本方程的前提下，作出了光流平滑约束（Smoothness constrain），即认为光流的变化是光滑的，于是问题可以转化为最小化：</p>
+<script type="math/tex; mode=display">\iint\left\{\left(f_{x} u+f_{y} v+f_{t}\right)^{2}+\lambda\left(u_{x}^{2}+u_{y}^{2}+v_{x}^{2}+v_{y}^{2}\right)\right\} d x d y</script><p>被积函数是一个泛函数（即关于函数的函数），可以用变分法来求解。根据欧拉-拉格朗日方程（这个可以搜一下相关的数学证明，我记得Youtube上有个很棒的推导）可以求得：</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+(f_{x} u+f_{y} v+f_{t}) f_{x}+\lambda(\nabla^{2} u)=0 \\
+(f_{x} u+f_{y} v+f_{t}) f_{y}+\lambda(\nabla^{2} v)=0
+\end{cases}</script><p>其中$\nabla^{2} u = u<em>{xx}+u</em>{yy}$，也就是二阶导，而在离散情况下，可以用Laplacian算子来求解二阶导，即用$u-u<em>{avg}$来代替$\nabla^{2}u$，其中$u</em>{avg}$为每个位置对应上下左右四个位置的平均值，从而有：</p>
+<script type="math/tex; mode=display">\left\{\begin{array}{l}
+\left(f_{x} u+f_{y} v+f_{t}\right) f_{x}+\lambda\left(u-u_{a v g}\right)=0 \\
+\left(f_{x} u+f_{y} v+f_{t}\right) f_{y}+\lambda\left(v-v_{a v g}\right)=0
+\end{array}\right.</script><p>于是可以得到如下解析解：</p>
+<script type="math/tex; mode=display">\left\{\begin{array}{l}
+u=u_{a y g}-f_{x}-\frac{P}{D} \\
+v=v_{a v g}-f_{y}-\frac{P}{D}
+\end{array}, \text { 其中, }\left\{\begin{array}{l}
+P=f_{x} u_{a v g}+f_{y} v_{a v g}+f_{t} \\
+D=\lambda+f_{x}^{2}+f_{y}^{2}
+\end{array}\right.\right.</script><p>用迭代的方法可以很容易求解光流。</p>
+<p>PS:如果你对这一小节的数学推导不太明白，我强烈建议你去看一下Mubarak Shah教授的关于光流的Lecture【5】。<a href="https://www.youtube.com/watch?v=5VyLAH8BhF8" target="_blank" rel="noopener">&gt;&gt;传输门&lt;&lt;</a></p>
+<h2 id="3-FlowNet"><a href="#3-FlowNet" class="headerlink" title="3. FlowNet"></a>3. FlowNet</h2><p>FlowNet是第一个用CNN来估计光流的工作，并将光流估计这个问题看做成一个有监督的问题。其实说白了，光流估计就要根据两张连续的帧，去估计（也就是，猜）两帧之间pixel-wise的光流。凡是有关估计相关的东西，CNN都很在行，只要有足够的训练数据和一个较好的网络结构。FlowNet就开辟了这个工作，也创造了一个数据集。</p>
+<p><a href="https://zhuanlan.zhihu.com/p/37736910" target="_blank" rel="noopener">&gt;&gt;FlowNet到FlowNet2.0：基于卷积神经网络的光流预测算法&lt;&lt;</a>，这篇文章对FlowNet、FlowNet2都做了很好的介绍，建议移步去看看再过来，我这里就专注于网络中的细节了。</p>
+<h3 id="3-1-网络整体设计"><a href="#3-1-网络整体设计" class="headerlink" title="3.1 网络整体设计"></a>3.1 网络整体设计</h3><p>在FlowNet中，作者设计了如上图所示的两种不同的架构：<br><img src="2.png" alt=""></p>
+<ol>
+<li>把相邻两帧concat到一起作为网络输入，然后经过一些列的conv、pool、upsample等等又最终refine到和输入图片一样的大小，并得到估计的光流结果，这种架构简称为<strong>FlowNetS</strong>，也就是Simple的意思。</li>
+<li>因为估计光流实际上就是去让网络做像素级别的matching，于是作者提出了另外一种基于<strong>Correlation Layer</strong>的架构，简称为<strong>FlowNetC</strong>，也就是Correlation 的意思。</li>
+</ol>
+<h3 id="3-2-Correlation-Layer"><a href="#3-2-Correlation-Layer" class="headerlink" title="3.2 Correlation Layer"></a>3.2 Correlation Layer</h3><p>First thing first，也就是网络中的Correlation Layer。先看下FlowNetC网络在Correlation Layer之前的设计，作者设计了3个卷积和池化操作，得到了比较粗粒度的feature maps，这个部分，对于两帧都是共享的，也就是说两张图片都会过一遍这个部分。<br><img src="3.png" alt=""></p>
+<p>现在假设两张图片经过这个部分，分别得到各自的featur maps为$f_A \in R^{C*H*W}$和$f_B\in R^{C*H*W}$，$C,H,W$分别代表特征图的通道数、高度和宽度，如下图所示，图中假设$H、W$都为3，非数字部分是一圈padding。<br><img src="4.png" alt=""></p>
+<p>我们现在假设这个特征图中提取到的是图片的一些速度之类的信息（我瞎说的），然后我们希望可以根据$f_A$和$f_B$的每个位置相似度来得到一些关于两张图片偏移量的信息，那怎么求呢？</p>
+<p>很简单的一个想法就是，对于$f_A$和$f_B$上的每个位置的组合，我们都求一次二者的相似度，比方说，我们想去求$f_A$和$f_B$在位置1处的相似度。但是一般我们都不会真的只求一个像素的相似度（准确地说，这里不应该叫像素，而是特征图上的每个cell），因为图片像素的特征往往都是和相邻特征是有关的，相应地，在特征图上，也就是相邻的cells是有关系的。于是为了求某个位置在两个feature maps上的相似度，我们会求以这个cell为中心的两个patch的相似度，并将这两个patch的相似度作为这个中心cell的相似度。如果我们去patch的大小为3，那么$f_A$和$f_B$在位置1处的相似度如下图所示，分别用橙色框和灰色框表示。<br><img src="5.png" alt=""></p>
+<p>也就是论文中的</p>
+<script type="math/tex; mode=display">
+c\left(\mathbf{x}_{1}, \mathbf{x}_{2}\right)=\sum_{\mathbf{o} \in[-k, k] \times[-k, k]}\left\langle\mathbf{f}_{1}\left(\mathbf{x}_{1}+\mathbf{o}\right), \mathbf{f}_{2}\left(\mathbf{x}_{2}+\mathbf{o}\right)\right\rangle</script><p>假设patch的大小为$K=2k+1$,每一次的相关性操作的计算量为$c*K^2$,其中$c$是特征图的通道数。对于$f<em>A$和$f_B$上的每个位置的组合（即$f</em>{A1}$和$f<em>{B1},f</em>{B2}…f<em>{B_9}$，$f</em>{A2}$和$f<em>{B1},f</em>{B2}…f<em>{B_9}$…一直到$f</em>{A<em>9}$和$f</em>{B1},f<em>{B2}…f</em>{B_9}$），那么总的计算量为$c*K^2*W^2*H^2$,这也太大了。</p>
+<p>于是作者作出了限制，理念就是说，虽然相邻的特征之间有关系，但也不至于要相邻到整个特征图的大小上去，现在我们假设特征图的大小不再是$3*3$的，而是$5*5$的，如下图所示，这里也加了一圈padding。<br><img src="6.png" alt=""></p>
+<p>现在我们定义一个邻居框，这个框的大小记作$D=2d+1$，如果我们假设$D$取值为3的话，那么我们认为，位置7处的值只和{1,2,3,6,7,8,11,12,13}处的值关系有关，和其他位置的关系不大。和之前说的一样，在求相关性操作的时候，也是基于patch的（即以当前cell为中心）。举例来说，$c(f<em>{A7},f</em>{B7})$就是上面橙色框和黄色框的卷积。</p>
+<p>于是，在添加了邻居框后，对于输入$f<em>A$中的每个cell，都会在$f_B$中存在一个相应的邻居框内，且和框内每个cell都存在一个相关度（即$D^2$个），我们把这个$D^2$个相关度在输出时按照channel维度上叠加起来，从而correlation layer的输出特征图$f</em>{out} \in \mathbb{R}^{D^2*H*W}$。</p>
+<p>Ok，但愿我已经把这个细节操作讲明白了。别急，还没完，这只是细节1。</p>
+<ul>
+<li><p>细节2：其实在上面画图的时候，我是特意画了一圈padding的，因为我们要保证特征图上的每个cell都有一个patch。我想可能说作者嫌麻烦，索性把patch的大小$K=2k+1$中$k$取了0，于是就成了$1*1$大小的patch，很类似$1*1$卷积核，就不需要再考虑padding操作了，瞬间简单了许多。</p>
+</li>
+<li><p>细节3：在FlowNetC中，$D=2d+1$中的$d$取值为20，即$D=41$，也就是说，输出特征图$f<em>{out} \in \mathbb{R}^{D^2*H*W}=\mathbb{R}^{1681*H*W}$。channel维度1681个dimension？？？你想多了，这里又是一个细节。作者又加了一个stride操作，从而让$D=21$，于是correlation layer层的输出特征图$f</em>{out} \in \mathbb{R}^{441*H*W}$。</p>
+</li>
+<li>细节4：你以为细节3完了就没了？ 对不起，还是没完！上面我们只是得到了correlation features，作者还在$f_{out}$的channel维度上添加了关于图片特征的信息，也就是论文图2中的<code>re_dir</code>部分。</li>
+</ul>
+<p>这下是真的讲完了，总的来说，可以归结为下面这个图（图来创作于<a href="https://stackoverflow.com/questions/59175540/can-someone-explain-the-correlation-layer-in-flownet-in-a-simple-way" target="_blank" rel="noopener">Abbas Khan</a>） </p>
+<p><img src="7.png" alt=""></p>
+<h3 id="3-3-Refine部分"><a href="#3-3-Refine部分" class="headerlink" title="3.3 Refine部分"></a>3.3 Refine部分</h3><p>这一部分没什么太多隐藏的细节，按照下图coarse-to-fine的思路在上采样时不断把之前的特征融合就好了。<br><img src="8.png" alt=""></p>
+<h2 id="4-FlowNet2"><a href="#4-FlowNet2" class="headerlink" title="4. FlowNet2"></a>4. FlowNet2</h2><h2 id="5-代码"><a href="#5-代码" class="headerlink" title="5. 代码"></a>5. 代码</h2><p>以后会慢慢补充</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><p>【1】Philipp Fischer et al., FlowNet: Learning Optical Flow with Convolutional Networks, arXiv:1504.06852v2<br>【2】SIGAI, FlowNet到FlowNet2.0：基于卷积神经网络的光流预测算法<br>【3】肖泽东 Shon, 光流估计——从传统方法到深度学习<br>【4】B. K. P. Horn and B. G. Schunck. Determining optical flow. Artificial Intelligence, 17:185–203, 1981. 2<br>【5】Mubarak Shah, UCF Computer Vision Video Lectures 06 - Optical Flow</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2020/04/24/Java集合-初见/" data-toggle="tooltip" data-placement="top" title="Java集合—初见">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2020/03/28/LeetCode-820-单词的压缩编码/" data-toggle="tooltip" data-placement="top" title="LeetCode-820-单词的压缩编码">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Optical Flow" title="Optical Flow">Optical Flow</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Intermediate-python(中) - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/10/25/intermediate-python(中)/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/posts_imgs/python.png')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Python进阶" title="Python进阶">Python进阶</a>
+                        
+                    </div>
+                    <h1>Intermediate-python(中)</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-10-25
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python-中的可变对象（mutuable）"><span class="toc-text">python  中的可变对象（mutuable）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#python-slots魔法"><span class="toc-text">python slots魔法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#python中的collection包"><span class="toc-text">python中的collection包</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#nametuples"><span class="toc-text">nametuples</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#枚举-Enumerate"><span class="toc-text">枚举 Enumerate</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#python-中的自省"><span class="toc-text">python 中的自省</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Lambda-表达式"><span class="toc-text">Lambda 表达式</span></a></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="python-中的可变对象（mutuable）"><a href="#python-中的可变对象（mutuable）" class="headerlink" title="python  中的可变对象（mutuable）"></a>python  中的可变对象（mutuable）</h1><ul>
+<li><p>在python中，列表是可变对象.每当你将一个变量赋值为另一个可变类型的变量时，对这个数据的任意改动会同时反映到这两个变量上去。新变量只不过是老变量的一个别名而已。</p>
+</li>
+<li><p>且在函数的参数中，默认参数只会运算一次！</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">foo=[<span class="string">"abc"</span>]</span><br><span class="line">bar=foo</span><br><span class="line">bar+=[<span class="string">"666"</span>]</span><br><span class="line"></span><br><span class="line">print(bar)</span><br><span class="line">print(foo)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;abc&#39;, &#39;666&#39;]
+[&#39;abc&#39;, &#39;666&#39;]
+</code></pre><a id="more"></a>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_to</span><span class="params">(num,target=[])</span>:</span></span><br><span class="line">    target.append(num)</span><br><span class="line">    <span class="keyword">return</span> target</span><br><span class="line"></span><br><span class="line">print(add_to(<span class="number">1</span>))</span><br><span class="line">print(add_to(<span class="number">2</span>))</span><br><span class="line">print(add_to(<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+<pre><code>[1]
+[1, 2]
+[1, 2, 3]
+</code></pre><p>上面的定义函数方法是错误的，我们希望每次得到不同的结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_to_2</span><span class="params">(num,target=None)</span>:</span></span><br><span class="line">    <span class="comment"># 当传入的target参数为空时，会生成一个新的list</span></span><br><span class="line">    <span class="keyword">if</span> target <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        target=[]</span><br><span class="line">    target.append(num)</span><br><span class="line">    <span class="keyword">return</span> target</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(add_to_2(<span class="number">1</span>))</span><br><span class="line">print(add_to_2(<span class="number">2</span>))</span><br><span class="line">print(add_to_2(<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+<pre><code>[1]
+[2]
+[3]
+</code></pre><h1 id="python-slots魔法"><a href="#python-slots魔法" class="headerlink" title="python slots魔法"></a>python <strong>slots</strong>魔法</h1><p>在python的类，每次生成一个对象，都会生成一个保存类属性的字典<code>__dict__</code>,这样带来的</p>
+<p>好处是：</p>
+<ul>
+<li>可以动态地增查改删属性。</li>
+</ul>
+<p>缺点是：</p>
+<ul>
+<li>因为python不能在创建对象时指定分配内存的大小，所以如果创建成千上万个对象，就会消耗很多内存空间。</li>
+</ul>
+<p>slots魔法就是可以现式地指定所包含的属性,使用类slots的类对象就不会保存<code>__dict__</code>属性字典。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass1</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,name,sex)</span>:</span></span><br><span class="line">        self.name=name</span><br><span class="line">        self.sex=sex</span><br><span class="line"></span><br><span class="line">        </span><br><span class="line">obj1=MyClass1(<span class="string">"andy"</span>,<span class="string">"male"</span>)</span><br><span class="line">obj2=MyClass1(<span class="string">"ann"</span>,<span class="string">"female"</span>)</span><br><span class="line">print(obj1.__dict__)</span><br><span class="line">print(obj2.__dict__)</span><br></pre></td></tr></table></figure>
+<pre><code>{&#39;name&#39;: &#39;andy&#39;, &#39;sex&#39;: &#39;male&#39;}
+{&#39;name&#39;: &#39;ann&#39;, &#39;sex&#39;: &#39;female&#39;}
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass2</span><span class="params">(object)</span>:</span></span><br><span class="line">    __slots__=[<span class="string">"name"</span>,<span class="string">"sex"</span>]</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,name,sex)</span>:</span></span><br><span class="line">        self.name=name</span><br><span class="line">        self.sex=sex</span><br><span class="line"></span><br><span class="line">        </span><br><span class="line">obj3=MyClass2(<span class="string">"andy"</span>,<span class="string">"male"</span>)</span><br><span class="line">obj4=MyClass2(<span class="string">"ann"</span>,<span class="string">"female"</span>)</span><br><span class="line"></span><br><span class="line">print(obj3.__dict__)</span><br><span class="line">print(obj4.__dict__)</span><br></pre></td></tr></table></figure>
+<pre><code>---------------------------------------------------------------------------
+
+AttributeError                            Traceback (most recent call last)
+
+&lt;ipython-input-5-3778b53f416e&gt; in &lt;module&gt;
+      8 obj3=MyClass2(&quot;andy&quot;,&quot;male&quot;)
+      9 obj4=MyClass2(&quot;ann&quot;,&quot;female&quot;)
+---&gt; 10 print(obj3.__dict__)
+     11 print(obj4.__dict__)
+
+
+AttributeError: &#39;MyClass2&#39; object has no attribute &#39;__dict__&#39;
+</code></pre><h1 id="python中的collection包"><a href="#python中的collection包" class="headerlink" title="python中的collection包"></a>python中的collection包</h1><ul>
+<li>defaultdict</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line">fruit_name=[(<span class="string">'banana'</span>,<span class="string">"香蕉"</span>),(<span class="string">'banana'</span>,<span class="string">"芭蕉"</span>),(<span class="string">'orange'</span>,<span class="string">"橘子"</span>),(<span class="string">'orange'</span>,<span class="string">"柑子"</span>),(<span class="string">'orange'</span>,<span class="string">"蜜橘"</span>)]</span><br><span class="line"></span><br><span class="line">fruit_alias=defaultdict(list)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> name_eng,name_cn <span class="keyword">in</span> fruit_name:</span><br><span class="line">    fruit_alias[name_eng].append(name_cn)</span><br><span class="line">    </span><br><span class="line">print(fruit_alias)</span><br></pre></td></tr></table></figure>
+<pre><code>defaultdict(&lt;class &#39;list&#39;&gt;, {&#39;banana&#39;: [&#39;香蕉&#39;, &#39;芭蕉&#39;], &#39;orange&#39;: [&#39;橘子&#39;, &#39;柑子&#39;, &#39;蜜橘&#39;]})
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">print(json.dumps(fruit_alias))</span><br></pre></td></tr></table></figure>
+<pre><code>{&quot;banana&quot;: [&quot;\u9999\u8549&quot;, &quot;\u82ad\u8549&quot;], &quot;orange&quot;: [&quot;\u6a58\u5b50&quot;, &quot;\u67d1\u5b50&quot;, &quot;\u871c\u6a58&quot;]}
+</code></pre><ul>
+<li>Counter 计数器</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line"></span><br><span class="line">fruit_alias_cnt=Counter(name_eng <span class="keyword">for</span> name_eng,name_cn <span class="keyword">in</span> fruit_name)</span><br><span class="line"></span><br><span class="line">print(fruit_alias_cnt)</span><br></pre></td></tr></table></figure>
+<pre><code>Counter({&#39;orange&#39;: 3, &#39;banana&#39;: 2})
+</code></pre><ul>
+<li>deque 双端队列</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"></span><br><span class="line">dq=deque()</span><br><span class="line">dq.append(<span class="number">1</span>)</span><br><span class="line">dq.append(<span class="string">"2"</span>)</span><br><span class="line">dq.append(<span class="string">"foo"</span>)</span><br><span class="line"></span><br><span class="line">print(dq)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"pop from left"</span>)</span><br><span class="line">dq.popleft()</span><br><span class="line">print(dq)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"pop from right"</span>)</span><br><span class="line">dq.pop()</span><br><span class="line">print(dq)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"append from left"</span>)</span><br><span class="line">dq.appendleft(<span class="number">1</span>)</span><br><span class="line">print(dq)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"append from right"</span>)</span><br><span class="line">dq.append(<span class="string">"foo"</span>)</span><br><span class="line">print(dq)</span><br></pre></td></tr></table></figure>
+<pre><code>deque([1, &#39;2&#39;, &#39;foo&#39;])
+pop from left
+deque([&#39;2&#39;, &#39;foo&#39;])
+pop from right
+deque([&#39;2&#39;])
+append from left
+deque([1, &#39;2&#39;])
+append from right
+deque([1, &#39;2&#39;, &#39;foo&#39;])
+</code></pre><p>我们可以通过设置队列的最大长度，从而自动地从队首弹出和队尾退出。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">dq2=deque(maxlen=<span class="number">8</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">8</span>):</span><br><span class="line">    dq2.append(i)</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">print(dq2)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"Be about to append 8 at right most!\n"</span>)</span><br><span class="line">print(<span class="string">"After reach max length of the deque, \</span></span><br><span class="line"><span class="string">      the left most element will be poped out automatically!\n"</span>)</span><br><span class="line">dq2.append(<span class="number">8</span>)</span><br><span class="line">print(dq2)</span><br></pre></td></tr></table></figure>
+<pre><code>deque([0, 1, 2, 3, 4, 5, 6, 7], maxlen=8)
+Be about to append 8 at right most!
+
+After reach max length of the deque,       the left most element will be poped out automatically!
+
+deque([1, 2, 3, 4, 5, 6, 7, 8], maxlen=8)
+</code></pre><h1 id="nametuples"><a href="#nametuples" class="headerlink" title="nametuples"></a>nametuples</h1><p>nametuple和tuple一样是不可变对象，可以通过下标索引来访问到具体的元素。</p>
+<p>而nametuple又有点类似mini型的dict，可以像dict一样访问元素，但是是不可变的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第一个参数是命名元组的名称，类似类的类名； 第二个参数是字段名称</span></span><br><span class="line">student=namedtuple(<span class="string">"Student"</span>,<span class="string">"name stuNum sex"</span>)</span><br><span class="line"></span><br><span class="line">andy=student(name=<span class="string">"Andy"</span>,stuNum=<span class="string">"123456"</span>,sex=<span class="string">"male"</span>)</span><br><span class="line">ann=student(<span class="string">"Ann"</span>,<span class="string">"123123"</span>,<span class="string">"female"</span>)</span><br><span class="line"></span><br><span class="line">print(andy)</span><br><span class="line"></span><br><span class="line">print(ann.stuNum)</span><br><span class="line">print(ann[<span class="number">2</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 务必记住，nametuple是不可变对象（immutable）</span></span><br><span class="line"><span class="comment"># ann.sex="male"  #  ERROR! </span></span><br><span class="line"></span><br><span class="line">andy_dict=andy._asdict()  <span class="comment"># 通过_asdict()将命名元组转化为字典，再改相应属性</span></span><br><span class="line">andy_dict[<span class="string">"stuNum"</span>]=<span class="number">654321</span></span><br><span class="line">print(andy_dict)</span><br></pre></td></tr></table></figure>
+<pre><code>Student(name=&#39;Andy&#39;, stuNum=&#39;123456&#39;, sex=&#39;male&#39;)
+123123
+female
+OrderedDict([(&#39;name&#39;, &#39;Andy&#39;), (&#39;stuNum&#39;, 654321), (&#39;sex&#39;, &#39;male&#39;)])
+</code></pre><ul>
+<li>enmu 枚举数据结构</li>
+</ul>
+<p>注意的是，这个是在<code>enum</code>包里的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line"><span class="keyword">from</span> enum <span class="keyword">import</span> Enum</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Species</span><span class="params">(Enum)</span>:</span></span><br><span class="line">    cat=<span class="number">1</span></span><br><span class="line">    dog=<span class="number">2</span></span><br><span class="line">    horse=<span class="number">3</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 但我们并不想关心同一物种的年龄，所以我们可以使用一个别名</span></span><br><span class="line">    kitten = <span class="number">1</span>  <span class="comment"># (幼小的猫咪)</span></span><br><span class="line">    puppy = <span class="number">2</span>   <span class="comment"># (幼小的狗狗)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以用三种方式访问枚举类型的值</span></span><br><span class="line">print(Species(<span class="number">2</span>))</span><br><span class="line">print(Species[<span class="string">"cat"</span>])</span><br><span class="line">print(Species.horse)</span><br><span class="line">print()</span><br><span class="line">      </span><br><span class="line"></span><br><span class="line">Animal=namedtuple(<span class="string">"Animal"</span>,<span class="string">"name age type"</span>)</span><br><span class="line"></span><br><span class="line">perry=Animal(name=<span class="string">"Perry"</span>,age=<span class="number">5</span>,type=Species.dog)</span><br><span class="line">kiyomi=Animal(name=<span class="string">"Kiyomi"</span>,age=<span class="number">4</span>,type=Species.puppy)</span><br><span class="line">hello_kitty=Animal(name=<span class="string">"Hello-Kitty"</span>,age=<span class="number">7</span>,type=Species.kitten)</span><br><span class="line"></span><br><span class="line"><span class="keyword">assert</span>(perry.type==kiyomi.type)</span><br><span class="line"></span><br><span class="line">print(hello_kitty.type)</span><br></pre></td></tr></table></figure>
+<pre><code>Species.dog
+Species.cat
+Species.horse
+
+Species.cat
+</code></pre><h1 id="枚举-Enumerate"><a href="#枚举-Enumerate" class="headerlink" title="枚举 Enumerate"></a>枚举 Enumerate</h1><p>这里说的枚举和枚举类型不是一个东西，这里的枚举指的是枚举一个列表或序列。<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> idx,elemnt <span class="keyword">in</span> enumrate(my_list):</span><br><span class="line">    <span class="builtin-name">print</span>(idx,element)</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my_list=[<span class="string">"apple"</span>,<span class="string">"banana"</span>,<span class="string">"pear"</span>]</span><br><span class="line"><span class="comment"># start 指示的是下表从哪个索引开始计算</span></span><br><span class="line"><span class="keyword">for</span> idx,ele <span class="keyword">in</span> enumerate(my_list,start=<span class="number">1</span>):</span><br><span class="line">    print(idx,ele)</span><br></pre></td></tr></table></figure>
+<pre><code>1 apple
+2 banana
+3 pear
+</code></pre><h1 id="python-中的自省"><a href="#python-中的自省" class="headerlink" title="python 中的自省"></a>python 中的自省</h1><ul>
+<li><p><code>dir()</code>是Python中自省的最重要的函数之一，列举出当前对象的所有可用方法或当前作用域下的所有变量。</p>
+</li>
+<li><p><code>inspect</code>模块中也提供了<code>getmembers()</code>函数来获取一个对象的所有成员函数。</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">my_list=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="string">"bar"</span>,<span class="string">"foo"</span>]</span><br><span class="line">print(dir(my_list))</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;__add__&#39;, &#39;__class__&#39;, &#39;__contains__&#39;, &#39;__delattr__&#39;, &#39;__delitem__&#39;, &#39;__dir__&#39;, &#39;__doc__&#39;, &#39;__eq__&#39;, &#39;__format__&#39;, &#39;__ge__&#39;, &#39;__getattribute__&#39;, &#39;__getitem__&#39;, &#39;__gt__&#39;, &#39;__hash__&#39;, &#39;__iadd__&#39;, &#39;__imul__&#39;, &#39;__init__&#39;, &#39;__init_subclass__&#39;, &#39;__iter__&#39;, &#39;__le__&#39;, &#39;__len__&#39;, &#39;__lt__&#39;, &#39;__mul__&#39;, &#39;__ne__&#39;, &#39;__new__&#39;, &#39;__reduce__&#39;, &#39;__reduce_ex__&#39;, &#39;__repr__&#39;, &#39;__reversed__&#39;, &#39;__rmul__&#39;, &#39;__setattr__&#39;, &#39;__setitem__&#39;, &#39;__sizeof__&#39;, &#39;__str__&#39;, &#39;__subclasshook__&#39;, &#39;append&#39;, &#39;clear&#39;, &#39;copy&#39;, &#39;count&#39;, &#39;extend&#39;, &#39;index&#39;, &#39;insert&#39;, &#39;pop&#39;, &#39;remove&#39;, &#39;reverse&#39;, &#39;sort&#39;]
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不加参数，返回的是当前作用域内所有名字</span></span><br><span class="line">print(dir())</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;Animal&#39;, &#39;Enum&#39;, &#39;In&#39;, &#39;Out&#39;, &#39;Species&#39;, &#39;_&#39;, &#39;__&#39;, &#39;___&#39;, &#39;__builtin__&#39;, &#39;__builtins__&#39;, &#39;__doc__&#39;, &#39;__loader__&#39;, &#39;__name__&#39;, &#39;__package__&#39;, &#39;__spec__&#39;, &#39;_dh&#39;, &#39;_i&#39;, &#39;_i1&#39;, &#39;_i10&#39;, &#39;_i11&#39;, &#39;_i12&#39;, &#39;_i13&#39;, &#39;_i14&#39;, &#39;_i15&#39;, &#39;_i16&#39;, &#39;_i17&#39;, &#39;_i18&#39;, &#39;_i19&#39;, &#39;_i2&#39;, &#39;_i20&#39;, &#39;_i21&#39;, &#39;_i22&#39;, &#39;_i23&#39;, &#39;_i24&#39;, &#39;_i25&#39;, &#39;_i26&#39;, &#39;_i27&#39;, &#39;_i28&#39;, &#39;_i29&#39;, &#39;_i3&#39;, &#39;_i30&#39;, &#39;_i31&#39;, &#39;_i32&#39;, &#39;_i33&#39;, &#39;_i34&#39;, &#39;_i35&#39;, &#39;_i36&#39;, &#39;_i37&#39;, &#39;_i4&#39;, &#39;_i5&#39;, &#39;_i6&#39;, &#39;_i7&#39;, &#39;_i8&#39;, &#39;_i9&#39;, &#39;_ih&#39;, &#39;_ii&#39;, &#39;_iii&#39;, &#39;_oh&#39;, &#39;andy&#39;, &#39;andy_dict&#39;, &#39;ann&#39;, &#39;deque&#39;, &#39;dq&#39;, &#39;dq2&#39;, &#39;ele&#39;, &#39;exit&#39;, &#39;get_ipython&#39;, &#39;hello_kitty&#39;, &#39;i&#39;, &#39;idx&#39;, &#39;kiyomi&#39;, &#39;my_list&#39;, &#39;namedtuple&#39;, &#39;perry&#39;, &#39;quit&#39;, &#39;student&#39;]
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> inspect</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestClass</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,a,b)</span>:</span></span><br><span class="line">        self.a=a</span><br><span class="line">        self.b=b</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">()</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.a+self.b</span><br><span class="line"></span><br><span class="line">test_case=TestClass(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">print(inspect.getmembers(test_case))</span><br></pre></td></tr></table></figure>
+<pre><code>[(&#39;__class__&#39;, &lt;class &#39;__main__.TestClass&#39;&gt;), (&#39;__delattr__&#39;, &lt;method-wrapper &#39;__delattr__&#39; of TestClass object at 0x112940978&gt;), (&#39;__dict__&#39;, {&#39;a&#39;: 1, &#39;b&#39;: 2}), (&#39;__dir__&#39;, &lt;built-in method __dir__ of TestClass object at 0x112940978&gt;), (&#39;__doc__&#39;, None), (&#39;__eq__&#39;, &lt;method-wrapper &#39;__eq__&#39; of TestClass object at 0x112940978&gt;), (&#39;__format__&#39;, &lt;built-in method __format__ of TestClass object at 0x112940978&gt;), (&#39;__ge__&#39;, &lt;method-wrapper &#39;__ge__&#39; of TestClass object at 0x112940978&gt;), (&#39;__getattribute__&#39;, &lt;method-wrapper &#39;__getattribute__&#39; of TestClass object at 0x112940978&gt;), (&#39;__gt__&#39;, &lt;method-wrapper &#39;__gt__&#39; of TestClass object at 0x112940978&gt;), (&#39;__hash__&#39;, &lt;method-wrapper &#39;__hash__&#39; of TestClass object at 0x112940978&gt;), (&#39;__init__&#39;, &lt;bound method TestClass.__init__ of &lt;__main__.TestClass object at 0x112940978&gt;&gt;), (&#39;__init_subclass__&#39;, &lt;built-in method __init_subclass__ of type object at 0x7f98c185c1c8&gt;), (&#39;__le__&#39;, &lt;method-wrapper &#39;__le__&#39; of TestClass object at 0x112940978&gt;), (&#39;__lt__&#39;, &lt;method-wrapper &#39;__lt__&#39; of TestClass object at 0x112940978&gt;), (&#39;__module__&#39;, &#39;__main__&#39;), (&#39;__ne__&#39;, &lt;method-wrapper &#39;__ne__&#39; of TestClass object at 0x112940978&gt;), (&#39;__new__&#39;, &lt;built-in method __new__ of type object at 0x10dff55e8&gt;), (&#39;__reduce__&#39;, &lt;built-in method __reduce__ of TestClass object at 0x112940978&gt;), (&#39;__reduce_ex__&#39;, &lt;built-in method __reduce_ex__ of TestClass object at 0x112940978&gt;), (&#39;__repr__&#39;, &lt;method-wrapper &#39;__repr__&#39; of TestClass object at 0x112940978&gt;), (&#39;__setattr__&#39;, &lt;method-wrapper &#39;__setattr__&#39; of TestClass object at 0x112940978&gt;), (&#39;__sizeof__&#39;, &lt;built-in method __sizeof__ of TestClass object at 0x112940978&gt;), (&#39;__str__&#39;, &lt;method-wrapper &#39;__str__&#39; of TestClass object at 0x112940978&gt;), (&#39;__subclasshook__&#39;, &lt;built-in method __subclasshook__ of type object at 0x7f98c185c1c8&gt;), (&#39;__weakref__&#39;, None), (&#39;a&#39;, 1), (&#39;add&#39;, &lt;bound method TestClass.add of &lt;__main__.TestClass object at 0x112940978&gt;&gt;), (&#39;b&#39;, 2)]
+</code></pre><h1 id="Lambda-表达式"><a href="#Lambda-表达式" class="headerlink" title="Lambda 表达式"></a>Lambda 表达式</h1><p>lambda表达式是Python中的匿名函数，它是一个<code>callable</code>的对象，原型为：</p>
+<p><code>lambda param : operation(param)</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add=<span class="keyword">lambda</span> x,y : x+y</span><br><span class="line">print(add(<span class="number">3</span>,<span class="number">4</span>))</span><br></pre></td></tr></table></figure>
+<pre><code>7
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列表排序 </span></span><br><span class="line"></span><br><span class="line">a = [(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">4</span>, <span class="number">1</span>), (<span class="number">9</span>, <span class="number">10</span>), (<span class="number">13</span>, <span class="number">-3</span>)]</span><br><span class="line">a.sort(key=<span class="keyword">lambda</span> x:x[<span class="number">1</span>])  <span class="comment"># 按照list中每个元素的第二个值进行排序</span></span><br><span class="line">print(a)</span><br></pre></td></tr></table></figure>
+<pre><code>[(13, -3), (4, 1), (1, 2), (9, 10)]
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/10/26/基于预测未来帧的异常事件检测/" data-toggle="tooltip" data-placement="top" title="基于预测未来帧的异常事件检测">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/10/24/hello-world/" data-toggle="tooltip" data-placement="top" title="欢迎来到我的博客~">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Python进阶" title="Python进阶">Python进阶</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

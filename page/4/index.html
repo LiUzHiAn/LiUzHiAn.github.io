@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/page/4/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg-5.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
+                <div class="site-heading">
+                    <h1>LiuZhian&#39;s Blog</h1>
+                    <!--<hr class="small">-->
+                    <span class="subheading">Welcome to my home~</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
+
+<!-- USE SIDEBAR -->
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                post-container
+            ">
+            
+                <!-- Main Content -->
+
+
+<div class="post-preview">
+
+    <a href="/2019/11/10/LeetCode-78-子集/">
+        <h2 class="post-title">
+            Leetcode 78- 子集
+        </h2>
+        <h3 class="post-subtitle">
+            Naive V.S. 牛掰格拉斯
+        </h3>
+        <div class="post-content-preview">
+            Leetcode Leetcode 78- 子集1. 题目描述给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+说明：解集不能包含重复的子集。
+123456789101112输入: nums = [1,2,3]输出:[  [3],  [1],  [2],  [1,2,3],  [1,3],  [2,3],  [1,2],  []]
+2. 思路2.1 我的思路依然先......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-10
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/11/09/Java多线程核心技术阅读笔记(第四章)/">
+        <h2 class="post-title">
+            Java多线程核心技术阅读笔记(第四章)
+        </h2>
+        <h3 class="post-subtitle">
+            Java多线程 Lock的使用
+        </h3>
+        <div class="post-content-preview">
+            第4章 Lock的使用4.1 重入锁所谓重入锁，就是可以重新进入的锁。。废话！反正我用纯文字解释不了他是什么意思。还是举个例子解释它的概念吧。假如有n个线程，都想操作共享变量obj，现在假设线程A的method1()通过lock.lock()拿到了锁，在释放锁之前method1()又调用了method2()，method2()开头第一句就是lock.lock()尝试去获得锁。在这种情况下，m......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-09
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/11/09/LeetCode-74-搜索二维数组/">
+        <h2 class="post-title">
+            Leetcode 74-搜索二维数组
+        </h2>
+        <h3 class="post-subtitle">
+            两次二分查找 VS 一次二分查找
+        </h3>
+        <div class="post-content-preview">
+            Leetcode 74-搜索二维数组1. 题目描述编写一个高效的算法来判断?m x n?矩阵中，是否存在一个目标值。该矩阵具有如下特性：
+
+每行中的整数从左到右按升序排列。
+每行的第一个整数大于前一行的最后一个整数。
+
+12345678910111213141516171819示例?1:输入:matrix = [  [1,   3,  5,  7],  [10, 11, 16, 20],  ......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-09
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/11/09/LeetCode-66-加一/">
+        <h2 class="post-title">
+            Leetcode 66-加一
+        </h2>
+        <h3 class="post-subtitle">
+            我的垃圾代码 VS 别人的优雅代码
+        </h3>
+        <div class="post-content-preview">
+            Leetcode 66- 加一1. 题目描述给定一个由整数组成的非空数组所表示的非负整数，在该数的基础上加一。
+最高位数字存放在数组的首位， 数组中每个元素只存储单个数字。
+你可以假设除了整数 0 之外，这个整数不会以零开头。12345678910示例?1:输入: [1,2,3]输出: [1,2,4]解释: 输入数组表示数字 123。示例?2:输入: [4,3,2,1]输出: [4,3,2,......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-09
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/11/08/Java多线程核心技术阅读笔记(第三章)/">
+        <h2 class="post-title">
+            Java多线程核心技术阅读笔记(第三章)
+        </h2>
+        <h3 class="post-subtitle">
+            Java多线程 线程之前的通信
+        </h3>
+        <div class="post-content-preview">
+            第3章  线程之前的通信3.1 忙等 Busy-Wait譬如说，两个线程都在监视一个共享变量，线程A对共享变量进行操作(例如，增加)，线程B一直在while(true){}代码块中判断共享变量是否到了想要的值（加到了100）。这样看似好像很简单，也容易理解，但是在while(true){}中如果没到达退出条件，其实是在空转，浪费CPU资源。
+向如下这样：1234567891011121314......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-08
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/11/07/LeetCode-62-不同路径/">
+        <h2 class="post-title">
+            Leetcode 62,63- 不同路径
+        </h2>
+        <h3 class="post-subtitle">
+            动态规划,水题
+        </h3>
+        <div class="post-content-preview">
+            Leetcode 62,63- 不同路径1. 题目描述一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+问总共有多少条不同的路径？
+
+1234567输入: m = 3, n = 2输出: 3解释:从左上角开始，总共有 3 条路径可以到达右下角。1. 向右......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-07
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/11/07/Java多线程核心技术阅读笔记(第二章)/">
+        <h2 class="post-title">
+            Java多线程核心技术阅读笔记(第二章)
+        </h2>
+        <h3 class="post-subtitle">
+            Java多线程 对象及变量的并发访问
+        </h3>
+        <div class="post-content-preview">
+            第2章  对象及变量的并发访问2.1 synchronized 关键字Java中每个对象都持有一把锁，当多线程并发地访问同一对象时，可以用synchronized关键字对这些并发线程进行同步。如果线程A先拿到了锁，其他线程B/C/D只能傻傻地等待线程A释放锁。1234567891011121314151617181920212223242526272829303132333435363738......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-07
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/11/06/异常检测论文笔记/">
+        <h2 class="post-title">
+            异常检测论文笔记
+        </h2>
+        <h3 class="post-subtitle">
+            2019/11/06
+        </h3>
+        <div class="post-content-preview">
+            这次看的是以下两篇文章：
+
+【ICCV-2017】Unmasking the abnormal events in video
+【ICCV-2019】Anomaly Detection in Video Sequence with Appearance-Motion Correspondence
+
+以下是论文笔记：
+
+	
+    
+	
+
+
+
+...
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-06
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/11/03/LeetCode-56-合并区间/">
+        <h2 class="post-title">
+            Leetcode 56- 合并区间
+        </h2>
+        <h3 class="post-subtitle">
+            区间交集的3种情况枚举
+        </h3>
+        <div class="post-content-preview">
+            Leetcode 56- 合并区间1. 题目描述给出一个区间的集合，请合并所有重叠的区间。12345678910示例 1:输入: [[1,3],[2,6],[8,10],[15,18]]输出: [[1,6],[8,10],[15,18]]解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].示例?2:输入: [[1,4],[4,5]]输出: [[1,5]]解释: 区间 ......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-03
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/11/03/LeetCode-54-螺旋数组/">
+        <h2 class="post-title">
+            Leetcode 54- 螺旋输出数组
+        </h2>
+        <h3 class="post-subtitle">
+            水题，分治
+        </h3>
+        <div class="post-content-preview">
+            Leetcode 54- 螺旋输出数组1. 题目描述很简单的需求，给定一个包含 m x n 个元素的矩阵（m 行, n 列），请按照顺时针螺旋顺序，返回矩阵中的所有元素：123456789101112131415161718示例?1:输入:[ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ]]输出: [1,2,3,6,9,8,7,4,5]示例?2:输入:[  [1,......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-03
+    </p>
+
+</div>
+<hr>
+
+
+
+<!-- Pager -->
+
+<ul class="pager">
+    
+        <li class="previous">
+            <a href="/page/3/">&larr; Newer Posts</a>
+        </li>
+    
+    
+        <li class="next">
+            <a href="/page/5/">Older Posts &rarr;</a>
+        </li>
+    
+</ul>
+
+
+
+                <!-- 如果开启评论功能 -->
+                
+
+            </div>
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-3 col-lg-offset-0
+                col-md-3 col-md-offset-0
+                col-sm-12
+                col-xs-12
+                sidebar-container
+            ">
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                            
+                            <a href="/tags/#计算机图形学" title="计算机图形学" rel="2">计算机图形学</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#Java" title="Java" rel="13">Java</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#LeetCode" title="LeetCode" rel="36">LeetCode</a>
+                            
+                        
+                            
+                            <a href="/tags/#Object Detection" title="Object Detection" rel="4">Object Detection</a>
+                            
+                        
+                            
+                            <a href="/tags/#操作系统" title="操作系统" rel="10">操作系统</a>
+                            
+                        
+                            
+                            <a href="/tags/#OpenCV" title="OpenCV" rel="4">OpenCV</a>
+                            
+                        
+                            
+                        
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#生活" title="生活" rel="3">生活</a>
+                            
+                        
+                            
+                            <a href="/tags/#Anomaly Detection" title="Anomaly Detection" rel="2">Anomaly Detection</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#数据库" title="数据库" rel="5">数据库</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#汇编" title="汇编" rel="3">汇编</a>
+                            
+                        
+                            
+                            <a href="/tags/#计算机网络" title="计算机网络" rel="2">计算机网络</a>
+                            
+                        
+                            
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Short About -->
+                <section class="visible-md visible-lg">
+                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
+                    <div class="short-about">
+
+                        
+                            <img src="/img/hachi.jpg" />
+                        
+						
+						<!-- Music Player -->
+						
+						
+                        
+                            <p>Learn for life!</p>
+                        
+
+                        <!-- SNS Link -->
+                        <ul class="list-inline">
+                            
+                            
+                            
+                                <li>
+                                    <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa  fa-stack-1x fa-inverse">知</i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+
+                            
+                                <li>
+                                    <a target="_blank" href="http://weibo.com/u/1952886932">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+							
+							
+                                <li>
+                                    <a target="_blank" href="https://leetcode-cn.com/u/liu_zhian">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-code fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+							
+                            
+
+                            
+                                <li>
+                                    <a target="_blank"  href="https://github.com/LiUzHiAn">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+                            
+                            
+                            
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+        
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

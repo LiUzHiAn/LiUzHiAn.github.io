@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          OS内存管理 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/06/16/OS内存管理/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#操作系统" title="操作系统">操作系统</a>
+                        
+                    </div>
+                    <h1>OS内存管理</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-06-16
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#OS的内存管理"><span class="toc-text">OS的内存管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#地址空间-amp-地址生成"><span class="toc-text">地址空间 &amp; 地址生成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#逻辑地址生成"><span class="toc-text">逻辑地址生成</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连续内存分配：内存碎片"><span class="toc-text">连续内存分配：内存碎片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连续内存分配：碎片整理"><span class="toc-text">连续内存分配：碎片整理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#非连续内存分配"><span class="toc-text">非连续内存分配</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#分段式"><span class="toc-text">分段式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分页式"><span class="toc-text">分页式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#页和帧"><span class="toc-text">页和帧</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#帧（frame）"><span class="toc-text">帧（frame）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#页（page）"><span class="toc-text">页（page）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#页表的结构（普通页表、快表、二级页表、多级页表）"><span class="toc-text">页表的结构（普通页表、快表、二级页表、多级页表）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#快表"><span class="toc-text">快表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#二级页表、多级页表"><span class="toc-text">二级页表、多级页表</span></a></li></ol></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <p>要是我之前就上了TSU向勇和陈渝老师的操作系统课，我的操作系统可能就不会学的这么渣了。。恶补一通。非常感谢该课程团队作出的努力与奉献，有兴趣的大家可以去B站上看向勇老师的授课视频，简直男神级别。</p>
+<h2 id="OS的内存管理"><a href="#OS的内存管理" class="headerlink" title="OS的内存管理"></a>OS的内存管理</h2><p>操作系统会对计算机的内存进行统一管理，注意一下，这里说的内存不要理解成真正物理内存空间，应该理解成一种可用的内存空间，也就是我们常说的<code>逻辑内存</code>或者说<code>虚拟内存</code>，这种逻辑内存有可能分布在外存（硬盘等）之上的，至于具体怎么分布和协调，就靠OS来完成。</p>
+<p>OS的内存管理大致有以下4个特点：<br><img src="https://img-blog.csdnimg.cn/2019052714094420.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ol>
+<li>抽象</li>
+</ol>
+<p>可以为用户提供一个理论上无限大的逻辑地址空间，用户编程不需要去考虑实际的物理内存，具体开辟和释放内存空间交给OS来完成。</p>
+<ol>
+<li>保护</li>
+</ol>
+<p>OS确保执行的进程之间的地址空间是相互独立的，不会相互之前产生影响。</p>
+<ol>
+<li>共享</li>
+</ol>
+<p>有可能进程之间需要访问其他一段相同的内存，这个时候OS来完成内存共享，以及进程与进程之间的数据通信也由OS来负责协调<br>就像上图展示的一样，有4个进程，我们平时编程时所面向的一般也是逻辑内存，逻辑内存理论上来说可以是无限大的。</p>
+<ol>
+<li>虚拟化</li>
+</ol>
+<p>OS将内存和外存进行管理，可以虚拟化出更大的地址空间。</p>
+<p>如上图所示，4个进程以及OS，OS及3个进程被加载进了内存，而P4进程被暂时放在外存上。对于用户来说，他认为这4个进程都被放到了“内存”之中。在实际执行到相应进程时，OS会采用一些进程调度算法来将暂时没用到的进程空间和在外存空间的进程进行交换。</p>
+<h2 id="地址空间-amp-地址生成"><a href="#地址空间-amp-地址生成" class="headerlink" title="地址空间 &amp; 地址生成"></a>地址空间 &amp; 地址生成</h2><h3 id="逻辑地址生成"><a href="#逻辑地址生成" class="headerlink" title="逻辑地址生成"></a>逻辑地址生成</h3><p>我们都知道，写一个程序，基本要面临编码、编译、链接、载入这几个过程，原来迷迷糊糊的不知道链接和载入的作用是什么，现在总算是明白了，先给下面这个图：<br><img src="https://img-blog.csdnimg.cn/20190527141007283.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>以一个C语言程序为例：</p>
+<ol>
+<li>首先，我们需要coding，生成<code>XXX.c</code>文件，C语言里面的变量名，函数名这些其实都是地址的概念，不过是符号地址。</li>
+<li>然后用gcc编译器（这其实是一个gcc的可选选项），将<code>XXX.c</code>文件编译成<code>XXX.s</code>文件，这一般都是会生成汇编程序。这里的地址也还是符号地址。</li>
+<li>再用gcc编译器，链接成<code>XXX.o</code>文件，在该文件中，会将汇编指令转为一条条的机器码中，其中，符号地址将会开始被转为逻辑地址，而且每一个<code>XXX.o</code>文件的第一条语句默认从0地址开始编址的。</li>
+<li><code>linker链接器</code>，链接的目的主要是将一些程序中的库函数链接起来，我的理解是，将程序中引用的各种文件包含起来，这里可能会涉及到多个<code>XXX.O</code>文件，并将这些一段段都是从0开始的地址归总起来。</li>
+<li><code>loader装载器</code>，这一步主要是程序的重定位，你想，假如有多个程序被链接器链接好了之后，它们各自也从0逻辑地址开始编制，肯定是要有一个软件来负责将这些程序全部定位好，定位到哪呢？对，就是逻辑地址空间上。</li>
+</ol>
+<p>以上五个步骤，循序渐进的将逻辑地址空间一步一步确定好，再次声明！上面说的地址全是逻辑地址，至于如何映射到物理地址，甚至说内存之间的空间交换，这就是OS的工作了。</p>
+<p>最后，每次实际运行<code>XXX.exe</code>或<code>XXX.out</code>文件时，会执行逻辑地址到物理地址的映射。</p>
+<h2 id="连续内存分配：内存碎片"><a href="#连续内存分配：内存碎片" class="headerlink" title="连续内存分配：内存碎片"></a>连续内存分配：内存碎片</h2><p>连续内存分配会带来两个问题：①内碎片 ②外碎片</p>
+<ul>
+<li>内碎片</li>
+</ul>
+<p>OS给进程分配了一段空间，但是空间没被完全利用，有一段区域始终没被利用，只有直到该进程被杀死或释放的时候，这段内存空间才有可能被重试拿到被其他进程使用。</p>
+<p>所谓内碎片也比较好理解，就是OS给进程以及分配的空间里面不能被有效利用的那个fragment。</p>
+<ul>
+<li>外碎片</li>
+</ul>
+<p>外碎片则是相对于内碎片的一个概念，是指由于OS在给不同进程分配内存的过程中，可能两个相邻的内存之间产生了一部分空闲的内存，可是这部分内存又比较小，无法满足一个新来的进程所想要申请的内存空间，这样一来，这一部分空闲内存空间相当于被浪费了，成了外部碎片。</p>
+<p>所谓外部随便，也好理解，就是进程外面不能被有效利用的那个fragment。</p>
+<p>为了解决，更恰当的说是，为了缓解上述的内碎片和外碎片问题，就出现了3个连续内存分配算法：</p>
+<ul>
+<li>首次适配</li>
+<li>最优适配</li>
+<li>最差适配</li>
+</ul>
+<p>这三个算法比较好理解，这里就不展开说了。</p>
+<h2 id="连续内存分配：碎片整理"><a href="#连续内存分配：碎片整理" class="headerlink" title="连续内存分配：碎片整理"></a>连续内存分配：碎片整理</h2><ul>
+<li>压缩式碎片整理</li>
+</ul>
+<p>既然产生了碎片，肯定就要想办法来解决，于是就出现了碎片压缩办法，这个方法说起来很简单，无非就是把一些已经占用的空间尽量的归总地连续起来，而将一些碎片也尽量连续起来，就好比一个数组里面有一些零零散散的为0的整数，其他是一些非0整数，我们要做的就是把这些为0的整数放在一起，非0的整数也放在一起。<br><img src="https://img-blog.csdnimg.cn/20190527142940942.png" alt="在这里插入图片描述"><br>可是，什么时候来copy这些内存单元呢？copy这些单元后程序的内存地址变了怎么来协调？这些copy操作带来的开销是什么呢？这都是需要考虑的问题。</p>
+<ul>
+<li>交换式碎片整理</li>
+</ul>
+<p>为了克服压缩式碎片整理带来的巨大开销，我们就直接选择不copy了，而是用swap的模式，来进行外存和内存的<code>swap-in</code>和<code>swap-out</code>。<br><img src="https://img-blog.csdnimg.cn/20190527143001342.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="非连续内存分配"><a href="#非连续内存分配" class="headerlink" title="非连续内存分配"></a>非连续内存分配</h2><p>之所以采用非连续内存分配方式，原因是在连续内存分配时，会产生<code>外碎片</code>,<code>内碎片</code>问题，导致内存利用率较低。</p>
+<p>而非连续内存分配两种常见的基于硬件的方法就是<code>分段式</code>和<code>分页式</code>。分段式在比较古老的CPU中用的多，而现在的大多CPU都采用的是分页式的机制。</p>
+<h4 id="分段式"><a href="#分段式" class="headerlink" title="分段式"></a>分段式</h4><p>学过一定汇编语言或者嵌入式的同学应该知道，在X86的CPU中，存在一个叫段寄存器的东西，好像是叫ES寄存器，有点忘记了。因为我们的程序地址空间是由多个段组成的，这个段寄存器就是用来具体寻找某个段的地址空间的。<br><img src="https://img-blog.csdnimg.cn/20190602132513690.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>一个进程中，会有相应的主代码段、堆栈段。符号表段等等，如上图，这些段在编程者看来好像是连续着的，实际上他们的地址可能是一段一段被隔开的。<br><img src="https://img-blog.csdnimg.cn/20190602132653702.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>既然进程在实际的物理地址空间中被分段了，那么我到时候访问的时候，肯定需要一个工具来完成相应的逻辑地址到物理地址的对应，这个工具可以用软件或硬件来完成，而硬件肯定是执行效率较高的，于是，段访问的硬件实现大致如下图所示：<br><img src="https://img-blog.csdnimg.cn/20190602132912480.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li>首先，OS会维护一个段表，每个段有一个唯一的索引，也就是上图中的<code>段描述符</code>，这和Linux下的<code>文件描述符</code>或者<code>socket描述符</code>都是类似的概念。这张表中还为每个段维护了段的其他一些信息，比如段的基址、长度等。</li>
+<li>每次CPU具体寻址时，先根据断号找到相应的段，得到其基址，然后再根据偏移地址，和基址进行运算得到物理地址。如果我没记错的话，在X86的CPU中，段基址和偏移地址都是用一个16进制数来表示，例如，段基址放在段寄存器ES中，取值为<code>0X1000</code>，偏移址放在偏移地址寄存器EX中，取值为<code>0X1234</code>，那么计算方法是先将ES左移16位再与EX相加，得到的就是<code>0X11234</code>这个物理地址，大概就是这样。不过在计算物理地址时，MMU会判断一下偏移地址是不是超过了段的最大长度，比如说，堆段OS只开辟了1M空间，超过了1M就会产生一个异常，这个访问就是非法的。</li>
+</ul>
+<p>说了这么多，分段式机制在一些上古时期的CPU里面用的比较多，现在用的比较多的是分页机制</p>
+<h3 id="分页式"><a href="#分页式" class="headerlink" title="分页式"></a>分页式</h3><p>分页式主要的思路和分段式是差不多的，也是通过页号，页内偏移地址来完成的。不过，和分段式最主要的区别就是：</p>
+<blockquote>
+<p>分页式内存分配方法中的页和帧的大小是固定的，而分段式内存分配方法中的段大小可以是不定的。</p>
+</blockquote>
+<p>比如说，我的数据段可以是1M，而代码段4M，堆栈段2M，这样不同大小的段空间会使得OS维护段地址时有些麻烦。而分页式方式中，所有的页和帧的大小都是固定的，say，1M。别急，页和帧的概念在下面我会一一说明。</p>
+<h4 id="页和帧"><a href="#页和帧" class="headerlink" title="页和帧"></a>页和帧</h4><p>页这个概念指的是分页式内存管理中的逻辑地址空间中的基本单元，而帧则是物理地址空间中的基本单元。</p>
+<h5 id="帧（frame）"><a href="#帧（frame）" class="headerlink" title="帧（frame）"></a>帧（frame）</h5><p><img src="https://img-blog.csdnimg.cn/20190602140144454.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>如上图，一个物理地址被分隔成了两部分，前一部分的F位表示帧号，后S为表示帧内的偏移地址。现在假设一个物理地址的帧号为f（十进制数），帧内偏移地址为o（十进制数），那么物理地址的计算方式就是：</p>
+<script type="math/tex; mode=display">physical\_address=f*2^S+o</script><p>这其实和分段式中的计算方法是一样的，举个栗子：<br><img src="https://img-blog.csdnimg.cn/20190602140726150.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h5 id="页（page）"><a href="#页（page）" class="headerlink" title="页（page）"></a>页（page）</h5><p>页这个概念则是相对应逻辑地址空间而言的，注意，页和帧的大小一定是一样的，比如说都是512B或1M，而页号所占的位数可以和帧号所占的位数是不一样的，理论上来说，页号的长度可以是无限大，如下图所示：<br><img src="https://img-blog.csdnimg.cn/20190602140809645.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>那么物理地址的计算方式就是：</p>
+<script type="math/tex; mode=display">logical\_address=p*2^S+o</script><p>于是页和帧就可以匹配起来，并且他们的偏移地址是一样的，OS管理起来就方便了许多。<br><img src="https://img-blog.csdnimg.cn/20190602141147277.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>为了完成上图中的逻辑地址到物理地址的映射，我们还差一个东西，就是页表，它的作用就是记录了页到帧的映射关系，如下图所示：<br><img src="https://img-blog.csdnimg.cn/20190602141256837.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>我举个通俗易懂的例子，比如你被赋予了一项神秘的刺杀任务，你的上司告诉了你目标的所在位置暗号（猎鹰大楼,1208房间），猎鹰大楼相等于是页号，1208房间就是页内偏移地址，并让你去找一个叫钢蛋的人，他会告诉你猎鹰大楼具体是哪个楼。于是，你找到了钢蛋，钢蛋打开密码箱，里面有一张纸，记录了接头暗号，知道了猎鹰大楼其实就是12号楼，然后你就去（12号楼，1208房间）执行任务。这个例子中，钢蛋就是操作系统，密码箱中的纸就是页表。</p>
+<h3 id="页表的结构（普通页表、快表、二级页表、多级页表）"><a href="#页表的结构（普通页表、快表、二级页表、多级页表）" class="headerlink" title="页表的结构（普通页表、快表、二级页表、多级页表）"></a>页表的结构（普通页表、快表、二级页表、多级页表）</h3><p>普通的页表就是如下图所示，每次寻址时，CPU内部的PTBR会找到页表的基址（也就是存放页表的内存地址的其实单元，类似于中断向量的概念），然后再根据页号找到相应页表项。</p>
+<p>注意，每条页表项前面有几个标志位，可以分别来表示该页对应的帧是否驻足在物理内存中、是否是修改位、引用位等等。如果<code>resident bit</code>取值为0，则会造成一个非法内存访问异常。<br><img src="https://img-blog.csdnimg.cn/20190602144754129.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>页表地址转换的示例如下，注意，图示中的地址和页表项都是从下往上开始计数的：<br><img src="https://img-blog.csdnimg.cn/20190602145225151.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>其实在这里，我们隐藏了一个问题没考虑，页表是放在哪的？？？</p>
+<ul>
+<li>放在内存中。这样的话，每次访问一个内存单元需要2次内存访问，第一次获取页表项，第二次访问数据项，这样速度较慢。</li>
+<li>放在CPU的<code>CACHE</code>中。这样CPU直接访问页表项，访问速度快，但是cache的容量又很小。</li>
+</ul>
+<p>是的，如今的计算机很多都是64位系统，如果每个页/帧的大小为1K，那么会有2^54个页表项，这是very huge的值，直接放在内存不显示，于是就出现了所谓的快表、二级页表、多级页表。</p>
+<h4 id="快表"><a href="#快表" class="headerlink" title="快表"></a>快表</h4><p>将那些常用的页表项缓存到TLB中，TLB中的每个项以key-value键值对的方式存在CPU中，如下图所示，如果TLB中的不存在相应要访问的页，则再去找内存中的页表。<br><img src="https://img-blog.csdnimg.cn/20190602150159953.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="二级页表、多级页表"><a href="#二级页表、多级页表" class="headerlink" title="二级页表、多级页表"></a>二级页表、多级页表</h4><p>为了解决普通页表太大的问题，我们可以将页表分成两级，也就是说将页号的长度分为2部分，如下图中的绿色和淡蓝色的部分。一级页表中的每一项存的是二级页表的起始地址。假设原理页号部分的二进制数一共可以表示24个页（当然，这好像不可能，但是不影响我们理解），然后我们将这24个数字分为<code>4*6</code>的组合，一级页表中有4项，每个二级页表有6项。这样一来，如果一级页表中的某项的驻留位为0（即上面在页表结构中说到的<code>resident</code>位为0），那么它对应的二级页表也不需要存放在内存中了，于是同一时刻只需要4+6=10项放在内存中，而不是原来的24项，数量越大，这个效果越明显。<img src="https://img-blog.csdnimg.cn/2019060215115081.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>当然，引申一下就可以到多级页表了。<br><img src="https://img-blog.csdnimg.cn/20190602151224216.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/06/16/OS之页面置换算法/" data-toggle="tooltip" data-placement="top" title="OS之页面置换算法">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/06/16/OS的中断、异常、系统调用/" data-toggle="tooltip" data-placement="top" title="OS的中断、异常、系统调用">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#操作系统" title="操作系统">操作系统</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

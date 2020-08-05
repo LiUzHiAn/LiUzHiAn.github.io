@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          目标检测-SSD总结 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/11/28/目标检测-SSD总结/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Object Detection" title="Object Detection">Object Detection</a>
+                        
+                    </div>
+                    <h1>目标检测-SSD总结</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-11-28
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-感悟"><span class="toc-text">1.感悟</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-训练"><span class="toc-text">1.1 训练</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-1-网络的搭建"><span class="toc-text">1.1.1 网络的搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-2-数据集"><span class="toc-text">1.1.2 数据集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-3-Default-box"><span class="toc-text">1.1.3 Default box</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-4-Loss-function"><span class="toc-text">1.1.4 Loss function</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-5-可视化"><span class="toc-text">1.1.5 可视化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-6-数据增强"><span class="toc-text">1.1.6 数据增强</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-评估"><span class="toc-text">1.2 评估</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-测试"><span class="toc-text">1.3 测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-应用"><span class="toc-text">1.4 应用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-后记"><span class="toc-text">2.后记</span></a></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="1-感悟"><a href="#1-感悟" class="headerlink" title="1.感悟"></a>1.感悟</h1><p>这次前前后后大概花了1周的时间把SSD训练、评估、测试、应用部署整个阶段都学习了一遍，为什么说学习呢？因为代码是别人开源的，但是自己也是from scratch，从0到1全部实现了一次。在这次复现论文的过程中，总得来说，遇到的困难不是很多，Google查下基本都能解决，这里还是记录一下学习时候的感悟吧，以后再翻阅也好有个更新的印象。</p>
+<h2 id="1-1-训练"><a href="#1-1-训练" class="headerlink" title="1.1 训练"></a>1.1 训练</h2><p>总的来说，我并没有按照论文中说的训练120000 iterations，我只训练了75000，结果已经和paper公布的结果很接近了。</p>
+<h3 id="1-1-1-网络的搭建"><a href="#1-1-1-网络的搭建" class="headerlink" title="1.1.1 网络的搭建"></a>1.1.1 网络的搭建</h3><p>网络的搭建部分还是比较简单的，注意一下，SSD300在BaseNet用的是VGG-16，最开始初始化的时候是用了pre-trained参数的，其实这个地方我个人觉得影响不会很大，可以自己DIY，不过我没有试过。后面部分网络参数初始化用的是<code>Xavier</code>方式。</p>
+<h3 id="1-1-2-数据集"><a href="#1-1-2-数据集" class="headerlink" title="1.1.2 数据集"></a>1.1.2 数据集</h3><p>训练数据集用的是VOC2007和VOC2012的training set，然后注意一下怎么把XML的各个标签解析出来，而且XML中的bbox格式是基于左上角和右下角的坐标的，而网络中是基于中心坐标表示的方式，然后长宽分别是基于default box的长和宽，然后取log对数的</p>
+<h3 id="1-1-3-Default-box"><a href="#1-1-3-Default-box" class="headerlink" title="1.1.3 Default box"></a>1.1.3 Default box</h3><p>defalut box相当于是先验知识，是基于很多物体的大小和长宽比（aspect ratio）统计得出的，在SSD中分别取了很多种大小，最小比例的是整个图片大小的0.2倍，最大的比例是整个图片的0.9倍，然后中间可以自己随便取一些值，这需要根据中间从多少不同层取预测结果来确定，也就是Multi-feature maps，越靠后，比例应该越大，反之比例越小。然后在每个物体大小比例的前提下，又有不同的长宽比，比如人是高比宽长的，而汽车则相反，SSD论文中取了6个长宽比，具体细节看论文。每一张图片，都会有N多个相同的default boxes。</p>
+<h3 id="1-1-4-Loss-function"><a href="#1-1-4-Loss-function" class="headerlink" title="1.1.4 Loss function"></a>1.1.4 Loss function</h3><p>这一部分是最复杂，也是最关键的。大概有下面这些问题需要着重关注：</p>
+<ul>
+<li><p>真的所有default box的都用去匹配吗？<br>不是这样的。我们知道，每个训练图片都会有ground truth信息，也就是真实的框，一张图，最多也就10多个物体，也就是10多个真实框，而我们的default boxes会有很多很多，几千个（8732个），怎么可能这么多都拿去训练？策略是：我们根据每个真实框，找到它所对应的default box（怎么找？先以每个真实框为目标，找到它对应最大交并比的default box，当然，匹配到的default box对应的各个长宽比都也考虑。）<br>还有一个重点，这也是SSD中需要尤其关注的地方，SSD不仅要求把真实框对应的default box找到，也要求找到default box和真实框IoU大于0.5的框，也算到训练的positive samples中去。这样一来，相当于让算法有了找到更多框的功能，虽然说不是很精确，但是在后面可以用non-max supperission筛除掉。</p>
+</li>
+<li><p>Hard Negative Mining，难负样本挖掘<br>按照上面的匹配策略，我们大概会有匹配到几十个正样本，剩下的8000多个全是负的，我们不可能全都拿来训练，SSD采取的策略是让剩下的negative samples先按照置信度排个序，然后按照负正样本比例为3:1的比例选一些负样本出来，参与到loss function的计算中。</p>
+</li>
+</ul>
+<h3 id="1-1-5-可视化"><a href="#1-1-5-可视化" class="headerlink" title="1.1.5 可视化"></a>1.1.5 可视化</h3><p>可视化部分用到了<code>visdom</code>这个工具，可以把loss实时地输出到一个图表中，很是方便。支持自适应地将坐标比例缩放。</p>
+<h3 id="1-1-6-数据增强"><a href="#1-1-6-数据增强" class="headerlink" title="1.1.6 数据增强"></a>1.1.6 数据增强</h3><p>这个部分就不多说了，论文中说的很明白。</p>
+<h2 id="1-2-评估"><a href="#1-2-评估" class="headerlink" title="1.2 评估"></a>1.2 评估</h2><p>这次的评估指标用的是mAP，具体来说，是VOC 2007的11点取值评估方法，网上有很多相关资料说的很清楚了，如果以后有必要，再翻阅一下。我在训练75000 iterations后已经和论文中公布的结果很接近了，好多类基本都超过了，但是也有几类略低，但都是低了一点点，可接受，总的各类平均mAP是72.5，论文公布的是72.4。</p>
+<h2 id="1-3-测试"><a href="#1-3-测试" class="headerlink" title="1.3 测试"></a>1.3 测试</h2><p>由于评估结果不错，我就没有再去测试test set了。</p>
+<h2 id="1-4-应用"><a href="#1-4-应用" class="headerlink" title="1.4 应用"></a>1.4 应用</h2><p>本来我开始是考虑写个Android小程序的，无奈手边没有Android手机。iOS把有手机但没有电脑，也之前没折腾过IOS开发，想了一下也没有必要去花这个时间，最后我就在本机上写了个脚本应用，可以实时打开摄像头进行预测，也可以对视频、图片进行预测。下面是应用到最近比较火的一段视频的结果：</p>
+<video width="100%" height="400" src="coincidance.mp4" controls="controls">
+The `<video>` tag is not supported by your browser.
+</video>
+
+<h1 id="2-后记"><a href="#2-后记" class="headerlink" title="2.后记"></a>2.后记</h1><p>暂时就写这么多吧，以后想到了再回来补。</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/12/01/LeetCode-108-数组转AVL/" data-toggle="tooltip" data-placement="top" title="LeetCode-108-数组转AVL">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/11/26/LeetCode-83-删除链表重复元素/" data-toggle="tooltip" data-placement="top" title="LeetCode-82-删除链表重复元素②">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Object Detection" title="Object Detection">Object Detection</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

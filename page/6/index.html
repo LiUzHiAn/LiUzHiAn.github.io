@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/page/6/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg-5.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
+                <div class="site-heading">
+                    <h1>LiuZhian&#39;s Blog</h1>
+                    <!--<hr class="small">-->
+                    <span class="subheading">Welcome to my home~</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
+
+<!-- USE SIDEBAR -->
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                post-container
+            ">
+            
+                <!-- Main Content -->
+
+
+<div class="post-preview">
+
+    <a href="/2019/10/26/OpenCV-py学习笔记（一）——基本图像视频输入输出/">
+        <h2 class="post-title">
+            OpenCV-py学习笔记（一）—— 基本图像/视频输入输出
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            @[TOC]
+图像的相关操作需要注意的是，OpenCV读入图像的顺序是g、b、r的顺序，而像matplotlib这样的图像库读入图像的顺序是正常的r、g、b，所以如果想要用opencv读取图像而用matplotlib.plotlib显示时，就需要考虑一个通道翻转的问题。详情参见Stack Overflow上的讨论。
+1.读取图片代码12345678910111213141516171819d......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-10-26
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/10/26/OpenCV-py学习笔记（三）——图像处理（上）/">
+        <h2 class="post-title">
+            OpenCV-py学习笔记（三）—— 图像处理（上）
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            @[TOC]
+改变颜色空间1. 转换颜色空间 cv2.cvtColor()OpenCV中提供了100多种颜色空间，其实我们常用的也就那么三个，RGB、HSV、灰度图，HSV其实是一个用来描述颜色的很好的颜色空间，具体的原理请百度，转换颜色空间的方法就是cv2.cvtColor()，代码如下：
+123456# 所有的颜色空间# color_space = [i for i in dir(cv2......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-10-26
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/10/26/OpenCV-py学习笔记（二）——核心运算操作/">
+        <h2 class="post-title">
+            OpenCV-py学习笔记（二）—— 核心运算/操作
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            @[TOC]
+图像的算术运算1.饱和加 cv2.add()OpenCV中的add()函数是饱和运算，也就是说，如果两个8位整数相加，超过了255，自动会截断成255.
+12345678&gt;&gt;&gt; x = np.uint8([250])&gt;&gt;&gt; y = np.uint8([10])&gt;&gt;&gt; print cv2.add(x,y) # 250+10 =......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-10-26
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/10/26/OpenCV-py学习笔记（四）——轮廓检测/">
+        <h2 class="post-title">
+            OpenCV-py学习笔记（四）—— 轮廓检测
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            @[toc]这几天一直在学习特征点检测、角点检测相关的内容，更新的略慢，这篇博文将主要介绍一下图像的轮廓方面的知识和openCV中的相关操作。
+轮廓检测参考资料
+OpenCV-Python Tutorial
+Computer Vision: Algorithms and Applications
+
+0. 什么是轮廓？所谓轮廓，简单地可以解释为，一些连续的，沿着曲线边界的，点的集合，这些点拥有......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-10-26
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/10/26/基于预测未来帧的异常事件检测/">
+        <h2 class="post-title">
+            基于预测未来帧的异常事件检测
+        </h2>
+        <h3 class="post-subtitle">
+            Future Frame Prediction for Anomaly Detection – A New Baseline
+        </h3>
+        <div class="post-content-preview">
+            Future Frame Prediction for Anomaly Detection – A New Baseline
+
+	
+    
+	
+
+
+
+...
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-10-26
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/10/25/intermediate-python(中)/">
+        <h2 class="post-title">
+            Intermediate-python(中)
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            python  中的可变对象（mutuable）
+在python中，列表是可变对象.每当你将一个变量赋值为另一个可变类型的变量时，对这个数据的任意改动会同时反映到这两个变量上去。新变量只不过是老变量的一个别名而已。
+
+且在函数的参数中，默认参数只会运算一次！
+
+
+123456foo=["abc"]bar=foobar+=["666"]print(bar)print(foo)
+[&#39;ab......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-10-25
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/10/24/hello-world/">
+        <h2 class="post-title">
+            欢迎来到我的博客~
+        </h2>
+        <h3 class="post-subtitle">
+             "Hello World, Hello Blog"
+        </h3>
+        <div class="post-content-preview">
+            
+“故事从这里开始. ”
+
+之前多多少少都在CSDN、知乎、简书上有记录过一些东西，但还是想拥有一个属于自己管理的平台，于是，我的 Blog 就这么开通了。
+...
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-10-24
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/06/16/Leetcode-30-串联所有单词的子串/">
+        <h2 class="post-title">
+            Leetcode-30-串联所有单词的子串
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            题目
+给定一个字符串&nbsp;s&nbsp;和一些长度相同的单词&nbsp;words。找出 s 中恰好可以由&nbsp;words 中所有单词串联形成的子串的起始位置。
+
+注意子串要与&nbsp;words 中的单词完全匹配，中间不能有其他字符，但不需要考虑&nbsp;words&nbsp;中单词串联的顺序。
+
+&nbsp;
+示例 1：
+
+输入：
+  s = "barfoothefoob......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-06-16
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/06/16/OS之页面置换算法/">
+        <h2 class="post-title">
+            OS之页面置换算法
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            之前几篇博客记录了OS内存管理的一些知识和技术，接下来将继续深入，介绍一些页面置换算法，这里包括一些我们大家都略有耳闻的算法。
+置换算法当出现缺页故障时，需要从外存调入新的页面到内存中去，而如果此时内存已满，于是就要按照一定策略置换一些物理页帧出来，这就是置换算法的目的。而置换算法的目标就是尽量减少页面的调入调出次数
+页面置换算法主要可分为两大类：
+
+局部页面置换算法
+
+置换页面的选择范围仅......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-06-16
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/06/16/OS内存管理/">
+        <h2 class="post-title">
+            OS内存管理
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            要是我之前就上了TSU向勇和陈渝老师的操作系统课，我的操作系统可能就不会学的这么渣了。。恶补一通。非常感谢该课程团队作出的努力与奉献，有兴趣的大家可以去B站上看向勇老师的授课视频，简直男神级别。
+OS的内存管理操作系统会对计算机的内存进行统一管理，注意一下，这里说的内存不要理解成真正物理内存空间，应该理解成一种可用的内存空间，也就是我们常说的逻辑内存或者说虚拟内存，这种逻辑内存有可能分布在外......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-06-16
+    </p>
+
+</div>
+<hr>
+
+
+
+<!-- Pager -->
+
+<ul class="pager">
+    
+        <li class="previous">
+            <a href="/page/5/">&larr; Newer Posts</a>
+        </li>
+    
+    
+        <li class="next">
+            <a href="/page/7/">Older Posts &rarr;</a>
+        </li>
+    
+</ul>
+
+
+
+                <!-- 如果开启评论功能 -->
+                
+
+            </div>
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-3 col-lg-offset-0
+                col-md-3 col-md-offset-0
+                col-sm-12
+                col-xs-12
+                sidebar-container
+            ">
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                            
+                            <a href="/tags/#计算机图形学" title="计算机图形学" rel="2">计算机图形学</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#Java" title="Java" rel="13">Java</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#LeetCode" title="LeetCode" rel="36">LeetCode</a>
+                            
+                        
+                            
+                            <a href="/tags/#Object Detection" title="Object Detection" rel="4">Object Detection</a>
+                            
+                        
+                            
+                            <a href="/tags/#操作系统" title="操作系统" rel="10">操作系统</a>
+                            
+                        
+                            
+                            <a href="/tags/#OpenCV" title="OpenCV" rel="4">OpenCV</a>
+                            
+                        
+                            
+                        
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#生活" title="生活" rel="3">生活</a>
+                            
+                        
+                            
+                            <a href="/tags/#Anomaly Detection" title="Anomaly Detection" rel="2">Anomaly Detection</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#数据库" title="数据库" rel="5">数据库</a>
+                            
+                        
+                            
+                        
+                            
+                            <a href="/tags/#汇编" title="汇编" rel="3">汇编</a>
+                            
+                        
+                            
+                            <a href="/tags/#计算机网络" title="计算机网络" rel="2">计算机网络</a>
+                            
+                        
+                            
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Short About -->
+                <section class="visible-md visible-lg">
+                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
+                    <div class="short-about">
+
+                        
+                            <img src="/img/hachi.jpg" />
+                        
+						
+						<!-- Music Player -->
+						
+						
+                        
+                            <p>Learn for life!</p>
+                        
+
+                        <!-- SNS Link -->
+                        <ul class="list-inline">
+                            
+                            
+                            
+                                <li>
+                                    <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa  fa-stack-1x fa-inverse">知</i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+
+                            
+                                <li>
+                                    <a target="_blank" href="http://weibo.com/u/1952886932">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+							
+							
+                                <li>
+                                    <a target="_blank" href="https://leetcode-cn.com/u/liu_zhian">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-code fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+							
+                            
+
+                            
+                                <li>
+                                    <a target="_blank"  href="https://github.com/LiUzHiAn">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            
+                            
+                            
+                            
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+        
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

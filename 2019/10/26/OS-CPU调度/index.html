@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          CPU调度 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/10/26/OS-CPU调度/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#操作系统" title="操作系统">操作系统</a>
+                        
+                    </div>
+                    <h1>CPU调度</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-10-26
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU调度基本概念"><span class="toc-text">CPU调度基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#调度算法评估准则"><span class="toc-text">调度算法评估准则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#调度算法"><span class="toc-text">调度算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-先来先服务算法（First-Come-First-Service-FCFS）"><span class="toc-text">1. 先来先服务算法（First Come First Service,FCFS）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-短进程优先算法（Shortes-Process-Next-SPN）"><span class="toc-text">2. 短进程优先算法（Shortes Process Next,SPN）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-最高响应比优先（Highest-Response-Ratio-Next-HRRN）"><span class="toc-text">3. 最高响应比优先（Highest Response Ratio Next,HRRN）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-时间片轮转算法（Round-Robin-RR）"><span class="toc-text">4. 时间片轮转算法（Round-Robin,RR）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-多级反馈队列调度算法（Multi-Level-Feedback-Queue-MLFQ）"><span class="toc-text">5. 多级反馈队列调度算法（Multi-Level Feedback  Queue,MLFQ）</span></a></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <p>@[toc]</p>
+<h2 id="CPU调度基本概念"><a href="#CPU调度基本概念" class="headerlink" title="CPU调度基本概念"></a>CPU调度基本概念</h2><ul>
+<li>进程切换<br>进程切换即CPU资源在当前占用者之间的切换，也就是保存当前进程在PCB中的执行上下文（context），然后再恢复下一个进程的执行上下文。</li>
+<li><p>CPU调度<br>CPU调度其实可以分为两个部分：①进程调度②CPU资源调度，前者就是从就绪进程队列中选取一个进程准备运行，后者是从多个可用的CPU资源中分配给进程。</p>
+</li>
+<li><p>内核调度进程的时机</p>
+</li>
+</ul>
+<ol>
+<li>进程从运行态切换到了等待状态（blocking）</li>
+<li>进程被终结了，进入了退出状态。</li>
+</ol>
+<h2 id="调度算法评估准则"><a href="#调度算法评估准则" class="headerlink" title="调度算法评估准则"></a>调度算法评估准则</h2><ul>
+<li>CPU使用率：CPU处于忙状态的时间百分比</li>
+<li>吞吐量（throughput）：单位时间内完成的进程数量</li>
+<li>周转时间（turn-around time）：进程从初始化到结束过程中的总时间（包括等待时间）</li>
+<li>等待时间：进程在就绪队列中的总时间</li>
+<li>响应时间（response time）：进程从提交请求到产生响应的时间</li>
+</ul>
+<h2 id="调度算法"><a href="#调度算法" class="headerlink" title="调度算法"></a>调度算法</h2><h3 id="1-先来先服务算法（First-Come-First-Service-FCFS）"><a href="#1-先来先服务算法（First-Come-First-Service-FCFS）" class="headerlink" title="1. 先来先服务算法（First Come First Service,FCFS）"></a>1. 先来先服务算法（First Come First Service,FCFS）</h3><p>该调度算法依据进程进入就绪状态的先后顺序维护一个队列，每次调度时从队首取出一个进程将之转入运行状态。<br><img src="https://img-blog.csdnimg.cn/20190617105406578.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<ul>
+<li>优点：<br>该算法的优点显而易见，就是实现方式比较简单了。</li>
+<li>缺点：</li>
+</ul>
+<ol>
+<li>平均等待时间较长，且如果短进程排在后面时，平均周转时间也会较长。</li>
+<li>I/O资源和CPU资源的利用率较低。</li>
+<li>不公平<h3 id="2-短进程优先算法（Shortes-Process-Next-SPN）"><a href="#2-短进程优先算法（Shortes-Process-Next-SPN）" class="headerlink" title="2. 短进程优先算法（Shortes Process Next,SPN）"></a>2. 短进程优先算法（Shortes Process Next,SPN）</h3>选择就绪队列中，执行时间最短的进程占用CPU进入运行状态。（这里有个问题，你怎么知道一个进程执行时间?），实际上，是按照进程的预期执行时间来排序。</li>
+</ol>
+<p><img src="https://img-blog.csdnimg.cn/20190617111239490.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>SPN具有最优的平均周转时间，如下图所示，其中$C_i$表示第i个进程的执行时间：<br><img src="https://img-blog.csdnimg.cn/2019061711154331.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<ul>
+<li>优点：<br>该算法的优点是，具有最优的平均周转时间。</li>
+<li>缺点：</li>
+</ul>
+<ol>
+<li>连续到来的短进程可能会使得长进程无法获得CPU资源</li>
+<li>需要预知未来，也就是上面提到的，你怎么知道一个进程的执行时间是多少？于是需要进行预测。</li>
+<li>不公平</li>
+</ol>
+<p>至于如何预测，因为OS知道上一次该进程的CPU计算时间，因此可以采用滑动平均（exponential moving average）的方式来预测：</p>
+<script type="math/tex; mode=display">\tau_{n+1}=\alpha t_{n}+(1-\alpha)\tau_{n}</script><p>其中，$t<em>{n}$表示第n次的CPU计算时间，$\tau</em>{n+1}$表示第n+1次的CPU计算时间预估。如果将上式全部展开为关于变量$t$的式子的话，可以得到如下：</p>
+<script type="math/tex; mode=display">\tau_{n+1}=\alpha t_{n}+\alpha(1-\alpha)t_{n-1}+\alpha(1-\alpha)^2t_{n-2}+...</script><h3 id="3-最高响应比优先（Highest-Response-Ratio-Next-HRRN）"><a href="#3-最高响应比优先（Highest-Response-Ratio-Next-HRRN）" class="headerlink" title="3. 最高响应比优先（Highest Response Ratio Next,HRRN）"></a>3. 最高响应比优先（Highest Response Ratio Next,HRRN）</h3><p>该算法的思想是选择就绪队列中响应比最高的那个进程，响应比的定义如下：</p>
+<script type="math/tex; mode=display">R=(w+s)/s</script><p>其中，w表示进程的等待时间（waiting time），s表示进程的执行时间（service time）</p>
+<p>该算法起始是对短进程优先算法的一个改进，在SPN中，有可能会造成长进程无限等待，而这里的响应比会使得等待时间越久的进程响应比越高，防止了无限期等待。</p>
+<h3 id="4-时间片轮转算法（Round-Robin-RR）"><a href="#4-时间片轮转算法（Round-Robin-RR）" class="headerlink" title="4. 时间片轮转算法（Round-Robin,RR）"></a>4. 时间片轮转算法（Round-Robin,RR）</h3><p>在上述的1-3个算法中，每次都是选择一个进程，然后将之运行直至完毕（这里暂时不考虑抢占的问题），而这样的调度算法是不公平的。RR算法从一定程度上解决了这个问题：<code>将CPU时间分片，每个进程每次只拿到1个时间片</code>。大致的思想如下：和FCFS一样，按照进程到来的顺序给进程维护一个队列，每次从队列头取出一个进程运行，不过每个进程只运行一个时间片（即为q）。如果进程的执行时间小于q，那不用说，自然在一个时间片之间就完成进程执行并退出；如果一个时间片q的时间到了，进程还没执行完成，就把这个进程强制放入队列尾部，等待下一次分配到时间片。<br><img src="https://img-blog.csdnimg.cn/20190617185138218.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>下面是一个RR算法执行的具体示例：<br><img src="https://img-blog.csdnimg.cn/20190617185217774.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<ul>
+<li>优点<br>各进程之间被公平的对待，不会使得某个进程被无限延期执行的情况。</li>
+<li>缺点</li>
+</ul>
+<ol>
+<li>基于时间片的思想，会产生一些额外的进程上下文切换，开销较大。所以，如何选择时间片q的大小也是一个关键，若q太小，自然上下文切换会非常频繁，加大系统开销；如果q太大，极限情况下就退化成了一个FCFS算法，又可能会造成平均周转时间太长。（一个经验规律是，选择的q使得上下文切换开销占系统开销的1%之内）</li>
+<li>平均等待时间较差</li>
+</ol>
+<p>下图是RR和FCFS的一个比较：<br><img src="https://img-blog.csdnimg.cn/20190617185652137.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<h3 id="5-多级反馈队列调度算法（Multi-Level-Feedback-Queue-MLFQ）"><a href="#5-多级反馈队列调度算法（Multi-Level-Feedback-Queue-MLFQ）" class="headerlink" title="5. 多级反馈队列调度算法（Multi-Level Feedback  Queue,MLFQ）"></a>5. 多级反馈队列调度算法（Multi-Level Feedback  Queue,MLFQ）</h3><p>在OS中常常会遇到这样的问题，一些前台交互程序希望可以在较短时间内被处理完毕，而一些后台批处理任务似乎慢点也无关紧要，于是，可以采用维护多个队列的形式，在每个队列上可以采用不同的调度算法。而所谓的多级反馈队列，多级刚才解释了，就是维护多个队列；而反馈的意思是指，进程可以在不同队列之间移动。移动的规则如下：<code>时间片在不同的队列中不一样，优先级最高的队列时间片最短，而优先级最低的队列时间片最长。如果一个进程在当前时间片内没有执行完毕，那么就把该进程降到下一个优先级的队列中去。</code>可能文字表述有点绕，举个例子说明一下：<br><img src="https://img-blog.csdnimg.cn/20190617190917540.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>有如上图的多级反馈队列，数字序号越低的队列优先级最高（时间片最短），在上图中，相邻两个队列的时间片时长以2的幂增长。现在，如果有一个进程p到来了，这个进程的特点是，开始有一些交互操作，后面有一些很消耗CPU计算时长的操作，最开始，这个队列被放在第1级，得到了t0时间片，执行一个时间片t0后，进程没做完，这个时候OS会把该进程下移，放到第2级队列的队尾部去（如果在第2个队列中该进程又得到了时间片，执行流程类似。）</p>
+<p>注意一下，这多个队列之间的CPU时间片分配也是被OS管理的，OS会给较高优先级队列比较多的CPU时间（例如，第1-4级队列占了70%的CPU时间，相邻队列之间的调用可以简单采用循环遍历的方式），剩下的CPU时间就分配给低优先级的队列就OK了。</p>
+<ul>
+<li>优点</li>
+</ul>
+<ol>
+<li>CPU密集型进程的优先级将下降的很快</li>
+<li>I/O密集型进程将停留在高优先级</li>
+<li>各进程动态地将信息反馈给OS，便于OS维护</li>
+</ol>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/10/27/LeetCode-31-下一个排列/" data-toggle="tooltip" data-placement="top" title="Leetcode 31- 下一个排列">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/10/26/OS-信号量和管程/" data-toggle="tooltip" data-placement="top" title="信号量和管程">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#操作系统" title="操作系统">操作系统</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

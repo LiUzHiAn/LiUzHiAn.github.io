@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          RESTful API 实践 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2020/03/10/RESTful-API/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('restful.png')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#RESTful API" title="RESTful API">RESTful API</a>
+                        
+                    </div>
+                    <h1>RESTful API 实践</h1>
+                    <h2 class="subheading">Theory with Aciton</h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2020-03-10
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-定义"><span class="toc-text">1.定义</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-注意点"><span class="toc-text">2.注意点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-HTTP动作规范"><span class="toc-text">3.HTTP动作规范</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-实践"><span class="toc-text">4.实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1新建项目"><span class="toc-text">4.1新建项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2定义domain层类"><span class="toc-text">4.2定义domain层类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3数据库建表"><span class="toc-text">4.3数据库建表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-4定义DAO层"><span class="toc-text">4.4定义DAO层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-5定义Controller"><span class="toc-text">4.5定义Controller</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-6测试REST-API"><span class="toc-text">4.6测试REST API</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-后记"><span class="toc-text">5.后记</span></a></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="1-定义"><a href="#1-定义" class="headerlink" title="1.定义"></a>1.定义</h1><p>REST是REpresentational State Transfer的首字母缩写，通常中文翻译为表征性状态转移，是一种分布式超媒体系统的架构风格，是由 Roy Fielding 在2000年提出的概念。REST指定了关于系统组织的一些约束条件和原则，REST本身并没有创造什么新的技术或者组件，一个系统如果满足了REST中的约束和设计原则，我们就可以称这个系统的RESTful的。虽然说REST这个理念对于任意一个系统都适用，但是目前，遵循REST原则的HTTP应用就是最好的实例。</p>
+<h1 id="2-注意点"><a href="#2-注意点" class="headerlink" title="2.注意点"></a>2.注意点</h1><p>具体的REST理论也比较多，基于我现有的理解，我认为，其中最关键的就是两点：</p>
+<ul>
+<li>规范了资源的表述接口（用统一格式的URI来表述）以及相关的动作使用使用；</li>
+</ul>
+<p>REST原则纠正了当前很多应用的误区，特别是HTTP应用。原来，包括现在，很多系统都会这样设计：比方说，有一个添加用户的功能，于是将路由定义成<code>/user/add</code>，然后这个路由对应的是一个post方法；如果是要获取某个用户的信息，路由又定义成了<code>/get_user</code>，服务器通过HTTP协议把数据送给客户端，但其实不应该是这样的。而是应该把路由定义成关于用户的URI，例如<code>v1/user/id/25</code>,即路由中应该由一系列的名词组成，而具体是执行什么操作，再调用相关的动作即可。</p>
+<ul>
+<li>严格将C/S分开，服务器只负责传数据，具体的渲染和交互交给客户端，一定程度上也减少了服务端的压力。</li>
+</ul>
+<p>服务端和客户端用JSON或XML来交互数据。</p>
+<h1 id="3-HTTP动作规范"><a href="#3-HTTP动作规范" class="headerlink" title="3.HTTP动作规范"></a>3.HTTP动作规范</h1><p>RESTful的HTTP应用必须正确地使用HTTP动作，原来的很多应用，几乎只会用到GET和POST方法，比如说，要删除一个资源怎么办？原来一种不是那么正确的设计方式是，定义一个GET方法的路由<code>/delet_user</code>，再说一遍，不应该是这样的！你应该定义一个<code>v1/user/id/25</code>的路由，并执行DELETE动作。</p>
+<p>REST中规范的HTTP动词和其对应的作用如下所示：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">HTTP动词</th>
+<th style="text-align:center">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">GET</td>
+<td style="text-align:center">客户端请求获得一个资源的数据</td>
+</tr>
+<tr>
+<td style="text-align:center">POST</td>
+<td style="text-align:center">客户端发送数据给服务端，新建一个资源</td>
+</tr>
+<tr>
+<td style="text-align:center">PUT</td>
+<td style="text-align:center">客户端发送数据给服务端，修改已有资源的数据(必须提供该资源的所有数据)</td>
+</tr>
+<tr>
+<td style="text-align:center">PATCH</td>
+<td style="text-align:center">客户端发送数据给服务端，修改已有资源的数据(可以只提供该资源的部分数据)</td>
+</tr>
+<tr>
+<td style="text-align:center">DELETE</td>
+<td style="text-align:center">客户端删除某个资源</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>主要注意一下PUT和PATCH的区别，比方说，数据库中用id和姓名两个字段来表示一个用户，如果要用PUT动词来修改某个用户的数据，那么客户顿必须把这两个字段全发送给服务端，无论客户端到底是想修改一个字段还是两个；而如果使用PATCH动词，那只要发送部分想要修改的字段即可。</p>
+<h1 id="4-实践"><a href="#4-实践" class="headerlink" title="4.实践"></a>4.实践</h1><h2 id="4-1新建项目"><a href="#4-1新建项目" class="headerlink" title="4.1新建项目"></a>4.1新建项目</h2><p>这里我们用Spring Boot来实践一下，首先当然是创建一个Spring Boot项目了，新建好的项目组织如下：<br><img src="proj.png" alt=""><br>因为项目比较小，这里我就没创建service层了。</p>
+<h2 id="4-2定义domain层类"><a href="#4-2定义domain层类" class="headerlink" title="4.2定义domain层类"></a>4.2定义domain层类</h2><p>这里我们就用User类来实践一下，代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.liuzhian.springbootrestdemo.domain;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.AllArgsConstructor;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> lombok.NoArgsConstructor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.persistence.Entity;</span><br><span class="line"><span class="keyword">import</span> javax.persistence.GeneratedValue;</span><br><span class="line"><span class="keyword">import</span> javax.persistence.GenerationType;</span><br><span class="line"><span class="keyword">import</span> javax.persistence.Id;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@ClassName</span> User</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Deacription</span> // TODO</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> LiuZhian</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2020-03-10 14:55</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Version</span> 1.0</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)</span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>注意一下，@Data、@AllArgsConstructor、@NoArgsConstructor注解是用了lombok包，添加了@Data注解后可以自动生成get/set方法，@AllArgsConstructor、@NoArgsConstructor注解则分别是生成所有参数的构造函数和无参构造函数。</p>
+<h2 id="4-3数据库建表"><a href="#4-3数据库建表" class="headerlink" title="4.3数据库建表"></a>4.3数据库建表</h2><p>数据库表就定义了3个字段，分别是id，name和password，如下：<br><img src="tbl.png" alt=""></p>
+<h2 id="4-4定义DAO层"><a href="#4-4定义DAO层" class="headerlink" title="4.4定义DAO层"></a>4.4定义DAO层</h2><p>DAO层主要就是为了访问数据库数据了，Spring中的JPA也非常好用，我们只要定义一个访问数据接口<code>UserRepository</code>，并继承<code>JpaRepository</code>接口就可以了，这个接口里面会帮我们自动实现一些基本的CRUD方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.liuzhian.springbootrestdemo.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.liuzhian.springbootrestdemo.domain.User;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.jpa.repository.JpaRepository;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@ClassName</span> UserRepository</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Deacription</span> // TODO</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> LiuZhian</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2020-03-10 14:58</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Version</span> 1.0</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserRepository</span> <span class="keyword">extends</span> <span class="title">JpaRepository</span>&lt;<span class="title">User</span>, <span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">User <span class="title">findByName</span><span class="params">(String name)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>如果我们要自定义一些访问数据库的方法，我们也可以类似上述的<code>findByName()</code>方法定义出来，记住，方法名一定要遵循一定的原则,具体的可以去搜使用文档。</p>
+<p>定义好了接口之后，也别忘了在项目的application.yml文件中配置好数据库的一些properties，我的配置如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  # 数据库配置</span><br><span class="line">  datasource:</span><br><span class="line">    url: jdbc:mysql:<span class="comment">//localhost:3306/test?serverTimezone=Asia/Shanghai</span></span><br><span class="line">    username: root</span><br><span class="line">    password: root</span><br><span class="line">    driver-class-name: com.mysql.cj.jdbc.Driver</span><br><span class="line"></span><br><span class="line">  #热部署生效</span><br><span class="line">  devtools:</span><br><span class="line">    restart.enabled: <span class="keyword">true</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="4-5定义Controller"><a href="#4-5定义Controller" class="headerlink" title="4.5定义Controller"></a>4.5定义Controller</h2><p>最后当然是定义控制器了，按照REST中的资源表示原则和动词使用原则，我定义了下面的<code>UserController</code>类:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.liuzhian.springbootrestdemo.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.liuzhian.springbootrestdemo.dao.UserRepository;</span><br><span class="line"><span class="keyword">import</span> com.liuzhian.springbootrestdemo.domain.User;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.dao.EmptyResultDataAccessException;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.HttpStatus;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.ResponseEntity;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Collection;</span><br><span class="line"><span class="keyword">import</span> java.util.Optional;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@ClassName</span> UserController</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Deacription</span> // TODO</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> LiuZhian</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2020-03-10 15:10</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Version</span> 1.0</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(path = <span class="string">"/user"</span>, produces = &#123;<span class="string">"application/json"</span>, <span class="string">"text/xml"</span>&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepo;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(path = <span class="string">"/test"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">testUser</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> User(<span class="number">1</span>, <span class="string">"andy"</span>, <span class="string">"123456"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 返回所有User对象</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping</span>(path = <span class="string">"/all"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Collection&lt;User&gt; <span class="title">allUsers</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> userRepo.findAll();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据id得到User对象</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 不存在返回404</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping</span>(path = <span class="string">"/id/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseEntity&lt;User&gt; <span class="title">userByName</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Integer id) </span>&#123;</span><br><span class="line">        Optional&lt;User&gt; optUser = userRepo.findById(id);</span><br><span class="line">        <span class="keyword">if</span> (optUser.isPresent()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(optUser.get(), HttpStatus.OK);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(<span class="keyword">null</span>, HttpStatus.NOT_FOUND);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据name得到User对象</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> name</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 不存在返回404</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping</span>(path = <span class="string">"/name/&#123;name&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseEntity&lt;User&gt; <span class="title">userByName</span><span class="params">(@PathVariable(<span class="string">"name"</span>)</span> String name) </span>&#123;</span><br><span class="line">        User user = userRepo.findByName(name);</span><br><span class="line">        <span class="keyword">if</span> (user != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(user, HttpStatus.OK);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(<span class="keyword">null</span>, HttpStatus.NOT_FOUND);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * POST 创建一个新的User 对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> user</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PostMapping</span>(consumes = <span class="string">"application/json"</span>)</span><br><span class="line">    <span class="comment">// 成功返回201 - created, 比200更好</span></span><br><span class="line">    <span class="meta">@ResponseStatus</span>(value = HttpStatus.CREATED)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">postUser</span><span class="params">(@RequestBody User user)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> userRepo.save(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * PUT 更新User</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> user</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PutMapping</span>(path = <span class="string">"/id/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">putUser</span><span class="params">(@RequestBody User user)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> userRepo.save(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Patch 方法更新对象</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id    User id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> patch 更新后的对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 成功返回200，不存在id对应的对象则返回404</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PatchMapping</span>(path = <span class="string">"/id/&#123;id&#125;"</span>, consumes = <span class="string">"application/json"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseEntity&lt;User&gt; <span class="title">patchUser</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Integer id,</span></span><br><span class="line"><span class="function">                                          @RequestBody User patch) </span>&#123;</span><br><span class="line">        Optional&lt;User&gt; userOpt = userRepo.findById(id);</span><br><span class="line">        <span class="keyword">if</span> (userOpt.isPresent()) &#123;</span><br><span class="line">            User u = userOpt.get();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (patch.getName() != <span class="keyword">null</span>)</span><br><span class="line">                u.setName(patch.getName());</span><br><span class="line">            <span class="keyword">if</span> (patch.getPassword() != <span class="keyword">null</span>)</span><br><span class="line">                u.setPassword(patch.getPassword());</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(userRepo.save(u), HttpStatus.OK);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(<span class="keyword">null</span>, HttpStatus.NOT_FOUND);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@DeleteMapping</span>(path = <span class="string">"/id/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="comment">// 成功删除返回状态码 204</span></span><br><span class="line">    <span class="meta">@ResponseStatus</span>(value = HttpStatus.NO_CONTENT)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteUser</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Integer id) </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            userRepo.deleteById(id);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (EmptyResultDataAccessException e) &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>我想代码都比较清晰了，主要需要关注这么几个点：</p>
+<ul>
+<li>用@Autowired把数据库访问bean注入进来；</li>
+<li>用@ResponseStatus来修改动作执行成功后的返回状态码。比方说，POST成功后，应该返回201-CREATED来提示用户已经新建成功了，而不应该用200；DELETE成功后，返回204-NO_CONTENT来提示用户该资源删除成功，已经不存在了；</li>
+<li>用ResponseEntity对象也同样可以管理返回的状态码。</li>
+</ul>
+<h2 id="4-6测试REST-API"><a href="#4-6测试REST-API" class="headerlink" title="4.6测试REST API"></a>4.6测试REST API</h2><p>推荐一个好用的测试工具——Postman，该软件中可以完成大多数测试工作，无论是web应用还是app等。我们先把<code>Conten-Type</code>设置成<code>application/json</code>，主要是为了后面做准备，表示客户端以JSON的格式来发送数据给服务器，如下所示：<br><img src="test_get.png" alt=""></p>
+<p>先测试一下GET方法，结果如下:<br><img src="test_get_result.png" alt=""></p>
+<p>再测试一下POST方法，记得提前把Body设置为raw，并选择JSON格式，然后再写一个待创建的JSON数据：<br><img src="test_post.png" alt=""></p>
+<p>然后测试一下PUT和PATCH，注意，PUT需要把所有字段全发给服务器，如下:<br><img src="test_put.png" alt=""><br>而PATCH只需要发送想要修改的字段，而没指定的字段保持之前的数据，如下：<br><img src="test_patch.png" alt=""><br><img src="test_patch_result.png" alt=""></p>
+<p>最后的DELETE这里就不放图了。</p>
+<h1 id="5-后记"><a href="#5-后记" class="headerlink" title="5.后记"></a>5.后记</h1><p>本文结合Spring Boot对REST API作了一次实践，模拟了HTTP中的GET/POST/PUT/PATCH/DELETE动作，我们可以对REST有个初步的感性认识。</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2020/03/14/CG-Lecture4-Transformation(Cont.)/" data-toggle="tooltip" data-placement="top" title="GAMES101笔记-Lecture4-基本变换">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2020/03/04/找出列表中的所有非0区间/" data-toggle="tooltip" data-placement="top" title="找出列表中的所有非0区间">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#RESTful API" title="RESTful API">RESTful API</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

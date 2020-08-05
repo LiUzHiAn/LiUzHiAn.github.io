@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          当你浏览一个网页时，协议栈中发生了什么？ - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2019/06/16/计算机网络-当你浏览一个网页时，协议栈中发生了什么/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg-5.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#计算机网络" title="计算机网络">计算机网络</a>
+                        
+                    </div>
+                    <h1>当你浏览一个网页时，协议栈中发生了什么？</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2019-06-16
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#说在前面的话"><span class="toc-text">说在前面的话</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#详细流程"><span class="toc-text">详细流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#第一关——主要通过DHCP来得到一个本机IP地址"><span class="toc-text">第一关——主要通过DHCP来得到一个本机IP地址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#第二关——DNS协议和ARP协议"><span class="toc-text">第二关——DNS协议和ARP协议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#第三关——路由选择到DNS服务器"><span class="toc-text">第三关——路由选择到DNS服务器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#最后一关——-Web客户端和服务器交互：TCP和HTTP"><span class="toc-text">最后一关—— Web客户端和服务器交互：TCP和HTTP</span></a>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h5 id="说在前面的话"><a href="#说在前面的话" class="headerlink" title="说在前面的话"></a>说在前面的话</h5><p>下面的例子是来自与计算机网络自顶向下方法，根据书上的描述、我的理解以及一些相应的修改，进行回顾总结。</p>
+<p>场景：用户Bob有一个笔记本电脑，他用网线连接到学校实验室的网络，然后准备访问谷歌（www.google.com），假设学校的网络是接在了一个ISP上，该ISP又和google的网络是相连的，同时，DNS服务由该ISP提供，DHCP服务（后面会提到）由学校路由器提供，Bob的笔记本通过交换机和学习的路由器互联，场景图示如下：<br><img src="https://img-blog.csdnimg.cn/20190319204236198.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3MTc0NTI2,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="详细流程"><a href="#详细流程" class="headerlink" title="详细流程"></a>详细流程</h2><p>假设最开始Bob的计算机对网络的信息什么都不知道（即从来没做过任何关于网络信息的缓存），那么Bob访问google主页会经历以下步骤：</p>
+<h4 id="第一关——主要通过DHCP来得到一个本机IP地址"><a href="#第一关——主要通过DHCP来得到一个本机IP地址" class="headerlink" title="第一关——主要通过DHCP来得到一个本机IP地址"></a>第一关——主要通过DHCP来得到一个本机IP地址</h4><ul>
+<li>（1）Bob的笔记本一开始是没有IP地址的，没有IP地址，也就没办法上Internet。于是，将利用<code>DHCP（Dynamic Host Configuration Protocol）动态主机配置协议</code>请求从DHCP服务器那边分到一个IP地址。笔记本上的操作系统将生成一个DHCP报文，并将这个报文放入一个<code>UDP报文</code>中（DHCP协议是建立在UDP协议上的哈），该UDP报文的<code>目的端口是67</code>（DHCP服务器的端口），<code>源端口是68</code>（Bob笔记本的端口）。由于此时这台笔记本还没有被分到一个具体的IP，而UDP报文肯定又要封装到IP数据报中，于是这时的IP数据包的源IP地址是<code>0.0.0.0（表示本网络）</code>，目的IP地址是<code>255.255.255.255（广播）</code></li>
+<li>（2）包含DHCP请求报文的IP数据报又被封装在<code>以太网帧</code>（假设链路层用的是以太网）中，该以太网帧具有的<code>源MAC地址是00:16:D3:23:68:8A(Bob笔记本网卡的MAC地址)</code>,<code>目的MAC地址是FF:FF:FF:FF:FF:FF(广播)</code>,为什么这里需要广播呢？因为客户端（Bob的笔记本）也不知道自己所处的局域网中到底由哪台机器来提供DHCP服务，所以自然就把DHCP请求向各个机器都发一遍，相当于一个一个问，诶，兄弟，你能给我分个IP地址吗？A机器说，不能，滚！它又去问机器B…就这样一直问下去</li>
+<li>（3）为了达到上述的以太网帧广播的目的，实际上是Bob的计算机先把这个包含DHCP的以太网帧（中间依次又封装了UDP报文、IP报文）发送到该计算机连接到的交换机，交换机向所有连接到的机器广播该以太网帧。</li>
+<li>（4）我们假设学校的路由器提供DHCP服务。因为这个路由器又是连接在交换机上的，自然就会收到上述包含Bob计算机DHCP请求的以太网帧了，则路由器在它的具有MAC地址为<code>00:22:6B:45:1F:1B</code>的接口上接受到DHCP请求的以太网帧，并从中抽出IP数据报，还记得第（1）步中Bob计算机发送的IP报的目的IP地址吗？——对，<code>255.255.255.255</code>，这样一来，路由器解析到了该目的IP，就知道这个数据报应当由该结点的上层协议来处理，于是该IP报的数据段中的UDP报文会被分解，路由器上运行的DHCP服务程序(绑定在67号端口上)会从该UDP报文中解析出DHCP请求报文，然后做分配IP的操作。</li>
+<li>（5）假设学校路由器上的DHCP服务器能够在<code>CIDR块68.85.2.0/24</code>的一堆网络IP中给Bob的笔记本分配一个IP<code>68.85.2.101</code>，而学校的这个CIDR块又是从ISP Comcast那边<code>68.80.0.0/13</code>分到的一小块。然后DHCP服务器会生成一个包含分出来的IP地址（<code>68.85.2.101</code>）、DNS服务器的IP地址（<code>68.87.71.226</code>）、默认网关路由器的IP地址（<code>68.85.2.1</code>)、子网块（<code>68.85.2.0/24</code>相当于子网掩码）的<code>DHCP ACK报文</code>，这个报文又会被封装进UDP报文，从而封装进IP数据报，从而封装进以太网帧中，该以太网帧具有的<code>源MAC地址是00:22:6B:45:1F:1B(路由器一个接口的MAC地址)</code>,<code>目的MAC地址是00:16:D3:23:68:8A</code>，这个目的MAC地址就是从包含DHCP请求报文的以太网帧中解析出来的哈。</li>
+</ul>
+<blockquote>
+<p>说明一下，因为学校这块局域网中只有一个路由器，所以默认网关也肯定只能是这个路由器了 </p>
+</blockquote>
+<ul>
+<li>(6）包含DHCP ACK报文的以太网帧由路由器发给交换机，由于交换机这个东西呢，它有个所谓的<code>自学习</code>特性，其实就是说，交换机会从每次交换的以太网帧中提取到源主机的MAC地址，然后记录到一张交换表中（学习过程），万一有一个MAC地址没在交换表中呢（没学习到）？—— 对了，简单粗暴，广播给所有接入的机器上去。  由于之前Bob的笔记本在发送DHCP请求报文的时候经过了一次交换机，所以它的MAC地址（也就是DHCP ACK报文的目的MAC地址）肯定会被学习到。然后交换机就将路由器那边发过来的DHCP ACK报文直接转发给Bob的笔记本了</li>
+<li>（7）Bob的笔记本接受到DHCP ACK报文，然后就会像DHCP服务器那样依次解析出DHCP报文中的信息，然后把各个字段（分到的IP地址、DNS服务器地址、默认网关地址、子网掩码这些）解析出来，然后把本机的配置改一下。</li>
+</ul>
+<p>呼。。。。这么一大通操作下来，Bob的算是通网了，离着访问google更近了一步。</p>
+<h4 id="第二关——DNS协议和ARP协议"><a href="#第二关——DNS协议和ARP协议" class="headerlink" title="第二关——DNS协议和ARP协议"></a>第二关——DNS协议和ARP协议</h4><p>Bob打开浏览器，在地址栏里面输入：<code>www.google.com</code></p>
+<ul>
+<li>（8）我们知道，域名肯定是要对应到它的IP地址才能进行通信的，于是Bob的操作系统因此生成一个<code>DNS（Domain Name System）查询报文</code>（这个协议也是基于UDP协议的），于是<code>www.google.com</code>这个URL被放进了DNS报文的问题段中，且该DNS报文的<code>目的端口是53</code>（DNS服务器），这个DNS报文被封装进UDP报文中，UDP报文的<code>源IP是68.85.2.101</code>，<code>目的IP是68.87.71.226</code>（DHCP ACK报文中已经获取到）</li>
+<li>（9）上一步包含DNS请求报文的数据报被放入一个以太网帧中，好了，这个帧即将转发到学校的路由器上去，然后再通过中间一些列路由器转发到DNS服务器上去（当然，这个过程对客户端来说是透明的）。！！！等等！！！，好像有点不对大头，这个以太网帧的<code>目的MAC</code>是什么？？？目前Bob的笔记本是知道网关的IP地址的，可是不止到网关的MAC地址呀！这样一来，就不知道让交换机转发给谁了。   是的，这个时候<code>ARP(Address Resolution Protocol)地址解析协议</code>就派上用场了。</li>
+<li>（10）Bob的笔记本生成一个ARP查询报文，该报文的目的IP地址是<code>68.85.2.1</code>,也就是默认网关，因为不知道那个网关IP对应的MAC地址嘛（也正是我们想要得到的），没办法，被逼无奈，只能用最简单粗暴的方法了——广播。老铁再一次逐个询问（挨个问交换机出口的所有机器），你的IP地址是不是<code>68.85.2.1</code>啊？是的话，麻烦你把你的MAC地址告诉我一下，我想送点东西到你家里去，要不然我找不到你。  是的，和上面说到的DHCP请求报文类似，这里也会生成一个目的地址为<code>FF:FF:FF:FF:FF:FF</code>的以太网帧，交换机会广播出去。</li>
+<li>（11）交换机出端口这边的所有机器都收到了广播以太网帧，而只有网关路由器发现，自己的IP地址和这个封装了ARP请求报文的帧中的目的IP地址匹配，于是就把自己的MAC地址封装进一个<code>ARP回答报文</code>中（它估计是有人有好事要找他了，呵呵），然后把这个ARP回答报文封装进一个以太网帧中，该帧的<code>源MAC地址是00:22:6B:45:1F:1B(路由器一个接口的MAC地址)</code>,<code>目的MAC地址是00:16:D3:23:68:8A</code>，并将该帧发送给交换机，交换机发给Bob的笔记本。</li>
+</ul>
+<p>细心的你可能会发现，诶，这个帧的目的和源地址好像和之前DHCP ACK报文一样啊！是的，回顾一下说在前面的话，我们假设DHCP服务是在学校路由器上提供的，于是这里就产生了一个目的和源MAC地址一样的帧。但是实际情况中，DHCP服务器可能和默认网关服务器不是在同一台机器上（所以，你可以认为这是凑巧吧。）</p>
+<ul>
+<li>（12）Bob的笔记本收到了上述包含ARP回答报文的帧，并从中解析出默认网关的MAC地址（<code>00:22:6B:45:1F:1B</code>）</li>
+<li>（13）现在Bob的笔记本知道了默认网关的MAC地址了，于是在第（9）步中的问题解决了，封装DNS查询请求的以太网帧终于可以通过交换机转发到默认网关那边去了，至于默认网关路由器再怎么转发这个DNS查询报文，对不起，Bob的笔记本就不管那么多了。</li>
+</ul>
+<h4 id="第三关——路由选择到DNS服务器"><a href="#第三关——路由选择到DNS服务器" class="headerlink" title="第三关——路由选择到DNS服务器"></a>第三关——路由选择到DNS服务器</h4><ul>
+<li>(14) 网关路由器接受到交换器转发过来的包含DNS查询报文的以太网帧，并从中抽取出IP数据报，路由器找到IP数据报中的目的IP地址<code>68.87.71.226</code>，并根据路由器中的转发表知道应该发送到ISP提供方的最左侧的那个路由器上去（这里可能会涉及到<code>不同自治域之间的路由选择协议</code>），然后把原以太网帧进行相应修改并发送出去（这里会把最初始的MAC源地址和目的地址进行变换哈）</li>
+<li>（15）在Comcast网络中，最左边的路由器接收到该帧后，抽取IP数据报文，发现目的地址是<code>68.87.71.226（DNS服务器）</code>，于是它根据<code>域内路由选择协议（RIP或OSPF等）</code>将数据报继续向下一站转发。</li>
+<li>（16）最终，包含DNS查询的IP数据报到达了DNS服务器，DNS服务器从中抽取出DNS查询报文，发现客户端是想查询www.google.com的IP地址，服务器于是从本地文件系统（文件或数据库中）从查询到谷歌的IP地址，生成一个DNS回答报文，并将之封装进UDP报文中，然后发回到Bob的笔记本。<blockquote>
+<p>这里发回的过程和Bob发送的过程刚好完全相反</p>
+</blockquote>
+</li>
+<li>（17）Bob的笔记本接受到DNS回答报文，然后从中解析出了www.google.com的IP地址，准备开始接触谷歌服务器了！</li>
+</ul>
+<h4 id="最后一关——-Web客户端和服务器交互：TCP和HTTP"><a href="#最后一关——-Web客户端和服务器交互：TCP和HTTP" class="headerlink" title="最后一关—— Web客户端和服务器交互：TCP和HTTP"></a>最后一关—— Web客户端和服务器交互：TCP和HTTP</h4><ul>
+<li>（18）假设Web客户端希望发送一个<code>HTTP GET</code>请求，请求到www.google.com页面，为了达到此目的，客户端好服务器之间要建立TCP连接（HTTP是面向连接的协议），准备开始<code>三次握手</code>过程。于是Bob的笔记本首先生成一个目的端口为<code>80（服务器HTTP端口）</code>的<code>TCP SYN（TCP连接报文）</code>，该TCP报文放置在具有目的IP地址为<code>64.233.169.105(www.google.com DNS回复报文中所得)</code>的IP数据报中，并将该数据包放在MAC地址为<code>00:22:6B:45:1F:1B(网关路由器的MAC地址)</code>的以太网帧中，并向交换机发送该帧</li>
+<li>（19）经过一些列的路由器转发，包含TCP SYN的数据包到达谷歌服务器，服务器分解报文，并将之分解到与80端口联系的<code>欢迎套接字</code>，然后谷歌HTTP服务器和Bob笔记本之间的TCP连接生成一个<code>连接套接字</code>,产生一个<code>TCP SYN ACK</code>报文，并将之发回到Bob的笔记本（和TCP SYN报文刚好相反）</li>
+<li>（20）Bob笔记本收到<code>TCP SYN ACK报文</code>，并且生成一个<code>ACK报文</code>确认收到服务器端的响应，此时三次握手完毕，客户端和服务端之间建立好了连接。</li>
+<li>（21）包含HTTP GET请求的HTTP报文被封装进TCP报文中，从Bob笔记本传往谷歌HTTP服务器。</li>
+<li>（22）谷歌HTTP服务器收到TCP报文后，解析出报文内容，知道客户端想要得的www.google.com的内容，于是将该页面的HTML内容封装进TCP报文中作为响应，发送回Bob的笔记本。</li>
+<li>（23）Bob的笔记本收到HTTP 响应报文，交给浏览器，解析出其中的HTML内容，显示网页内容！</li>
+</ul>
+<p>以上所有的步骤，就是浏览一个网页时，协议栈中发生的事情。</p>
+<p>如有错误，请留言指明。</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/06/16/数学-怎么求Pi的值/" data-toggle="tooltip" data-placement="top" title="怎么求Pi的值">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/06/16/（转）文件IO和标准IO的区别/" data-toggle="tooltip" data-placement="top" title="（转）文件I/O和标准I/O的区别">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#计算机网络" title="计算机网络">计算机网络</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
