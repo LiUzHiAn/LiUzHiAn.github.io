@@ -225,7 +225,7 @@
 </ul>
 <h3 id="3-3D-ConvNet"><a href="#3-3D-ConvNet" class="headerlink" title="3. 3D ConvNet"></a>3. 3D ConvNet</h3><h4 id="3-1-3d卷积"><a href="#3-1-3d卷积" class="headerlink" title="3.1 3d卷积"></a>3.1 3d卷积</h4><p>其实在2d卷积和2d池化中都存在一个问题——我们忽略了输入tensor沿着channel维度的关系，在2d conv和2d pooling时，我们都默认卷积核的channel数和input tensor的channel数相等，这样就丢失了temporal的信息！如下图所示，在视频这种同时包含motion信息的数据中，我们更应该同时考虑 spatial-temporal特征信息。</p>
 <p><img src="1.png" alt=""></p>
-<p>假设输入的video clip尺寸为$c \x l \x h \x w$，其中c是通道数，l是帧的数量，h和w是帧的高度和宽度，再假设卷积核的尺寸为$d \x k \x k$，其中d是卷积核的depth，k是卷积核的spatial size。</p>
+<p>假设输入的video clip尺寸为$c * l * h * w$，其中c是通道数，l是帧的数量，h和w是帧的高度和宽度，再假设卷积核的尺寸为$d * k * k$，其中d是卷积核的depth，k是卷积核的spatial size。</p>
 <h4 id="3-2-卷积核的depth"><a href="#3-2-卷积核的depth" class="headerlink" title="3.2 卷积核的depth"></a>3.2 卷积核的depth</h4><p>作者对不同的卷积核depth进行了对比实验，主要有两种架构：</p>
 <ul>
 <li>所有3d-conv的 kernel temporal depth保持一致，例如d-1、d-3、d-5，d-1等效于在输入的每个channel上做一次2d-conv；</li>
@@ -245,6 +245,10 @@
                 
 
                 <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2020/08/16/pytorch实现warping操作/" data-toggle="tooltip" data-placement="top" title="Pytorch实现warping操作">&larr; Previous Post</a>
+                        </li>
                     
                     
                         <li class="next">
@@ -533,23 +537,8 @@
 
 <!-- Image to hack wechat -->
 <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work -->
+<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>
