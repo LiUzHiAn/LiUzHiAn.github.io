@@ -193,6 +193,53 @@
 
 <div class="post-preview">
 
+    <a href="/2019/11/19/目标检测-SSD源码解读/">
+        <h2 class="post-title">
+            目标检测——SSD源码解读
+        </h2>
+        <h3 class="post-subtitle">
+            目标检测经典方法
+        </h3>
+        <div class="post-content-preview">
+            0.简介SSD的全称是Single Shot MultiBox Detector，是目标检测中经典方法之一，它和YOLO一样，都是one-stage模式的，而像R-CNN和Fast R-CNN这些文章则是two-stage的，也就是需要先提取出proposals，再对各个proposal进行定位和分类。
+接下来，我将尽我所能，结合自身理解和网上的一些参考资料，对Pytorch版本的SSD源码......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-19
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/11/18/Non-max Suppression非最大抑制/">
+        <h2 class="post-title">
+            Non-max Suppression非最大抑制
+        </h2>
+        <h3 class="post-subtitle">
+            目标检测常用方法
+        </h3>
+        <div class="post-content-preview">
+            1.Non-max Suppression 流程Input: A list of Proposal boxes B, corresponding confidence scores S and overlap threshold N.
+Output: A list of filtered proposals D.
+Algorithm:
+
+Select the proposal with hi......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-11-18
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2019/11/17/PASCAL VOC数据集介绍/">
         <h2 class="post-title">
             PASCAL VOC数据集介绍
@@ -376,61 +423,6 @@
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2019/11/06/异常检测论文笔记/">
-        <h2 class="post-title">
-            异常检测论文笔记
-        </h2>
-        <h3 class="post-subtitle">
-            2019/11/06
-        </h3>
-        <div class="post-content-preview">
-            这次看的是以下两篇文章：
-
-【ICCV-2017】Unmasking the abnormal events in video
-【ICCV-2019】Anomaly Detection in Video Sequence with Appearance-Motion Correspondence
-
-以下是论文笔记：
-
-	
-    
-	
-
-
-
-...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2019-11-06
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2019/11/03/LeetCode-56-合并区间/">
-        <h2 class="post-title">
-            Leetcode 56- 合并区间
-        </h2>
-        <h3 class="post-subtitle">
-            区间交集的3种情况枚举
-        </h3>
-        <div class="post-content-preview">
-            Leetcode 56- 合并区间1. 题目描述给出一个区间的集合，请合并所有重叠的区间。12345678910示例 1:输入: [[1,3],[2,6],[8,10],[15,18]]输出: [[1,6],[8,10],[15,18]]解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].示例?2:输入: [[1,4],[4,5]]输出: [[1,5]]解释: 区间 ......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2019-11-03
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -482,7 +474,7 @@
                             
                         
                             
-                            <a href="/tags/#LeetCode" title="LeetCode" rel="36">LeetCode</a>
+                            <a href="/tags/#LeetCode" title="LeetCode" rel="38">LeetCode</a>
                             
                         
                             
@@ -796,8 +788,23 @@
 
 <!-- Image to hack wechat -->
 <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

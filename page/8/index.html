@@ -193,6 +193,55 @@
 
 <div class="post-preview">
 
+    <a href="/2019/03/13/LeetCode-16-最接近的三数之和/">
+        <h2 class="post-title">
+            LeetCode-16-最接近的三数之和
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            没什么好说的，这就是三数之和的变种。
+
+先排序
+再确定一个数，用双指针移动两个数，比较diff和当前diff值即可。12345678910111213141516171819202122232425262728293031323334353637383940414243444546import java.util.Arrays;public class ThreeSumClosest16 &......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-03-13
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/03/13/LeetCode-17-电话号码的字母组合/">
+        <h2 class="post-title">
+            LeetCode-17-电话号码的字母组合
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            题目描述给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。
+给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+示例:12输入："23"输出：["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"]
+说明:尽管上面的答案是按字典序排列的，但是你可以任意选择答案输出的顺序。
+想法&amp;尝试这题我感觉也没......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-03-13
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2019/03/13/LeetCode-18-四数之和/">
         <h2 class="post-title">
             LeetCode-18-四数之和
@@ -396,55 +445,6 @@ so easy的题12345678910111213141516......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2018/11/15/LeetCode-2-两数相加/">
-        <h2 class="post-title">
-            LeetCode-2-两数相加
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            其实很早之前就接触到了LeetCode，原来也刷过一些题，但是乱七八糟的事太多了也没空刷一刷，最近在家没事准备玩一玩了。好吧，我承认我python学的不好，一天速成的（OOP的python风格我都不太记得了），于是选择了用python，希望可以加强一下我的渣python。
-Okay，闲话不多说，今天写的也是一个比较简单的题目，LeetCode-2-两数相加。
-
-题目内容描述给定两个非空链表来......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2018-11-15
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2018/11/15/LeetCode-3-最长不重复子串/">
-        <h2 class="post-title">
-            LeetCode-3-最长不重复子串
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            题目内容描述给定一个字符串，找出不含有重复字符的最长子串的长度。
-示例：给定 “abcabcbb” ，没有重复字符的最长子串是 “abc” ，那么长度就是3。
-给定 “bbbbb” ，最长的子串就是 “b” ，长度是1。
-给定 “pwwkew” ，最长子串是 “wke” ，长度是3。请注意答案必须是一个子串，”pwke” 是 子序列  而不是子串。
-思路 1——暴力求解粗略的想法就是，把字符......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2018-11-15
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -496,7 +496,7 @@ Okay，闲话不多说，今天写的也是一个比较简单的题目，LeetCod
                             
                         
                             
-                            <a href="/tags/#LeetCode" title="LeetCode" rel="36">LeetCode</a>
+                            <a href="/tags/#LeetCode" title="LeetCode" rel="38">LeetCode</a>
                             
                         
                             
@@ -810,8 +810,23 @@ Okay，闲话不多说，今天写的也是一个比较简单的题目，LeetCod
 
 <!-- Image to hack wechat -->
 <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

@@ -193,6 +193,55 @@
 
 <div class="post-preview">
 
+    <a href="/2020/08/21/Leetcode-740-删除与获得点/">
+        <h2 class="post-title">
+            Leetcode-740-删除与获得点.md
+        </h2>
+        <h3 class="post-subtitle">
+            “动态规划”
+        </h3>
+        <div class="post-content-preview">
+            1. 题目描述给定一个整数数组 nums ，你可以对它进行一些操作。
+每次操作中，选择任意一个 nums[i] ，删除它并获得 nums[i] 的点数。之后，你必须删除每个等于nums[i] - 1 或 nums[i] + 1 的元素。
+开始你拥有 0 个点数。返回你能通过这些操作获得的最大点数。
+示例 1：
+12345输入: nums = [3, 4, 2]输出: 6解释: 删除 4 来获......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-08-21
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2020/08/21/LeetCode-198-打家劫舍/">
+        <h2 class="post-title">
+            ”LeetCode-198-打家劫舍“
+        </h2>
+        <h3 class="post-subtitle">
+            “动态规划”
+        </h3>
+        <div class="post-content-preview">
+            1. 题目描述你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+给定一个代表每个房屋存放金额的非负整数数组，计算你 不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。
+示例 1：
+1234输入：[1,2,3,1]输出：4解释：偷窃 1 号房屋 (金额 ......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-08-21
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2020/08/16/pytorch实现warping操作/">
         <h2 class="post-title">
             Pytorch实现warping操作
@@ -377,54 +426,6 @@ Map接口没有继承自Collection接口......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2020/03/28/LeetCode-820-单词的压缩编码/">
-        <h2 class="post-title">
-            LeetCode-820-单词的压缩编码
-        </h2>
-        <h3 class="post-subtitle">
-            前缀树
-        </h3>
-        <div class="post-content-preview">
-            LeetCode-820-单词的压缩编码1. 题目描述给定一个单词列表，我们将这个列表编码成一个索引字符串S与一个索引列表A。
-例如，如果这个列表是[&quot;time&quot;, &quot;me&quot;, &quot;bell&quot;]，我们就可以将其表示为S = &quot;time#bell#&quot;和indexes = [0, 2, 5]。
-对于每一个索引，我们可以......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2020-03-28
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2020/03/22/LeetCode-84-柱状图中最大的矩阵/">
-        <h2 class="post-title">
-            LeetCode-84-柱状图中最大的矩阵
-        </h2>
-        <h3 class="post-subtitle">
-            单调栈
-        </h3>
-        <div class="post-content-preview">
-            LeetCode-84-柱状图中最大的矩阵1. 题目描述给定n个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为1。
-求在该柱状图中，能够勾勒出来的矩形的最大面积。
-12输入: [2,1,5,6,2,3]输出: 10
-以上是柱状图的示例，其中每个柱子的宽度为 1，给定的高度为[2,1,5,6,2,3]。
-2. 思路2.1暴力搜索暴力搜索的思路就是，对于每一个bar，我们都......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2020-03-22
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -472,7 +473,7 @@ Map接口没有继承自Collection接口......
                             
                         
                             
-                            <a href="/tags/#LeetCode" title="LeetCode" rel="36">LeetCode</a>
+                            <a href="/tags/#LeetCode" title="LeetCode" rel="38">LeetCode</a>
                             
                         
                             
@@ -786,8 +787,23 @@ Map接口没有继承自Collection接口......
 
 <!-- Image to hack wechat -->
 <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

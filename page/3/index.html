@@ -193,6 +193,54 @@
 
 <div class="post-preview">
 
+    <a href="/2020/01/11/Spring+Mybatis项目搭建/">
+        <h2 class="post-title">
+            Spring+Mybatis项目搭建
+        </h2>
+        <h3 class="post-subtitle">
+            idea项目搭建
+        </h3>
+        <div class="post-content-preview">
+            1. idea项目创建先按照下图，创建一个新的Maven webapp项目：
+
+再填写相应的项目名称：
+
+创建好的项目结构如下：
+再把需要的包在pom.xml中引入，包比较多，也可以在开发需要时再补充进来：1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-01-11
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2019/12/20/Spring装配Bean/">
+        <h2 class="post-title">
+            Spring装配Bean
+        </h2>
+        <h3 class="post-subtitle">
+            Spring 实战第二章
+        </h3>
+        <div class="post-content-preview">
+            1.Spring配置的三种方案1.1 自动装配
+首先，需要将Bean类添加@Component注解，便于Spring进行扫描（默认是关闭的）12345678910@Componentpublic class BeyondCD implements CD &#123;    private String title = "Beyond合集唱片";    private String artis......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-12-20
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2019/12/19/LeetCode-143-重排链表/">
         <h2 class="post-title">
             LeetCode-143-重排链表
@@ -372,53 +420,6 @@
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2019/11/19/目标检测-SSD源码解读/">
-        <h2 class="post-title">
-            目标检测——SSD源码解读
-        </h2>
-        <h3 class="post-subtitle">
-            目标检测经典方法
-        </h3>
-        <div class="post-content-preview">
-            0.简介SSD的全称是Single Shot MultiBox Detector，是目标检测中经典方法之一，它和YOLO一样，都是one-stage模式的，而像R-CNN和Fast R-CNN这些文章则是two-stage的，也就是需要先提取出proposals，再对各个proposal进行定位和分类。
-接下来，我将尽我所能，结合自身理解和网上的一些参考资料，对Pytorch版本的SSD源码......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2019-11-19
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2019/11/18/Non-max Suppression非最大抑制/">
-        <h2 class="post-title">
-            Non-max Suppression非最大抑制
-        </h2>
-        <h3 class="post-subtitle">
-            目标检测常用方法
-        </h3>
-        <div class="post-content-preview">
-            1.Non-max Suppression 流程Input: A list of Proposal boxes B, corresponding confidence scores S and overlap threshold N.
-Output: A list of filtered proposals D.
-Algorithm:
-
-Select the proposal with hi......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2019-11-18
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -470,7 +471,7 @@ Select the proposal with hi......
                             
                         
                             
-                            <a href="/tags/#LeetCode" title="LeetCode" rel="36">LeetCode</a>
+                            <a href="/tags/#LeetCode" title="LeetCode" rel="38">LeetCode</a>
                             
                         
                             
@@ -784,8 +785,23 @@ Select the proposal with hi......
 
 <!-- Image to hack wechat -->
 <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

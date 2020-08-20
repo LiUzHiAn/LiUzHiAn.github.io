@@ -193,6 +193,54 @@
 
 <div class="post-preview">
 
+    <a href="/2020/03/28/LeetCode-820-单词的压缩编码/">
+        <h2 class="post-title">
+            LeetCode-820-单词的压缩编码
+        </h2>
+        <h3 class="post-subtitle">
+            前缀树
+        </h3>
+        <div class="post-content-preview">
+            LeetCode-820-单词的压缩编码1. 题目描述给定一个单词列表，我们将这个列表编码成一个索引字符串S与一个索引列表A。
+例如，如果这个列表是[&quot;time&quot;, &quot;me&quot;, &quot;bell&quot;]，我们就可以将其表示为S = &quot;time#bell#&quot;和indexes = [0, 2, 5]。
+对于每一个索引，我们可以......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-03-28
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2020/03/22/LeetCode-84-柱状图中最大的矩阵/">
+        <h2 class="post-title">
+            LeetCode-84-柱状图中最大的矩阵
+        </h2>
+        <h3 class="post-subtitle">
+            单调栈
+        </h3>
+        <div class="post-content-preview">
+            LeetCode-84-柱状图中最大的矩阵1. 题目描述给定n个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为1。
+求在该柱状图中，能够勾勒出来的矩形的最大面积。
+12输入: [2,1,5,6,2,3]输出: 10
+以上是柱状图的示例，其中每个柱子的宽度为 1，给定的高度为[2,1,5,6,2,3]。
+2. 思路2.1暴力搜索暴力搜索的思路就是，对于每一个bar，我们都......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-03-22
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2020/03/21/LeetCode-365-水壶问题/">
         <h2 class="post-title">
             Leetcode 365-水壶问题
@@ -373,54 +421,6 @@
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2020/01/11/Spring+Mybatis项目搭建/">
-        <h2 class="post-title">
-            Spring+Mybatis项目搭建
-        </h2>
-        <h3 class="post-subtitle">
-            idea项目搭建
-        </h3>
-        <div class="post-content-preview">
-            1. idea项目创建先按照下图，创建一个新的Maven webapp项目：
-
-再填写相应的项目名称：
-
-创建好的项目结构如下：
-再把需要的包在pom.xml中引入，包比较多，也可以在开发需要时再补充进来：1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2020-01-11
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2019/12/20/Spring装配Bean/">
-        <h2 class="post-title">
-            Spring装配Bean
-        </h2>
-        <h3 class="post-subtitle">
-            Spring 实战第二章
-        </h3>
-        <div class="post-content-preview">
-            1.Spring配置的三种方案1.1 自动装配
-首先，需要将Bean类添加@Component注解，便于Spring进行扫描（默认是关闭的）12345678910@Componentpublic class BeyondCD implements CD &#123;    private String title = "Beyond合集唱片";    private String artis......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2019-12-20
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -472,7 +472,7 @@
                             
                         
                             
-                            <a href="/tags/#LeetCode" title="LeetCode" rel="36">LeetCode</a>
+                            <a href="/tags/#LeetCode" title="LeetCode" rel="38">LeetCode</a>
                             
                         
                             
@@ -786,8 +786,23 @@
 
 <!-- Image to hack wechat -->
 <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

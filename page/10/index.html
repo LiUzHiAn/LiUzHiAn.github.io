@@ -193,6 +193,68 @@
 
 <div class="post-preview">
 
+    <a href="/2018/11/15/数据库-第二范式-SecondNormalForm/">
+        <h2 class="post-title">
+            Second Normal Form（2NF）
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            什么是第二范式？一个relation如果满足第二范式，那么它必定：
+
+满足第一范式
+不存在partial dependency（部分依赖）
+
+那什么又是partial dependency呢？别急，我们慢慢道来。
+
+
+什么是dependency(依赖)？假设我们有一张Student表，该表包含以下字段student_id, name, reg_no(注册号), branch(专业) 和add......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2018-11-15
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/07/28/汇编-指令集合/">
+        <h2 class="post-title">
+            汇编指令集合
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本博客转载于：https://blog.csdn.net/baishuiniyaonulia/article/details/78504758
+
+                1、数据传送指令集
+
+MOV  
+功能: 把源操作数送给目的操作数  
+语法: MOV 目的操作数,源操作数  
+格式: MOV r1,r2  
+MOV r,m  
+MOV m,r  
+MOV r,data 
+
+XC......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2018-07-28
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2018/07/28/汇编-INT21h中断的使用/">
         <h2 class="post-title">
             汇编——INT 21h 中断的使用
@@ -302,7 +364,7 @@ AH的值需要查表取得，表在下面
                             
                         
                             
-                            <a href="/tags/#LeetCode" title="LeetCode" rel="36">LeetCode</a>
+                            <a href="/tags/#LeetCode" title="LeetCode" rel="38">LeetCode</a>
                             
                         
                             
@@ -616,8 +678,23 @@ AH的值需要查表取得，表在下面
 
 <!-- Image to hack wechat -->
 <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>
