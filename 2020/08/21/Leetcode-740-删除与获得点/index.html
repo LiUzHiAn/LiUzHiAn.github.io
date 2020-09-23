@@ -179,7 +179,7 @@
                         
                     </div>
                     <h1>Leetcode-740-删除与获得点.md</h1>
-                    <h2 class="subheading">“动态规划”</h2>
+                    <h2 class="subheading">动态规划</h2>
                     <span class="meta">
                         Posted by 刘知安 on
                         2020-08-21
@@ -229,7 +229,7 @@
 <li>每个整数<code>nums[i]</code>的大小都在<code>[1, 10000]</code>范围内。</li>
 </ul>
 <h2 id="2-思路"><a href="#2-思路" class="headerlink" title="2. 思路"></a>2. 思路</h2><p>先用示例2来说明一下题目的意思，假设我们现在有<code>nums = [2, 2, 3, 3, 3, 4]</code>，我们开始随便选一个数字，如果选了2，那么数组中所有的1和3都要删掉，并此次选数的得分为2；删除完毕后，我们继续选数字，然后按照类似的方式删除数，并加上选数的得分…一直这么进行下去，直到无法再选任何一个数字，此时的总得分为我们的得分，现在就希望求得最高得分。</p>
-<p>经过这么一解读，这个题目和<a href="https://leetcode-cn.com/problems/house-robber/" target="_blank" rel="noopener">&gt;&gt;LeetCode-198-打家劫舍&lt;&lt;</a>很相似，可以参考<a href="">&gt;&gt;我的题解-LeetCode-198-打家劫舍&lt;&lt;</a>，在这里，相邻的房子就是相邻的整数了，所以我们需要对<code>nums</code>数组中各个整数的数量统计一遍。注意，题目中有说这些整数的范围为<code>[1, 10000]</code>，所以统计数组需要的空间复杂度为<code>O(1)</code>。</p>
+<p>经过这么一解读，这个题目和<a href="https://leetcode-cn.com/problems/house-robber/" target="_blank" rel="noopener">&gt;&gt;LeetCode-198-打家劫舍&lt;&lt;</a>很相似，可以参考<a href="http://liuzhian.github.io/2020/08/21/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D/">&gt;&gt;我的题解-LeetCode-198-打家劫舍&lt;&lt;</a>，在这里，相邻的房子就是相邻的整数了，所以我们需要对<code>nums</code>数组中各个整数的数量统计一遍。注意，题目中有说这些整数的范围为<code>[1, 10000]</code>，所以统计数组需要的空间复杂度为<code>O(1)</code>。</p>
 <p>怎么类比打家劫舍的思路呢(<a href="https://leetcode-cn.com/problems/delete-and-earn/solution/ru-guo-ni-li-jie-liao-da-jia-jie-she-zhe-ti-ni-ken/" target="_blank" rel="noopener">&gt;&gt;参考&lt;&lt;</a>)？同样用示例2作为例子：</p>
 <ul>
 <li><p>首先，我们统计各个正整数出现的次数，得到<code>cnts=[0,0,2,3,1]</code>,其中<code>cnts[i]</code>表示正整数i的出现次数；</p>
@@ -251,7 +251,7 @@ dp[2]&=max\{dp[1], \space nums[2]*2\}\\
 <p>动态转移方程的初始条件需要考虑选1和选2两种情况。</p>
 <h2 id="3-代码"><a href="#3-代码" class="headerlink" title="3. 代码"></a>3. 代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">deleteAndEarn</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums.length &lt; <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums.length == <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">return</span> nums[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// get max integer in nums.</span></span><br><span class="line">        <span class="keyword">int</span> max = nums[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; ++i) &#123;</span><br><span class="line">            max = Math.max(max, nums[i]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// count the nums</span></span><br><span class="line">        <span class="keyword">int</span>[] cnts = <span class="keyword">new</span> <span class="keyword">int</span>[max + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++)</span><br><span class="line">            cnts[nums[i]]++;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] dp = <span class="keyword">new</span> <span class="keyword">int</span>[max + <span class="number">1</span>];</span><br><span class="line">        <span class="comment">// find the minimum number that occurs no less than once.</span></span><br><span class="line">        dp[<span class="number">1</span>] = cnts[<span class="number">1</span>] * <span class="number">1</span>;</span><br><span class="line">        dp[<span class="number">2</span>] = Math.max(dp[<span class="number">1</span>], cnts[<span class="number">2</span>] * <span class="number">2</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= max; i++) &#123;</span><br><span class="line">            dp[i] = Math.max(dp[i - <span class="number">1</span>], dp[i - <span class="number">2</span>] + i * cnts[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[max];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="4-相似题"><a href="#4-相似题" class="headerlink" title="4. 相似题"></a>4. 相似题</h1><ul>
-<li>LeetCode-198-打家劫舍</li>
+<li><a href="http://liuzhian.github.io/2020/08/21/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D/">&gt;&gt;LeetCode-198-打家劫舍&lt;&lt;</a></li>
 </ul>
 
 
@@ -263,7 +263,7 @@ dp[2]&=max\{dp[1], \space nums[2]*2\}\\
                     
                     
                         <li class="next">
-                            <a href="/2020/08/21/LeetCode-198-打家劫舍/" data-toggle="tooltip" data-placement="top" title="”LeetCode-198-打家劫舍“">Next Post &rarr;</a>
+                            <a href="/2020/08/21/LeetCode-198-打家劫舍/" data-toggle="tooltip" data-placement="top" title="LeetCode-198-打家劫舍">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
