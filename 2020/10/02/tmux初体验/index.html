@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          tmux初体验 - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2020/10/02/tmux初体验/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/posts_imgs/tmux.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#工具软件" title="工具软件">工具软件</a>
+                        
+                    </div>
+                    <h1>tmux初体验</h1>
+                    <h2 class="subheading">A useful terminal tool.</h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2020-10-02
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#tmux初体验"><span class="toc-text">tmux初体验</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-什么是tmux？"><span class="toc-text">1. 什么是tmux？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-tmux可以干什么？"><span class="toc-text">2. tmux可以干什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-tmux-上手"><span class="toc-text">3. tmux 上手</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-基本概念"><span class="toc-text">3.1 基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-基本操作"><span class="toc-text">3.2 基本操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-会话分享演示"><span class="toc-text">3.3 会话分享演示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-总结"><span class="toc-text">4. 总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-参考"><span class="toc-text">5. 参考</span></a></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="tmux初体验"><a href="#tmux初体验" class="headerlink" title="tmux初体验"></a>tmux初体验</h1><h2 id="1-什么是tmux？"><a href="#1-什么是tmux？" class="headerlink" title="1. 什么是tmux？"></a>1. 什么是tmux？</h2><p>TMUX stands for <code>terminal multiplexer</code>, which is a program runs in a terminal and allows other program to be run inside it. 也就是说，tmux是一个管理终端程序的程序，即所谓<code>终端复用</code>程序。</p>
+<h2 id="2-tmux可以干什么？"><a href="#2-tmux可以干什么？" class="headerlink" title="2. tmux可以干什么？"></a>2. tmux可以干什么？</h2><ul>
+<li>多窗口管理应用程序（当然，这个很多软件都可以完成，比如<code>iTerm</code>）;</li>
+<li>通过某种会话程序（例如<code>ssh</code>）连接到server端时，防止因为session的关闭而导致程序中断，甚至，我们可以再new一个session，在那个session中重新恢复tmux中的程序，相当于保护现场的作用；</li>
+<li>会话共享，将 tmux 会话的地址分享给他人，这样他们就可以通过 SSH 接入该会话，很适合结对编程或者code review啥的。</li>
+</ul>
+<p>好吧，这些也是我在网上看到关于tmux的介绍，至于我为什么要学习一下这个工具的使用，主要是我要用我的mac通过openVPN去访问实验室的机器，然后我又不想一直让这个终端always stays there。于是，罗宇成同学给我安利了这个神器。</p>
+<h2 id="3-tmux-上手"><a href="#3-tmux-上手" class="headerlink" title="3. tmux 上手"></a>3. tmux 上手</h2><p>首先肯定是安装了，老夫上来就是<code>brew install tmux</code>一把梭，完事。。</p>
+<h3 id="3-1-基本概念"><a href="#3-1-基本概念" class="headerlink" title="3.1 基本概念"></a>3.1 基本概念</h3><p>下面这段来源于<a href="http://louiszhai.github.io/2017/09/30/tmux/" target="_blank" rel="noopener">louiszhai的分享</a>:</p>
+<blockquote>
+<p>tmux采用C/S模型构建，输入tmux命令就相当于开启了一个服务器，此时默认将新建一个会话，然后会话中默认新建一个窗口，窗口中默认新建一个面板。会话、窗口、面板之间的联系如下：</p>
+<p>一个tmux <code>session</code>（会话）可以包含多个<code>window</code>（窗口），窗口默认充满会话界面，因此这些窗口中可以运行相关性不大的任务。</p>
+<p>一个<code>window</code>又可以包含多个<code>pane</code>（面板），窗口下的面板，都处于同一界面下，这些面板适合运行相关性高的任务，以便同时观察到它们的运行情况。</p>
+</blockquote>
+<h3 id="3-2-基本操作"><a href="#3-2-基本操作" class="headerlink" title="3.2 基本操作"></a>3.2 基本操作</h3><p>先开启一个新的会话，如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tmux new -s demo <span class="comment"># 新建一个名称为demo的会话</span></span></span><br></pre></td></tr></table></figure>
+<p><img src="1.png" alt="1"></p>
+<p>这时候，如果我们想关掉这个界面，并希望下次还能接着运行当前会话，那就用detach命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tmux detach</span></span><br></pre></td></tr></table></figure>
+<p>然后就回到了刚才新建会话时的那个界面了，当然，这个detach也是有快捷键的，即<code>Ctrl + b, d</code>，也就是先按下 ctrl加b，然后同时松开这两个键，再按下d键。</p>
+<p>如果我想再次回到刚才的会话，咋办？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tmux a <span class="comment"># 默认进入第一个会话</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> tmux a -t demo <span class="comment"># 进入到名称为demo的会话</span></span></span><br></pre></td></tr></table></figure>
+<p>除了上述基本操作，还有就是如何关闭会话咯！用tmux kill命令来完成即可。针对基本概念中的4种不同概念，就对应有4种kill命令，<code>kill-pane</code>、<code>kill-server</code>、<code>kill-session</code> 和 <code>kill-window</code>。</p>
+<p>但是我的记性不大好使，我先查看一下所有的会话:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tmux ls</span></span><br></pre></td></tr></table></figure>
+<p><img src="3.png" alt="3"></p>
+<p>如果我们当前正处于会话中，那可以用快捷键<code>Ctrl + b, s</code>，然后用上下键移动，左右键展开，如下：</p>
+<p><img src="2.png" alt="2"></p>
+<p>ok，现在我想关闭这个名字叫demo的会话：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tmux <span class="built_in">kill</span>-session -t demo  <span class="comment"># 关闭demo会话</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> tmux <span class="built_in">kill</span>-server  <span class="comment"># 关闭服务器，所有的会话都将关闭</span></span></span><br></pre></td></tr></table></figure>
+<p><img src="4.png" alt="4"></p>
+<p>删除完后，我们发现后台其实还是运行着2个会话的，名字分别为1和openvpn_window。</p>
+<p><strong><em>让某个程序在后台运行的操作总结：</em></strong></p>
+<ol>
+<li>新建一个session，via <code>$ tmux s -t &lt;sesion_name&gt;</code>;</li>
+<li>在这个session中开启你的程序，whatever command;</li>
+<li>detach the current session we just created, via <code>$ tmux detach</code>，快捷键是<code>Ctrl + b, d</code>;</li>
+<li>attach to a specific session, via <code>$ tmux -a t &lt;sesion_name&gt;</code>;</li>
+<li>[optional] Kill the server/session/window/plane, via <code>$ tmux kill-&lt;server｜session｜window｜plane&gt; -t &lt;name&gt;</code>。</li>
+</ol>
+<h3 id="3-3-会话分享演示"><a href="#3-3-会话分享演示" class="headerlink" title="3.3 会话分享演示"></a>3.3 会话分享演示</h3><p><code>tmux</code>的会话分享使得结对编程变得可能，<code>tmate</code>是<code>tmux</code>的管理工具，它可以轻松的创建<code>tmux</code>会话，并且自动生成<code>ssh链接</code>。</p>
+<p>先安装，<code>$ brew install tmate</code>。</p>
+<p>然后，用tmate创建一个tmux会话，via <code>$ tmate</code></p>
+<p><img src="5.png" alt="5"></p>
+<p>这里可以看到当前会话的共享访问链接，可以通过web或者ssh的方式，可以是只读的方式或者是可读性的方式。咱们后续也可以通过命令<code>$ tmate show-message</code>命令来显式地显示这些链接。</p>
+<p><img src="6.png" alt="6"></p>
+<p>咱们不妨来试试，先测试一下web的方式，输入上述的https链接，可以看到如下的界面，可读共享时，我们是无法从键盘输入的：</p>
+<p><img src="7.png" alt="7"></p>
+<p>再试试ssh方式访问，如下：</p>
+<p><img src="8.png" alt="8"></p>
+<p>在ssh客户端窗口输入的命令也会实时地显示在“server端”的界面中。。就是。。我感觉有点延迟。</p>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>tmux还是很强大的，这次只是简单地用了一下session中的基本功能，window和plane的很多功能也还没用到，以后用到再查吧，<code>$ man tmux</code>也是很言简意赅的文档。</p>
+<p>感谢hxd罗宇成的VPN分享和tmux工具的安利，哈哈。</p>
+<h2 id="5-参考"><a href="#5-参考" class="headerlink" title="5. 参考"></a>5. 参考</h2><ul>
+<li><a href="https://github.com/tmux/tmux/wiki" target="_blank" rel="noopener">tmux官方手册</a></li>
+<li><a href="http://louiszhai.github.io/2017/09/30/tmux/#%E4%BC%9A%E8%AF%9D%E5%85%B1%E4%BA%AB" target="_blank" rel="noopener">路易斯，Tmux使用手册</a></li>
+</ul>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2020/08/21/Leetcode-740-删除与获得点/" data-toggle="tooltip" data-placement="top" title="Leetcode-740-删除与获得点.md">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#工具软件" title="工具软件">工具软件</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
