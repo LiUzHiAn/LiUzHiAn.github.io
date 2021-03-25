@@ -193,6 +193,37 @@
 
 <div class="post-preview">
 
+    <a href="/2018/11/15/LeetCod-4-两个排序数组的中位数/">
+        <h2 class="post-title">
+            LeetCod-4-两个排序数组的中位数
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            题目内容描述给定两个大小为 m 和 n 的有序数组 nums1 和 nums2 。
+请找出这两个有序数组的中位数。要求算法的时间复杂度为 O(log (m+n)) 。
+你可以假设 nums1 和 nums2 均不为空。
+示例：
+示例1
+
+1234nums1 = [1, 3]nums2 = [2]中位数是 2.0
+
+示例2
+
+1234nums1 = [1, 2]nums2 = [3, 4]中位......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2018-11-15
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2018/11/15/LeetCode-14-最长公共前缀/">
         <h2 class="post-title">
             LeetCode-14-最长公共前缀
@@ -423,27 +454,6 @@ if two tuples of R agre......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2018/11/15/数据库-正规化/">
-        <h2 class="post-title">
-            Normalization of Database——数据库的正规化
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Recall：数据库中的一些术语：（后面的中文可能翻译不准确，我自己这么称呼它们）relation —— 关系模型tuple entity—— 表中的一条记录，也成为实体attribute/column —— 每个表头即属性domain —— 属性的取值域FD（functional dependency）—— 函数依赖MVD(Multi-Valued Dependency) —— 多值依赖。......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2018-11-15
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -544,6 +554,8 @@ if two tuples of R agre......
                         
                             
                             <a href="/tags/#计算机网络" title="计算机网络" rel="2">计算机网络</a>
+                            
+                        
                             
                         
                     </div>
@@ -691,7 +703,7 @@ if two tuples of R agre......
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    Copyright &copy; LiuZhian&#39;s Blog 2021 
                     <br>
                     Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
                     <span style="display: inline-block; margin: 0 5px;">
@@ -811,8 +823,23 @@ if two tuples of R agre......
 
 <!-- Image to hack wechat -->
 <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

@@ -193,6 +193,28 @@
 
 <div class="post-preview">
 
+    <a href="/2020/02/27/LeetCode-105-根据先序和中序遍历构造树/">
+        <h2 class="post-title">
+            LeetCode-105-根据先序和中序遍历构造树
+        </h2>
+        <h3 class="post-subtitle">
+            二叉树的3种遍历方式间的关系
+        </h3>
+        <div class="post-content-preview">
+            LeetCode-105-根据先序和中序遍历构造树1. 题目描述很简单的需求，给出一个二叉树的先序和中序遍历结果，返回这颗二叉树。123456789101112输入:前序遍历 preorder = [3,9,20,15,7]中序遍历 inorder = [9,3,15,20,7]输出:     3   / \  9  20    /  \   15   7
+2. 思路手动去分析倒是不难，我觉......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-02-27
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2020/02/26/接口的继承和抽象类/">
         <h2 class="post-title">
             接口的继承和抽象类
@@ -398,28 +420,6 @@
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2019/11/28/目标检测-SSD总结/">
-        <h2 class="post-title">
-            目标检测-SSD总结
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1.感悟这次前前后后大概花了1周的时间把SSD训练、评估、测试、应用部署整个阶段都学习了一遍，为什么说学习呢？因为代码是别人开源的，但是自己也是from scratch，从0到1全部实现了一次。在这次复现论文的过程中，总得来说，遇到的困难不是很多，Google查下基本都能解决，这里还是记录一下学习时候的感悟吧，以后再翻阅也好有个更新的印象。
-1.1 训练总的来说，我并没有按照论文中说的训练1......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2019-11-28
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -520,6 +520,8 @@
                         
                             
                             <a href="/tags/#计算机网络" title="计算机网络" rel="2">计算机网络</a>
+                            
+                        
                             
                         
                     </div>
@@ -667,7 +669,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    Copyright &copy; LiuZhian&#39;s Blog 2021 
                     <br>
                     Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
                     <span style="display: inline-block; margin: 0 5px;">
@@ -787,8 +789,23 @@
 
 <!-- Image to hack wechat -->
 <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

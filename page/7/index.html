@@ -193,6 +193,35 @@
 
 <div class="post-preview">
 
+    <a href="/2019/10/26/基于预测未来帧的异常事件检测/">
+        <h2 class="post-title">
+            基于预测未来帧的异常事件检测
+        </h2>
+        <h3 class="post-subtitle">
+            Future Frame Prediction for Anomaly Detection – A New Baseline
+        </h3>
+        <div class="post-content-preview">
+            Future Frame Prediction for Anomaly Detection – A New Baseline
+
+	
+    
+	
+
+
+
+...
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-10-26
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2019/10/25/intermediate-python(中)/">
         <h2 class="post-title">
             Intermediate-python(中)
@@ -427,28 +456,6 @@ PCB中主要包含以下信息：
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2019/06/16/数学-怎么求Pi的值/">
-        <h2 class="post-title">
-            怎么求Pi的值
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            怎么用计算机求解$\pi$的值？我只是一只搬运工，下文中提供了两种求解方法，在最后，我会用程序来模拟一下求解的速度与精确度，&gt;文章来源&lt;
-Calculating Pi (π) In some ways Pi (π) is a really straightforward number – calculating Pi simply involves taking any circ......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2019-06-16
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -549,6 +556,8 @@ Calculating Pi (π) In some ways Pi (π) is a really straightforward number – 
                         
                             
                             <a href="/tags/#计算机网络" title="计算机网络" rel="2">计算机网络</a>
+                            
+                        
                             
                         
                     </div>
@@ -696,7 +705,7 @@ Calculating Pi (π) In some ways Pi (π) is a really straightforward number – 
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    Copyright &copy; LiuZhian&#39;s Blog 2021 
                     <br>
                     Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
                     <span style="display: inline-block; margin: 0 5px;">
@@ -816,8 +825,23 @@ Calculating Pi (π) In some ways Pi (π) is a really straightforward number – 
 
 <!-- Image to hack wechat -->
 <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

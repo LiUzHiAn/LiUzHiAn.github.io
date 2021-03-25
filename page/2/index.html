@@ -193,6 +193,28 @@
 
 <div class="post-preview">
 
+    <a href="/2020/04/24/Java集合-List篇/">
+        <h2 class="post-title">
+            Java集合—List篇
+        </h2>
+        <h3 class="post-subtitle">
+            List、ArrayList、LinkedList
+        </h3>
+        <div class="post-content-preview">
+            List相关我们从最简单的List开始入手，一步步往下分析。List是一个列表，是一个顺序容器，对容器中对象的get和set都可以在常数级别时间内完成。
+1. List接口List接口如下,这里只分析了一些主要的函数。1234567891011121314151617181920212223242526272829public interface List&lt;E&gt; extends ......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2020-04-24
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2020/04/24/Java集合-初见/">
         <h2 class="post-title">
             Java集合—初见
@@ -402,28 +424,6 @@ Map接口没有继承自Collection接口......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2020/02/27/LeetCode-105-根据先序和中序遍历构造树/">
-        <h2 class="post-title">
-            LeetCode-105-根据先序和中序遍历构造树
-        </h2>
-        <h3 class="post-subtitle">
-            二叉树的3种遍历方式间的关系
-        </h3>
-        <div class="post-content-preview">
-            LeetCode-105-根据先序和中序遍历构造树1. 题目描述很简单的需求，给出一个二叉树的先序和中序遍历结果，返回这颗二叉树。123456789101112输入:前序遍历 preorder = [3,9,20,15,7]中序遍历 inorder = [9,3,15,20,7]输出:     3   / \  9  20    /  \   15   7
-2. 思路手动去分析倒是不难，我觉......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2020-02-27
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -524,6 +524,8 @@ Map接口没有继承自Collection接口......
                         
                             
                             <a href="/tags/#计算机网络" title="计算机网络" rel="2">计算机网络</a>
+                            
+                        
                             
                         
                     </div>
@@ -671,7 +673,7 @@ Map接口没有继承自Collection接口......
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; LiuZhian&#39;s Blog 2020 
+                    Copyright &copy; LiuZhian&#39;s Blog 2021 
                     <br>
                     Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
                     <span style="display: inline-block; margin: 0 5px;">
@@ -791,8 +793,23 @@ Map接口没有继承自Collection接口......
 
 <!-- Image to hack wechat -->
 <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>
