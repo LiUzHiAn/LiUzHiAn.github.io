@@ -227,8 +227,8 @@
 </ul>
 <h2 id="2-细节"><a href="#2-细节" class="headerlink" title="2. 细节"></a>2. 细节</h2><ul>
 <li>DenseBlock中的每个DenseLayer层，包含BN，ReLU，3*3Conv，三者的顺序和平常有点不一样；</li>
-<li>DenseBlock中的的每个layer，论文中称为“bottleneck layer”，因为每个层都需要接受它前面所有层的特征作为输入，必然会导致越靠后的层channel数更多，为了解决这个问题，作者在每个dense layer的前面添加了1<em>1卷积来降维，具体的setting为 BN-ReLU-1\</em>1Conv-BN-ReLU-3*3Conv。此外，在最后的3*3Conv后面还加了dropout(p=0.2)。论文中记为<strong>DenseNet-B</strong>；</li>
-<li>需要注意的是，第$i$个dense block中的layers并不会接受第$i-1$个dense block中各layers的输出，不然的话，可想而知参数量必然指数增长。此外，就算是第$i$个dense block的第一层接收的是第$i-1$个dense block的最后一层输出（size记为$[bs,C,H,W]$），这里的$C$也会比较大，于是论文中运用了transition layer来压缩通道数，具体为BN-ReLU-1*1Conv-2*2Pooling。论文中记为<strong>DenseNet-C</strong>；</li>
+<li>DenseBlock中的的每个layer，论文中称为“bottleneck layer”，因为每个层都需要接受它前面所有层的特征作为输入，必然会导致越靠后的层channel数更多，为了解决这个问题，作者在每个dense layer的前面添加了1*1卷积来降维，具体的setting为 BN-ReLU-1*1Conv-BN-ReLU-3*3Conv。此外，在最后的3*3Conv后面还加了dropout(p=0.2)。论文中记为<strong>DenseNet-B</strong>；</li>
+<li>需要注意的是，第$i$个dense block中的layers并不会接受第$(i-1)$个dense block中各layers的输出，不然的话，可想而知参数量必然指数增长。此外，就算是第$i$个dense block的第一层接收的是第$(i-1)$个dense block的最后一层输出（size记为$[bs,C,H,W]$），这里的$C$也会比较大，于是论文中运用了transition layer来压缩通道数，具体为BN-ReLU-1*1Conv-2*2Pooling。论文中记为<strong>DenseNet-C</strong>；</li>
 <li>实现的时候需要注意吃显存的问题，这可以用gradient checking技术用增加一些计算时间的代价来换空间效率，具体可以参考论文<a href="https://arxiv.org/pdf/1604.06174.pdf" target="_blank" rel="noopener">Training Deep Nets with Sublinear Memory Cost, by Chen et al. (2016)</a>；</li>
 </ul>
 <h2 id="3-实现"><a href="#3-实现" class="headerlink" title="3. 实现"></a>3. 实现</h2><p>源代码来源于<a href="https://github.com/gpleiss/efficient_densenet_pytorch" target="_blank" rel="noopener">efficient-densenet-pytorch</a>, 这里为了方便说明问题，我将detailed network architecture画出来了，对应的是论文中的DenseNet-BC(k=12)的架构，如下：</p>
@@ -243,6 +243,10 @@
                 
 
                 <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2021/04/08/初识TorchScript/" data-toggle="tooltip" data-placement="top" title="初识TorchScript">&larr; Previous Post</a>
+                        </li>
                     
                     
                         <li class="next">

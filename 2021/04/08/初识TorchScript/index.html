@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="一个记录关于生活,计算机,成长,旅行的地方">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          初识TorchScript - 刘知安的博客 | LiuZhian&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://liuzhian.github.io/2021/04/08/初识TorchScript/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiuZhian&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">随笔</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">归类</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/macOSBigSurDark.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                    </div>
+                    <h1>初识TorchScript</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 刘知安 on
+                        2021-04-08
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+				
+				<!-- 文章目录全局默认开启，如果不加目录，在文章front-matter设置toc为false -->  
+				
+				<div id="toc" class="toc-article">
+				
+                    <strong class="toc-title">文章目录</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#TorchScript初见"><span class="toc-text">TorchScript初见</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Tracing技术"><span class="toc-text">1. Tracing技术</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Script技术"><span class="toc-text">2. Script技术</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-References"><span class="toc-text">3. References</span></a></li></ol></li></ol>
+                    
+                    <!-- 文章目录用的是themes\huxblog\source\css下的post.style,hexo会把它生成一个post.css文件在public文件夹中 -->
+                    
+<link rel="stylesheet" href="/css/post.css">
+
+				
+                </div>
+				
+				
+                <h1 id="TorchScript初见"><a href="#TorchScript初见" class="headerlink" title="TorchScript初见"></a>TorchScript初见</h1><p>自从PyTorch 1.3 开始，PyTorch也支持部署到移动端了，那么很自然地，就有以下两个必须待解决的问题：</p>
+<ul>
+<li>如果我们训练好了一个模型，我们怎么将这个模型序列化/反序列化，从而可以在移动端上导入并运行；</li>
+<li>序列化好的模型应该不受Python语言的限制，从而可以在别的语言环境下载入，例如Android中的Java，iOS中的Swift/Objective-C，甚至是服务端中的C++环境中，即语言无关特点。</li>
+</ul>
+<p>很自然的一个解决方案就是，类似编译器中的中间代码技术，PyTorch以此为基础，提出了一个叫作<code>TorchScript</code>的技术，即将Python语言定义的PyTorch模型，转化成一个序列化文件，即脚本文件，我想，这也正是<code>TorchScript</code>技术的由来吧！</p>
+<h2 id="1-Tracing技术"><a href="#1-Tracing技术" class="headerlink" title="1. Tracing技术"></a>1. Tracing技术</h2><p>如何将PyTorch模型转化成中间的序列化脚本呢？很原始的一个想法就是，我们将Python模型，按照给定的输入数据，将模型跑一遍，在跑的同时，我们记住模型的数据流动（也就是常说的<code>计算图</code>），按照一定的规则，我们将计算图序列化保存下来即可。这实际上是一种动态代码生成技术，PyTorch官方给这种方式起名为<code>tracing</code>，直意就是追踪数据在网络中的流动，从而确定计算图。</p>
+<p>我们先定义一个简单的模型，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cell</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(MyCell, self).__init__()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x, h)</span>:</span></span><br><span class="line">        new_h = x + h</span><br><span class="line">        <span class="keyword">return</span> new_h</span><br></pre></td></tr></table></figure>
+<p>这个模型的功能就是将两个输入数据求和，然后返回结果，代码的功能不是关键。有了这个模型，我们如何tracing呢？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">my_cell = Cell()</span><br><span class="line">x = torch.ones(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">h = torch.ones(<span class="number">2</span>, <span class="number">2</span>) * (<span class="number">-2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># tracing</span></span><br><span class="line">traced_cell = torch.jit.trace(my_cell, (x, h))</span><br><span class="line">print(traced_cell.graph)</span><br><span class="line">print(traced_cell.code)</span><br></pre></td></tr></table></figure>
+<p>我们只要调用<code>torch.jit.trace()</code>函数，并传入输入数据(x,h)即可，PyTorch会依据数据流返回一个traced object，这个对象是一个<code>torch.jit.ScriptModule</code>类的实例，该类又是<code>nn.Module</code>类的子类。traced_obj有两个重要的属性<code>graph</code>和<code>code</code>，分别表示当前输入对应的计算图底层表示和计算图对应的Python语法代码，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">graph(%self : __torch__.Cell,</span><br><span class="line">      %x : Float(<span class="number">2</span>, <span class="number">2</span>),</span><br><span class="line">      %h : Float(<span class="number">2</span>, <span class="number">2</span>)):</span><br><span class="line">  %<span class="number">4</span> : int = prim::Constant[value=<span class="number">1</span>]() <span class="comment"># /Users/liuzhian/PycharmProjects/TorchScriptDemo/demo1.py:9:0</span></span><br><span class="line">  %<span class="number">5</span> : Float(<span class="number">2</span>, <span class="number">2</span>) = aten::add(%x, %h, %<span class="number">4</span>) <span class="comment"># /Users/liuzhian/PycharmProjects/TorchScriptDemo/demo1.py:9:0</span></span><br><span class="line">  <span class="keyword">return</span> (%<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self,</span></span></span><br><span class="line"><span class="function"><span class="params">    x: Tensor,</span></span></span><br><span class="line"><span class="function"><span class="params">    h: Tensor)</span> -&gt; Tensor:</span></span><br><span class="line">  <span class="keyword">return</span> torch.add(x, h, alpha=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>计算图稍微有点复杂，无非也就是一些符号标记，注意，这种计算图的底层表示方法显然是语言无关的，而下面的中间代码就类似是整个计算过程对于的Python-Syntax代码了，和我们定义的<code>forward()</code>很类似。</p>
+<p>OK，现在我们要做的就是序列化到文件了，这个也不难,一行代码搞定</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 序列化</span></span><br><span class="line">traced_cell.save(<span class="string">"cell.pt"</span>)</span><br></pre></td></tr></table></figure>
+<p>序列化好了，下一步是什么？当然是反序列化，然后再给定一个输入数据，看看能否得到理想的输出啦！</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 反序列化</span></span><br><span class="line">traced_cell_loaded = torch.jit.load(<span class="string">'cell.pt'</span>)</span><br><span class="line">print(traced_cell_loaded(x, h))</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line">tensor([[<span class="number">-1.</span>, <span class="number">-1.</span>],</span><br><span class="line">        [<span class="number">-1.</span>, <span class="number">-1.</span>]])</span><br></pre></td></tr></table></figure>
+<p>OK，一摸一样，起码功能是实现了。看到这里，是不是你会有点疑问？我们目前为止干了什么？首先，我们将PyTorch模型序列化到文件，然后又反序列化加载进来，最后又运行了一下，你是不是会想问，兜兜转转绕了一圈，跑了个结果，为啥不直接第一步就运行？哈哈，别忘了，我们的目的是在其他非Python环境下运行，只不过我们这里的目标宿主环境刚好也用的是Python，所以会让人觉得有点绕。实际上，我们是完完全全可以开发一个基于C++/Java的客户端代码，将序列化好的模型用另外一种语言加载，并运行。</p>
+<p>讲到这里，似乎关键的技术就讲完了，可是你有没有想过一个这样的问题：如果我们的模型，在定义的时候是有if-else这样的逻辑判断语句的，如果我们给定的当前输入对应的是if的控制流，推断得到的动态计算图必然是对应当前if控制流的；而如果在宿主环境上测试时，如果输入的数据对应的是else控制语句呢？为了说明这个问题，我们考虑下面的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyDecisionGate</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(MyDecisionGate, self).__init__()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> x.sum() &gt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> x</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> -x</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyCell</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(MyCell, self).__init__()</span><br><span class="line">        self.dg = MyDecisionGate()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x, h)</span>:</span></span><br><span class="line">        new_h = self.dg(x + h)</span><br><span class="line">        <span class="keyword">return</span> new_h</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">my_cell = MyCell()</span><br><span class="line">x = torch.ones(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">h = torch.ones(<span class="number">2</span>, <span class="number">2</span>) * (<span class="number">-2</span>)</span><br><span class="line"><span class="comment"># tracing时，对应MyDecisionGate类 forward()函数中的else段</span></span><br><span class="line">traced_cell = torch.jit.trace(my_cell, (x, h))</span><br><span class="line">print(traced_cell.code)  <span class="comment"># --- 1</span></span><br><span class="line">print(traced_cell(x, h)) <span class="comment"># --- 2</span></span><br><span class="line"></span><br><span class="line">x1 = torch.ones(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">h1 = torch.ones(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">print(traced_cell(x1, h1))  <span class="comment"># --- 3</span></span><br></pre></td></tr></table></figure>
+<p>在1和2处的输出如下，和我们的预期相符合：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self,</span></span></span><br><span class="line"><span class="function"><span class="params">    x: Tensor,</span></span></span><br><span class="line"><span class="function"><span class="params">    h: Tensor)</span> -&gt; Tensor:</span></span><br><span class="line">  _0 = self.dg</span><br><span class="line">  x0 = torch.add(x, h, alpha=<span class="number">1</span>)</span><br><span class="line">  <span class="keyword">return</span> (_0).forward(x0, )</span><br><span class="line"></span><br><span class="line">tensor([[<span class="number">1.</span>, <span class="number">1.</span>],</span><br><span class="line">        [<span class="number">1.</span>, <span class="number">1.</span>]])</span><br></pre></td></tr></table></figure>
+<p>可是在3处的输出会有点出乎意料：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tensor([[<span class="number">-2.</span>, <span class="number">-2.</span>],</span><br><span class="line">        [<span class="number">-2.</span>, <span class="number">-2.</span>]])</span><br></pre></td></tr></table></figure>
+<p>为何？按照我们模型的定义，输出理应是全2的tensor的！噢！明白了，原来我们在tracing的时候，数据流对应的是else段，因此在以后无论给定什么输入数据时，都会走else这个部分，这就是动态计算图构建必然会出现的问题。那，有没有解决方案呢？当然！静态构建就行了呀，开发一个特定的编译器，用来直接将Python定义的Pytorch模型转化成静态计算图，而且是可以有if-else这种逻辑判断的，好在PyTorch开发团队为我们开发了这样的编译器，即<code>torch.jit.script()</code>，</p>
+<h2 id="2-Script技术"><a href="#2-Script技术" class="headerlink" title="2. Script技术"></a>2. Script技术</h2><p>script的使用方法相比tracing而言，无需传入输入数据，只需传入模型对象即可，使用方法如下，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">scripted_cell = torch.jit.script(my_cell)</span><br><span class="line">print(scripted_cell.code)</span><br><span class="line">x2 = torch.ones(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">h2 = torch.ones(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">print(scripted_cell(x2, h2))</span><br></pre></td></tr></table></figure>
+<p>此时对应的代码和输出分别是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self,</span></span></span><br><span class="line"><span class="function"><span class="params">    x: Tensor,</span></span></span><br><span class="line"><span class="function"><span class="params">    h: Tensor)</span> -&gt; Tensor:</span></span><br><span class="line">  new_h = (self.dg).forward(torch.add(x, h, alpha=<span class="number">1</span>), )</span><br><span class="line">  <span class="keyword">return</span> new_h</span><br><span class="line"></span><br><span class="line">tensor([[<span class="number">2.</span>, <span class="number">2.</span>],</span><br><span class="line">        [<span class="number">2.</span>, <span class="number">2.</span>]])</span><br></pre></td></tr></table></figure>
+<p>可以看到，相比tracing生成的代码，script生成的代码还被优化了，而且输出也是符合模型的定义的。</p>
+<p>讲到这里，本文就可以暂告一段落了，至于后续如何在宿主语言环境（如C++）中使用TorchScript，期待下一篇博客吧。</p>
+<h2 id="3-References"><a href="#3-References" class="headerlink" title="3. References"></a>3. References</h2><ul>
+<li><a href="https://pytorch.org/tutorials/beginner/Intro_to_TorchScript_tutorial.html" target="_blank" rel="noopener">Introduction to TorchScript</a>, PyTorch Official Doc.</li>
+<li><a href="https://zhpmatrix.github.io/2019/03/09/torch-jit-pytorch/" target="_blank" rel="noopener">直观认识torch.jit模块</a></li>
+</ul>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2021/03/25/从源码学习DenseNet/" data-toggle="tooltip" data-placement="top" title="从源码学习 DenseNet">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+				
+				
+				<!-- 来必力City版安装代码 -->
+				<div id="lv-container" data-id="city" data-uid="MTAyMC80NzM2OC8yMzg2OA==" >
+					<script type="text/javascript">
+				   (function(d, s) {
+					   var j, e = d.getElementsByTagName(s)[0];
+
+					   if (typeof LivereTower === 'function') { return; }
+
+					   j = d.createElement(s);
+					   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+					   j.async = true;
+
+					   e.parentNode.insertBefore(j, e);
+				   })(document, 'script');
+					</script>
+				<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+				</div>
+				<!-- City版安装代码已完成 -->
+				
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">Foo</a></li>
+                    
+                        <li><a href="#" target="_blank">Bar</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liu-zhi-an-98">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/1952886932">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LiUzHiAn">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LiuZhian&#39;s Blog 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" target="_blank" rel="noopener">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks" target="_blank" rel="noopener">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://liuzhian.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-150994646-1';
+    var _gaDomain = '';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://liuzhian.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
