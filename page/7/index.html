@@ -193,6 +193,29 @@
 
 <div class="post-preview">
 
+    <a href="/2019/10/26/OpenCV-py学习笔记（一）——基本图像视频输入输出/">
+        <h2 class="post-title">
+            OpenCV-py学习笔记（一）—— 基本图像/视频输入输出
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            @[TOC]
+图像的相关操作需要注意的是，OpenCV读入图像的顺序是g、b、r的顺序，而像matplotlib这样的图像库读入图像的顺序是正常的r、g、b，所以如果想要用opencv读取图像而用matplotlib.plotlib显示时，就需要考虑一个通道翻转的问题。详情参见Stack Overflow上的讨论。
+1.读取图片代码12345678910111213141516171819d......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 刘知安 on
+        2019-10-26
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2019/10/26/OpenCV-py学习笔记（三）——图像处理（上）/">
         <h2 class="post-title">
             OpenCV-py学习笔记（三）—— 图像处理（上）
@@ -426,34 +449,6 @@ OS的内存管理操作系统会对计算机的内存进行统一管理，注意
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2019/06/16/OS进程管理及进程状态转化/">
-        <h2 class="post-title">
-            OS进程管理及进程状态转化
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            OS进程管理
-进程：指一个具有一定独立功能的程序在一个数据集合上的一次动态执行的过程。
-
-简单来说，进程就是正在内存中运行的程序。需要注意的是，不同进程之间的地址空间是相互独立的。
-进程控制块（Process Control Block，PCB）PCB是OS来描述进程基本情况及变化的一个数据结构，每个进程都在OS中对应有一个PCB，是进程存在的唯一标志。
-PCB中主要包含以下信息：
-
-调度和......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by 刘知安 on
-        2019-06-16
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -554,6 +549,8 @@ PCB中主要包含以下信息：
                         
                             
                             <a href="/tags/#计算机网络" title="计算机网络" rel="2">计算机网络</a>
+                            
+                        
                             
                         
                             
