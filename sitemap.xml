@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://liuzhian.github.io/about/index.html</loc>
+    
+    <lastmod>2021-10-28T09:00:02.521Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://liuzhian.github.io/2021/05/22/%25E4%25B8%2580%25E6%2596%2587%25E6%258E%258C%25E6%258F%25A1Python%25E8%25A3%2585%25E9%25A5%25B0%25E5%2599%25A8/</loc>
     
     <lastmod>2021-05-22T07:26:39.626Z</lastmod>
@@ -26,13 +33,6 @@
     <loc>https://liuzhian.github.io/2020/12/02/%25E4%25BB%258E%25E6%25BA%2590%25E7%25A0%2581%25E5%25AD%25A6%25E4%25B9%25A0%2520Faster-RCNN/</loc>
     
     <lastmod>2020-12-02T04:49:46.930Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://liuzhian.github.io/about/index.html</loc>
-    
-    <lastmod>2020-10-02T14:13:22.899Z</lastmod>
     
   </url>
   
